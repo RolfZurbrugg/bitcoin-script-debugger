@@ -1,0 +1,17 @@
+target/*
+.settings/*
+.project
+.classpath
+stefan ;-)
+# More...
+/target/
+.idea/
+*.iml
+.metadata/*
+log/*
+nbactions.xml
+build/*
+build.properties
+build/
+output/
+build.xml
