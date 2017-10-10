@@ -1,0 +1,13 @@
+To Do
+Citations, referenzen ins Work einfügen
+
+Anforderungen definieren
+	Bitcoin Scripte in einer Sandbox ausführen.
+	Bitcoin Script kann in einem mehrzeiligen Textfeld eingegeben werden.
+	Syntax Fehler Erkennung (opt. Syntax highlighting)
+	Insbesondere soll interaktives, zeilenweises Ausführen des Skriptes möglich sein.
+	Umgebung soll client-seitig im Browser laufen.
+	(opt. beschreibung von den schritten im stack)	
+
+Mokups erstellen (Balsamic mock up)
+
