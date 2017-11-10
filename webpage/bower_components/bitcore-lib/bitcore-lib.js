@@ -6201,6 +6201,8 @@ Interpreter.prototype.step = function() {
   var chunk = this.script.chunks[this.pc];
   this.pc++;
   var opcodenum = chunk.opcodenum;
+  //added by rolf
+  console.log('Opcodenum: '+opcodenum);
   if (_.isUndefined(opcodenum)) {
     this.errstr = 'SCRIPT_ERR_UNDEFINED_OPCODE';
     return false;
@@ -6777,6 +6779,9 @@ Interpreter.prototype.step = function() {
               break;
 
             case Opcode.OP_SUB:
+            //added by rolf
+            window.my_bn = bn1;
+            console.log('OP-sub');
               bn = bn1.sub(bn2);
               break;
 
@@ -7078,7 +7083,17 @@ Interpreter.prototype.step = function() {
         return false;
     }
   }
+    //added by rolf
+    console.log('--------- start of stack --------')
+    BN.fromScriptNumBuffer(this.stack[this.stack.length - 1], fRequireMinimal);
+    for (var i = 0; i<this.stack.length; i++){
+        var bn = BN.fromScriptNumBuffer(this.stack[i], fRequireMinimal);
+        //console.log(bn);
+        console.log('Stack element[' + i + '] = ' + bn.words[0]);
+    }
+    console.log('--------- end of stack --------')
 
+    console.log(this);
   return true;
 };
 
