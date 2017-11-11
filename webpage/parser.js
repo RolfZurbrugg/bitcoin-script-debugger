@@ -1,6 +1,8 @@
 /**
+ * The parser takes a string containing opcodes which are either separated by white spaces or
+ * carriage return. It will return a bitcore script object containing the script.
  *
- *
+ * ToDo extend this library to be able to do syntax checks
  */
 
 var bitcore = require('bitcore-lib');
