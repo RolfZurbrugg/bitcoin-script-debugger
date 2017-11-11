@@ -6,21 +6,27 @@
     <script src="bower_components/bitcore-mnemonic/bitcore-mnemonic.js"></script>
     <script src="jquery.js"></script>
     <script src="parser.js"></script>
+    <!-- <script src="test.js"></script> -->
     <script src="app.js"></script>
+    <link rel="stylesheet" href="main.css"/>
     <title>Bitcoin Script Debugger</title>
 </head>
 <body>
-<form>
+<form name="IOScript">
     <p>Input Script</p>
     <p>
-        <textarea name="InputScript" cols="40" rows="10"></textarea>
+        <textarea name="InputScript" id="is" cols="40" rows="10"></textarea>
     </p>
     <p>Output Script</p>
     <p>
-        <textarea name="OutputScript" cols="40" rows="10"></textarea>
+        <textarea name="OutputScript" id="os" cols="40" rows="10"></textarea>
     </p>
     <p>
-        <input type="submit" value="run"/>
+        <input type="button" name="RunScript" id="runs" onclick="runScript(this);" value="run"/>
+    </p>
+    <p id="st">
+        Stack<br/>
+        <textarea name="StackTraceText" id="stt" cols="80" rows="25"></textarea>
     </p>
 </form>
 </body>

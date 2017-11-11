@@ -23,7 +23,6 @@ var bitcore = require('bitcore-lib');
             script.add(opcode_arr[i]);
         }
 
-        console.log(script);
         return script;
 
 
