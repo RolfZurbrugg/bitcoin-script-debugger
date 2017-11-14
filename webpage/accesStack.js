@@ -17,7 +17,7 @@ var bitcore = require('bitcore-lib');
 
         // Read instruction
         var pc = here.pc -1;
-        console.log(pc);
+        //console.log(pc);
         var chunk = here.script.chunks[pc];
         //here.pc++;
         //console.log(chunk)
@@ -27,7 +27,7 @@ var bitcore = require('bitcore-lib');
 
         window.stack_trace += 'Opcodenum: ' + op_code + '\n';
 
-        console.log(here);
+        //console.log(here);
 
         //added by rolf
         window.stack_trace += '\n' + '--------- start of stack --------' + '\n';
