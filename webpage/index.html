@@ -24,11 +24,13 @@
         <textarea name="OutputScript" id="os" cols="40" rows="10"></textarea>
     </p>
     <p>
-        <input type="button" name="RunScript" id="runs" onclick="runScript(this);" value="run"/>
+        <input type="button" name="RunScript" id="runs" onclick="runScript(this);" value="Run Script"/>
     </p>
-    <p id="st">
+
+    <p id="st" class="stack">
         Stack<br/>
-        <textarea name="StackTraceText" id="stt" cols="80" rows="25"></textarea>
+        <textarea name="StackTraceText" clase="stack" id="stt" cols="80" rows="24"></textarea>
+        <br/><br/><input type="button" name="Clear Stack" id="cs" onclick="clearStack(this);" value="Clear Stack"/>
     </p>
 </form>
 </body>

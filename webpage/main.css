@@ -1,7 +1,13 @@
 /* This is the main CSS style sheet */
 
-#st {
+.stack {
     position: absolute;
     top: 0.43cm;
     left: 10cm;
+}
+
+
+#cs {
+    position: relative;
+    top: -0.12cm;
 }

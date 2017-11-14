@@ -1,6 +1,7 @@
 
 var bitcore = require('bitcore-lib');
 
+
 console.log('app.js ready');
 
 function runScript(form){
@@ -19,4 +20,8 @@ function runScript(form){
     window.stack_trace += '\n' + 'Result: ' + result;
 
     $('#stt').val(window.stack_trace);
+}
+
+function clearStack(form){
+    $('#stt').val('');
 }
