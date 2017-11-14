@@ -6202,9 +6202,9 @@ Interpreter.prototype.step = function() {
   this.pc++;
   var opcodenum = chunk.opcodenum;
 
-  //added by rolf
-    window.stack_trace += 'Opcodenum: ' + opcodenum + '\n';
-  console.log('Opcodenum: ' + opcodenum);
+  // //added by rolf
+  //   window.stack_trace += 'Opcodenum: ' + opcodenum + '\n';
+  // console.log('Opcodenum: ' + opcodenum);
 
   if (_.isUndefined(opcodenum)) {
     this.errstr = 'SCRIPT_ERR_UNDEFINED_OPCODE';
@@ -7083,19 +7083,20 @@ Interpreter.prototype.step = function() {
         return false;
     }
   }
-    //added by rolf
-    window.stack_trace += '\n' + '--------- start of stack --------' + '\n';
-    console.log('--------- start of stack --------')
-    BN.fromScriptNumBuffer(this.stack[this.stack.length - 1], fRequireMinimal);
-    for (var i = 0; i<this.stack.length; i++){
-        var bn = BN.fromScriptNumBuffer(this.stack[i], fRequireMinimal);
-        //console.log(bn);
-        window.stack_trace += 'Stack element[' + i + '] = ' + bn.words[0] + '\n';
-        console.log('Stack element[' + i + '] = ' + bn.words[0]);
-    }
-    window.stack_trace += '--------- end of stack --------' + '\n\n';
-    console.log('--------- end of stack --------')
-   // console.log(this);
+   //  //added by rolf
+   //  window.stack_trace += '\n' + '--------- start of stack --------' + '\n';
+   //  console.log('--------- start of stack --------');
+   //  console.log(this);
+   //  BN.fromScriptNumBuffer(this.stack[this.stack.length - 1], fRequireMinimal);
+   //  for (var i = 0; i<this.stack.length; i++){
+   //      var bn = BN.fromScriptNumBuffer(this.stack[i], fRequireMinimal);
+   //      //console.log(bn);
+   //      window.stack_trace += 'Stack element[' + i + '] = ' + bn.words[0] + '\n';
+   //      console.log('Stack element[' + i + '] = ' + bn.words[0]);
+   //  }
+   //  window.stack_trace += '--------- end of stack --------' + '\n\n';
+   //  console.log('--------- end of stack --------');
+   // // console.log(this);
   return true;
 };
 
