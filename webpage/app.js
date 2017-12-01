@@ -35,9 +35,14 @@ function clearStack(form) {
     $('#stt').val('');
 }
 
-
-
+/**
+ * creating a dynamic table in order to store public and private key pairs and their corresponding address
+ * @type {number}
+ */
 //create dynamic table for keypairs and addresses
+//addapted implementation from http://www.encodedna.com/javascript/dynamically-add-remove-rows-to-html-table-using-javascript-and-save-data.htm
+
+
 // ARRAY FOR HEADER.
 var createdAdressId = 1;
 var arrHead = new Array();
@@ -73,7 +78,7 @@ function addRow() {
     //create a key pair and address
     var privateKey = new bitcore.PrivateKey();
     var publicKey = new bitcore.PublicKey.fromPrivateKey(privateKey);
-    var address =  publicKey.toAddress();
+    var address = publicKey.toAddress();
 
 
     for (var c = 0; c < arrHead.length; c++) {
@@ -81,7 +86,7 @@ function addRow() {
         td = tr.insertCell(c);
 
         if (c == 0) {
-           addTextBox(document, td, createdAdressId);
+            addTextBox(document, td, createdAdressId);
         }
 
         if (c == 1) {
@@ -97,7 +102,7 @@ function addRow() {
         }
 
         if (c == 4) {           // FIRST COLUMN.
-            // ADD A BUTTON.
+                                // ADD A BUTTON.
             var button = document.createElement('input');
 
             // SET INPUT ATTRIBUTE.
@@ -133,6 +138,16 @@ function removeRow(oButton) {
     empTab.deleteRow(oButton.parentNode.parentNode.rowIndex);       // BUTTON -> TD -> TR.
 }
 
+// Access table by row and columns
+function getTableValue(row, columns) {
+    var myTab = document.getElementById('empTable');
+    var element = myTab.rows.item(row).cells[columns];
+
+    return element.childNodes[0].value;
+}
+
+
+// ToDo not sure if this is needed
 // EXTRACT AND SUBMIT TABLE DATA.
 function sumbit() {
     var myTab = document.getElementById('empTable');
