@@ -20,7 +20,13 @@ var bitcore = require('bitcore-lib');
         var script = bitcore.Script();
 
         for(var i=0; i<opcode_arr.length; i++){
-            script.add(opcode_arr[i]);
+            if(/(pubk\d*|privk\d*|addr\d*)/.test(opcode_arr[i])){
+                //add buffer
+            } else if (is chunk){
+                //add chunk
+            } else{
+                script.add(opcode_arr[i]);
+            }
         }
 
         return script;

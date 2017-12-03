@@ -3,6 +3,11 @@ var bitcore = require('bitcore-lib');
 
 console.log('app.js ready');
 
+//constants needed for accessing the generated keys in the script parsing
+var PRIVATE_KEY = 1;
+var PUBLIC_KEY = 2;
+var ADDRESS   = 3;
+
 /**
  * This function takes the input and output script with id 'is', 'os' respectivly
  * and evaluates the script
@@ -10,13 +15,13 @@ console.log('app.js ready');
  */
 function runScript(form) {
 
-    window.stack_trace = ''; //reset, clear value which will be filled in bitcore-lib.js on line 6205 and 7092
+    clearStack();
 
     var input_script_string = $("#is").val();
     var output_script_string = $("#os").val();
 
-    var script_i = P$(input_script_string);
-    var script_o = P$(output_script_string);
+    var script_i = getInputScript();
+    var script_o = getOutputScript();
 
 
     var result = bitcore.Script.Interpreter().verify(script_i, script_o);
@@ -26,12 +31,24 @@ function runScript(form) {
     $('#stt').val(window.stack_trace);
 }
 
+function getInputScript(){
+    var input_script_string = $("#is").val();
+    var script_i = P$(input_script_string);
+    return script_i;
+}
+
+function getOutputScript(){
+    var output_script_string = $("#os").val();
+    var script_o = P$(output_script_string);
+    return script_o;
+}
+
 /**
  * This function was implemented because there is no way to clear textareas on refresh
  * so a manual option is provided to clear the current stack trace
  * @param form
  */
-function clearStack(form) {
+function clearStack() {
     $('#stt').val('');
 }
 
@@ -165,3 +182,65 @@ function sumbit() {
     }
     console.log(values);
 }
+
+function signScript() {
+    //do some stuff
+}
+
+/**
+ * Apending parser code to end of app.js in order to gain acces to the keys generated in the dynamic table.
+ */
+
+/**
+ * The parser takes a string containing opcodes which are either separated by white spaces or
+ * carriage return. It will return a bitcore script object containing the script.
+ *
+ * ToDo extend this library to be able to do syntax checks
+ */
+
+
+
+(function (global) {
+
+    var Parser = function (script_text) {
+        return new Parser.init(script_text);
+    }
+
+    Parser.init = function (script_text) {
+
+        var opcode_arr = script_text.split(/\s+|\r+/);
+
+        var script = bitcore.Script();
+
+        for(var i=0; i<opcode_arr.length; i++){
+
+            //get generated public keys from table
+            //using a variable name pubk<number>
+            if(/(pubk\d*)/.test(opcode_arr[i])){
+                var num = opcode_arr[i].replace('pubk', '');
+                num = Number(num); //converting the string to a number
+                console.log('num: '+num);
+                var pubKeyString = getTableValue(num, PUBLIC_KEY); //getting the public key string out of the dynamic table
+                var pubKey = new bitcore.PublicKey(pubKeyString);
+
+                console.log(pubKey);
+                console.log(pubKey.toString());
+
+                script.add(pubKey.toBuffer());
+
+            } else{
+                script.add(opcode_arr[i]);
+            }
+        }
+        return script;
+
+
+    }
+
+
+    Parser.init.prototype = Parser.prototype;
+
+    global.Parser = global.P$ = Parser;
+
+
+}(window));

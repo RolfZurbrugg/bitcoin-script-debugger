@@ -5,7 +5,7 @@
     <script src="bower_components/bitcore-lib/bitcore-lib.js"></script>
     <script src="bower_components/bitcore-mnemonic/bitcore-mnemonic.js"></script>
     <script src="jquery.js"></script>
-    <script src="parser.js"></script>
+    <!--<script src="parser.js"></script>-->
     <script src="accesStack.js"></script>
     <!-- <script src="test.js"></script> -->
     <script src="testKeyCreationAndScriptSignatures.js"></script>
@@ -19,6 +19,9 @@
     <p>Input Script</p>
     <p>
         <textarea name="InputScript" id="is" cols="40" rows="10"></textarea>
+        <br/>add private key selection here <br/>
+        <input type="button" name="signInputScript" id="sis" onclick="signScript();" value="Sign Script"/>
+        <textarea name="InputScriptSig" is="iss" cols="30" rows="1"></textarea>
     </p>
     <p>Output Script</p>
     <p>
