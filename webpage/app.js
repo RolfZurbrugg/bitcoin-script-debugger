@@ -183,8 +183,48 @@ function sumbit() {
     console.log(values);
 }
 
+function getPubKeyFromTable(num){
+    var pubKeyString = getTableValue(num, PUBLIC_KEY); //getting the public key string out of the dynamic table
+    var pubKey = new bitcore.PublicKey(pubKeyString);
+    return pubKey;
+}
+
+function getPrivatKeyFromTable(num){
+    var privateKeyString = getTableValue(num, PRIVATE_KEY);
+    var privateKey = new bitcore.PrivateKey(privateKeyString);
+    return privateKey;
+}
+
 function signScript() {
-    //do some stuff
+   var inputScript = getInputScript();
+   /*
+    todo implement selection of sig type
+    Signature.SIGHASH_ALL = 0x01;
+    Signature.SIGHASH_NONE = 0x02;
+    Signature.SIGHASH_SINGLE = 0x03;
+    Signature.SIGHASH_ANYONECANPAY = 0x80;
+    */
+   // get private key ToDo implent private key selection for now the first private key will be used
+    var num = 1; //default use first private key ToDo change this when implementing key selection
+    var privateKey = getPrivatKeyFromTable(num);
+
+    //building a dummy transaction because i dont see a way to just sign the script
+    var utxos = ''; // Unspent transaction(s) which will be spent
+    var address = ''; // Adress where satoshies will be sent
+    var amount = 1000; // number of satoshies
+    var address2 = '' //adress where the rest of the btcs will go
+    var script = getOutputScript(); //get the output script to add it to the tx
+    var input = '';
+
+    var transaction = new bitcore.Transaction()
+        // .from(utxos)
+        // .to(address, amount)
+        // .change(address2) //maybe this can be omitted
+        .addInput(script,amount)
+        .sign(privateKey);
+
+    console.log(transaction);
+
 }
 
 /**
@@ -220,8 +260,7 @@ function signScript() {
                 var num = opcode_arr[i].replace('pubk', '');
                 num = Number(num); //converting the string to a number
                 console.log('num: '+num);
-                var pubKeyString = getTableValue(num, PUBLIC_KEY); //getting the public key string out of the dynamic table
-                var pubKey = new bitcore.PublicKey(pubKeyString);
+                var pubKey = getPubKeyFromTable(num);
 
                 console.log(pubKey);
                 console.log(pubKey.toString());

@@ -19,13 +19,13 @@
     <p>Input Script</p>
     <p>
         <textarea name="InputScript" id="is" cols="40" rows="10"></textarea>
-        <br/>add private key selection here <br/>
-        <input type="button" name="signInputScript" id="sis" onclick="signScript();" value="Sign Script"/>
-        <textarea name="InputScriptSig" is="iss" cols="30" rows="1"></textarea>
     </p>
     <p>Output Script</p>
     <p>
         <textarea name="OutputScript" id="os" cols="40" rows="10"></textarea>
+        <br/>add private key selection here <br/>
+        <input type="button" name="signInputScript" id="sis" onclick="signScript();" value="Sign Script"/>
+        <textarea name="InputScriptSig" is="iss" cols="30" rows="1"></textarea>
     </p>
     <p>
         <input type="button" name="RunScript" id="runs" onclick="runScript(this);" value="Run Script"/>
@@ -47,6 +47,10 @@
 
 <p>
     <input type="button" id="bt" value="Sumbit Data" onclick="sumbit()" />
+</p>
+
+<p id="tx">
+    <b>Create a Transaction</b>
 </p>
 
 </body>
