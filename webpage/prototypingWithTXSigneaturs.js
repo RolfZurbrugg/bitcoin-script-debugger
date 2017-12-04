@@ -92,19 +92,106 @@ console.log(genesisBlock);
 
 
 
-// create an unspent transaction
+// create an unspent transaction (utox)
 
 var data = new Object(); // creating the data opbject to create an unspent tx
-data.txid =''; // {String} the previous transaction id
+data.txid ='00baf6626abc2df808da36a518c69f09b0d2ed0a79421ccfde4f559d2e42128b'; // {String} the previous transaction id
 data.txId = ''; // {String=} alias for 'txid'
 data.vout = 0; // {number} the index in the transaction
 data.outputIndex = 0; // {number=} alias for 'vout'
 data.scriptPubKey = ''; // {string|Script} the script that must be resolved to release the funds
-data.script = ''; // {string|Script=} alias for 'scriptPubKey'
+data.script = ''; // {string|Script=} alias for 'scriptPubKey' (Output Script)
 data.amount = 1; // {number} amount of bitcoins associated
 data.satoshis =100000000; // {number=} alias for 'amount', but expressed in satoshis (1 BTC = 1e8 satoshis
-data.address = '' // {sting | Address=} the associated address to the script, if provided.
+data.address = ''; // {sting | Address=} the associated address to the script, if provided.
 
+
+var unspentOutput = bitcore.Transaction.UnspentOutput(data);
+
+console.log(unspentOutput);
+
+
+// lets now try and make a transaction bassed on the utox created above.
+var tx = bitcore.Transaction().from(unspentOutput, publicKey);
+
+console.log(tx); //ok this sorta works i think were getting some where :)
+
+// now to make this usefull lets put it in functions
+
+// function to crate a utox
+
+function crateUtox(outputScript, toAddress){
+
+    //creating the data object in order to be able to create a utox
+    var data = new Object(); // creating the data opbject to create an unspent tx
+    data.txid ='00baf6626abc2df808da36a518c69f09b0d2ed0a79421ccfde4f559d2e42128b'; // {String} the previous transaction id
+    data.txId = ''; // {String=} alias for 'txid'
+    data.vout = 0; // {number} the index in the transaction
+    data.outputIndex = 0; // {number=} alias for 'vout'
+    data.scriptPubKey = outputScript; // {string|Script} the script that must be resolved to release the funds
+    data.script = outputScript; // {string|Script=} alias for 'scriptPubKey' (Output Script)
+    data.amount = 1; // {number} amount of bitcoins associated
+    data.satoshis =100000000; // {number=} alias for 'amount', but expressed in satoshis (1 BTC = 1e8 satoshis
+    data.address = toAddress; // {sting | Address=} the associated address to the script, if provided.
+
+    var utox = bitcore.Transaction.UnspentOutput(data);
+    return utox;
+}
+
+
+/*  pay to pubkey script format for reference
+ *  scriptPubKey: <pubKey> OP_CHECKSIG
+ *  scriptSig: <sig>
+ */
+
+var outputScript = bitcore.Script()
+            .add(new bitcore.deps.Buffer(publicKey.toString(),'hex'))
+            .add('OP_CHECKSIG');
+
+console.log('OutputScrip:\n'+outputScript);
+
+var utox = crateUtox(outputScript, address);
+
+// creating a JS object of a transaction
+
+// var txObject = {
+//     'adress' : address,
+//     'txID' : '00baf6626abc2df808da36a518c69f09b0d2ed0a79421ccfde4f559d2e42128c',
+//     'outputIndex' : 0,
+//     'script' : bitcore.Script.empty(),
+//     'satoshis' : 100000000
+// };
+//
+// var transx = bitcore.Transaction().fromObject(txObject);
+//
+// console.log(transx);
+//
+// var tx3 = new bitcore.Transaction();
+//
+// console.log(tx3);
+//
+// var sig = tx3.sign(privateKey);
+//
+// console.log('sig:\n'+sig.toString());
+
+var tx =  bitcore.Transaction().from(utox,publicKey);
+console.log(tx);
+var sig = tx.sign(privateKey);
+
+console.log('sig: '+sig.toString());
+
+var inputscript = bitcore.Script()
+    .add(new bitcore.deps.Buffer(sig.toBuffer(), 'hex'));
+console.log('Inputscript:\n'+inputscript);
+
+var result = bitcore.Script.Interpreter().verify(inputscript,outputScript,tx,0,0);
+
+console.log('result test: '+result);
+
+
+// from interpreter ln 1114 op_checksig
+
+var result2 = tx.verfySignature(); // todo continue here tomorow
 
 
 
