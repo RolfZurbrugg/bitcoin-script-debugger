@@ -7,6 +7,10 @@ var privateKey = new bitcore.PrivateKey();
 var publicKey = new bitcore.PublicKey.fromPrivateKey(privateKey);
 var address = publicKey.toAddress();
 
+var privateKey2 = new bitcore.PrivateKey();
+var publicKey2 = new bitcore.PublicKey.fromPrivateKey(privateKey2);
+var changeAddress = publicKey2.toAddress();
+
 console.log('Private Key: '+privateKey.toString());
 console.log('Public Key: '+publicKey);
 console.log('Adress : '+address);
@@ -125,14 +129,14 @@ function crateUtox(outputScript, toAddress){
     //creating the data object in order to be able to create a utox
     var data = new Object(); // creating the data opbject to create an unspent tx
     data.txid ='00baf6626abc2df808da36a518c69f09b0d2ed0a79421ccfde4f559d2e42128b'; // {String} the previous transaction id
-    data.txId = ''; // {String=} alias for 'txid'
-    data.vout = 0; // {number} the index in the transaction
+    //data.txId = '00baf6626abc2df808da36a518c69f09b0d2ed0a79421ccfde4f559d2e42128b'; // {String=} alias for 'txid'
+    //data.vout = 0; // {number} the index in the transaction
     data.outputIndex = 0; // {number=} alias for 'vout'
-    data.scriptPubKey = outputScript; // {string|Script} the script that must be resolved to release the funds
-    data.script = outputScript; // {string|Script=} alias for 'scriptPubKey' (Output Script)
-    data.amount = 1; // {number} amount of bitcoins associated
-    data.satoshis =100000000; // {number=} alias for 'amount', but expressed in satoshis (1 BTC = 1e8 satoshis
-    data.address = toAddress; // {sting | Address=} the associated address to the script, if provided.
+    //data.scriptPubKey = outputScript; // {string|Script} the script that must be resolved to release the funds
+    data.script = outputScript.toHex(); // {string|Script=} alias for 'scriptPubKey' (Output Script)
+    //data.amount = 1; // {number} amount of bitcoins associated
+    data.satoshis =100000000; // {number=} alias for 'amount', but expressed in satoshis (1 BTC = 1e8 satoshis)
+    //data.address = toAddress; // {sting | Address=} the associated address to the script, if provided.
 
     var utox = bitcore.Transaction.UnspentOutput(data);
     return utox;
@@ -144,11 +148,11 @@ function crateUtox(outputScript, toAddress){
  *  scriptSig: <sig>
  */
 
-var outputScript = bitcore.Script()
-            .add(new bitcore.deps.Buffer(publicKey.toString(),'hex'))
+var outputScript = new bitcore.Script();
+outputScript.add(publicKey.toBuffer())
             .add('OP_CHECKSIG');
 
-console.log('OutputScrip:\n'+outputScript);
+console.log('OutputScrip:\n'+outputScript.toHex());
 
 var utox = crateUtox(outputScript, address);
 
@@ -174,24 +178,76 @@ var utox = crateUtox(outputScript, address);
 //
 // console.log('sig:\n'+sig.toString());
 
-var tx =  bitcore.Transaction().from(utox,publicKey);
-console.log(tx);
-var sig = tx.sign(privateKey);
+// atempt 2 at creating a transaction object
+// first we create an input object
+// var inputObj = new Object();
+// inputObj.output = ''; // params.output not sure what goes here
+// inputObj.prevTxId = '0000000000000000000000000000000000000000000000000000000000000000'; //lets pretend there was no previous tx
+// inputObj.outputIndex = ''; //params.outputIndex
+// inputObj.sequenceNumber = "ffffffff"; // not sure what exactly is requiered here, stole sequence from genesis block.
+// inputObj.script = outputScript;
+//
+// var input = bitcore.Transaction.Input.fromObject(inputObj);
+// console.log('Input:\n'+input);
 
-console.log('sig: '+sig.toString());
 
-var inputscript = bitcore.Script()
-    .add(new bitcore.deps.Buffer(sig.toBuffer(), 'hex'));
-console.log('Inputscript:\n'+inputscript);
+// attempt 3 at building a tx
+var tx3 =  bitcore.Transaction()
+    .from(utox,publicKey)
+    .to(address, 100000000);
+    //.change(changeAddress)
+    // .sign(privateKey, bitcore.Transaction.SIGHASH_NONE);
 
-var result = bitcore.Script.Interpreter().verify(inputscript,outputScript,tx,0,0);
+console.log('Transaction tx3: \n');
+console.log(tx3);
+
+
+
+// var tx =  bitcore.Transaction().from(utox,publicKey);
+// tx.to(address, 1000); // defining to which address satoshies will be sent.
+// console.log('Transactiong tx:');
+// console.log(tx);
+
+
+var sig = tx3.getSignatures(privateKey, bitcore.Transaction.SIGHASH_NONE); //here we create the signature,
+
+tx3.applySignature(sig[0]); //here we have to apply the signature to the tx for some reason this is not doing anything
+console.log('tx3 after sig is applied');
+console.log(tx3);
+
+console.log('sig: ');
+console.log(sig[0]); // for some reason r and s of the signature object are empty. i dont know where they come from.
+console.log('sig to string: ');
+//console.log(sig[0].toString());
+
+console.log(tx3.isFullySigned());
+console.log(tx3.isValidSignature(sig));
+
+
+var inputscript = new bitcore.Script()
+    .add(sig);
+
+
+console.log('Inputscript:\n');
+console.log(inputscript);
+
+//nin - index of the transaction input containing the scriptSig verified.
+var nin = 0;
+var result = bitcore.Script.Interpreter().verify(inputscript,outputScript,tx3);
 
 console.log('result test: '+result);
 
 
 // from interpreter ln 1114 op_checksig
+var verify = tx3.verify();
+console.log(verify);
 
-var result2 = tx.verfySignature(); // todo continue here tomorow
 
-
+// var txOP_RETURN = new bitcore.Transaction()
+//     .from(utox)
+//     .addData('bitcoin rocks')
+//     .sign(privateKey);
+//
+// console.log('txOP_RETURNS');
+// console.log(txOP_RETURN);
 

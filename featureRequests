@@ -1,0 +1,36 @@
+### This file is meant to be a list of features that could/should be implementet
+### This list does not nesseseraly reflect what is implemented. This is supposed to be
+### a reference list.
+
+
+- Display / generate key pairs and their respective adreses and hashes
+
+
+- Allow variables to be used instead of the full keys, hashes, adresses.
+
+
+- The abilety to load example scripts that can be executed
+
+
+- Implement a function to chech if a script is considered a standard script or not
+
+
+- Be able to manipulate exterior variables including but not limited to:
+    Block chain length, current time, transaction time, lock time, ...
+
+
+- Syntax highlighting, detect op codes, variables (see above) , and other formated inputs
+
+
+- Display the script stack
+
+
+- Be able to step through the script line by line
+
+
+- Autoformat scripts, beatufy slopy script formating at the press of a button.
+
+
+- Be able to specifie input and outputscript
+
+
