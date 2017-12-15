@@ -15,6 +15,8 @@ var ADDRESS   = 3;
  */
 function runScript(form) {
 
+    window.stackArray = new Array(); // this step is necessary in order to remove results form the array from previous calls.
+
     clearStack();
 
     var input_script_string = $("#is").val();
@@ -25,6 +27,7 @@ function runScript(form) {
 
 
     var result = bitcore.Script.Interpreter().verify(script_i, script_o);
+    window.resetCount();
 
     window.stack_trace += '\n' + 'Result: ' + result;
 
