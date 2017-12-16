@@ -7,6 +7,7 @@ console.log('app.js ready');
 var PRIVATE_KEY = 1;
 var PUBLIC_KEY = 2;
 var ADDRESS   = 3;
+var signed = false;
 
 /**
  * This function takes the input and output script with id 'is', 'os' respectivly
@@ -19,31 +20,57 @@ function runScript(form) {
 
     clearStack();
 
-    var input_script_string = $("#is").val();
-    var output_script_string = $("#os").val();
+    var input_script_string = getInputScript();
+    var output_script_string = getOutputScript();
 
-    var script_i = getInputScript();
-    var script_o = getOutputScript();
+    // var script_i = getInputScript();
+    // var script_o = getOutputScript();
 
 
-    var result = bitcore.Script.Interpreter().verify(script_i, script_o);
-    window.resetCount();
+    //var result = bitcore.Script.Interpreter().verify(script_i, script_o);
+   // window.resetCount();
 
-    window.stack_trace += '\n' + 'Result: ' + result;
+    var stackArray = bitcore.Script.Interpreter.prototype.debug(input_script_string, output_script_string, privk, signed);
+    console.log(stackArray);
+
+   // window.stack_trace += '\n' + 'Result: ' + result;
 
     $('#stt').val(window.stack_trace);
 }
 
+function sign() {
+    signed = true;
+    console.log(signed);
+
+    var inputScriptString = getInputScript();
+    if(inputScriptString === ''){ //if the inputscript is empty the key word sig can be on the first line
+        inputScriptString += 'sig';
+    }else{ //if the inputscript is not empty the sig key word should be appended on a new line for visual pleasure.
+        inputScriptString += '\nsig';
+    }
+    setInputScript(inputScriptString);
+}
+
+/**
+ * Functions for accessing the input and output script text boxes.
+ */
+
 function getInputScript(){
     var input_script_string = $("#is").val();
-    var script_i = P$(input_script_string);
-    return script_i;
+    return input_script_string;
 }
 
 function getOutputScript(){
     var output_script_string = $("#os").val();
-    var script_o = P$(output_script_string);
-    return script_o;
+    return output_script_string;
+}
+
+function setInputScript(scriptString){
+    $('#is').val(scriptString);
+}
+
+function setOutPutScript(scriptString) {
+    $('#os').val(scriptString);
 }
 
 /**
@@ -53,9 +80,19 @@ function getOutputScript(){
  */
 function clearStack() {
     $('#stt').val('');
+    window.stack_trace = '';
 }
 
+
+function getSigType() {
+    var sigType = $('#sigType').val();
+    P$.addKeyValuePair('selectedSigType',P$.getValueByKey(sigType)); //todo @sami is it better if selectedSigType was a konstant.
+}
+
+
+
 /**
+ * todo this needs refactoring
  * creating a dynamic table in order to store public and private key pairs and their corresponding address
  * @type {number}
  */
@@ -198,91 +235,22 @@ function getPrivatKeyFromTable(num){
     return privateKey;
 }
 
-function signScript() {
-   var inputScript = getInputScript();
-   /*
-    todo implement selection of sig type
-    Signature.SIGHASH_ALL = 0x01;
-    Signature.SIGHASH_NONE = 0x02;
-    Signature.SIGHASH_SINGLE = 0x03;
-    Signature.SIGHASH_ANYONECANPAY = 0x80;
-    */
-   // get private key ToDo implent private key selection for now the first private key will be used
-    var num = 1; //default use first private key ToDo change this when implementing key selection
-    var privateKey = getPrivatKeyFromTable(num);
 
-    //building a dummy transaction because i dont see a way to just sign the script
-    var utxos = ''; // Unspent transaction(s) which will be spent
-    var address = ''; // Adress where satoshies will be sent
-    var amount = 1000; // number of satoshies
-    var address2 = '' //adress where the rest of the btcs will go
-    var script = getOutputScript(); //get the output script to add it to the tx
-    var input = '';
 
-    var transaction = new bitcore.Transaction()
-        // .from(utxos)
-        // .to(address, amount)
-        // .change(address2) //maybe this can be omitted
-        .addInput(script,amount)
-        .sign(privateKey);
+// creating a set of keys and addresses for testing ToDo the map schould be created dinamicly.
+var privk = new bitcore.PrivateKey();
+var pubk = new bitcore.PublicKey.fromPrivateKey(privk);
+var address = pubk.toAddress();
 
-    console.log(transaction);
 
+
+//ToDo add metthods for the dynamic creation of key value pairs. Static elemets created for testing.
+P$.initVariableMap(); //ToDo not sure if it is good practice to load map manualy @Sami
+P$.addKeyValuePair('privK_1',privk);
+P$.addKeyValuePair('pubK_1',pubk);
+P$.addKeyValuePair('addr_1', address);
+
+
+function loadBaiscDemoScript(){
+    var inputScriptString;
 }
-
-/**
- * Apending parser code to end of app.js in order to gain acces to the keys generated in the dynamic table.
- */
-
-/**
- * The parser takes a string containing opcodes which are either separated by white spaces or
- * carriage return. It will return a bitcore script object containing the script.
- *
- * ToDo extend this library to be able to do syntax checks
- */
-
-
-
-(function (global) {
-
-    var Parser = function (script_text) {
-        return new Parser.init(script_text);
-    }
-
-    Parser.init = function (script_text) {
-
-        var opcode_arr = script_text.split(/\s+|\r+/);
-
-        var script = bitcore.Script();
-
-        for(var i=0; i<opcode_arr.length; i++){
-
-            //get generated public keys from table
-            //using a variable name pubk<number>
-            if(/(pubk\d*)/.test(opcode_arr[i])){
-                var num = opcode_arr[i].replace('pubk', '');
-                num = Number(num); //converting the string to a number
-                console.log('num: '+num);
-                var pubKey = getPubKeyFromTable(num);
-
-                console.log(pubKey);
-                console.log(pubKey.toString());
-
-                script.add(pubKey.toBuffer());
-
-            } else{
-                script.add(opcode_arr[i]);
-            }
-        }
-        return script;
-
-
-    }
-
-
-    Parser.init.prototype = Parser.prototype;
-
-    global.Parser = global.P$ = Parser;
-
-
-}(window));

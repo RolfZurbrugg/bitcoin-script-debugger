@@ -251,7 +251,7 @@ console.log(tx3ScriptWithSig.toString());
 // to spend the transaction i need a new transaction which will the satoshies i recieved from tx3
 console.log('input script with sig');
 var tx3ScriptWithSig = bitcore.Script(tx3.inputs[0]._script);
-console.log(tx3ScriptWithSig.toString());
+console.log(tx3ScriptWithSig);
 
 console.log('output scripts of tx3');
 // var tx3InputScript = bitcore.Script(tx3.outputs[0]._script);

@@ -1,11 +1,127 @@
 var bitcore = require('bitcore-lib');
 
-window.stackArray = new Array();
-var count = 0;
+bitcore.Script.Interpreter.stackArray = new Array();
+var count = 0; //the count is needed in orded to fill the bitcore.Script.Interpreter.stackArray properly
 
 
 (function (interpreter) {
 
+    /**
+     *
+     * @param inputScript
+     * @param outputScript
+     * @param privateKey
+     * @param signed {boolean} True = Signed, False = not Signed. Determines weather the user whants the transaction to be signed or not if transaction is not signed, no transaction needs to be created.
+     * @returns {Array}
+     */
+    bitcore.Script.Interpreter.prototype.debug = function (inputScriptString, outputScriptString, privateKey, signed) {
+
+        //if signed is undefined the default value of false should be used.
+        signed = signed || false;
+
+        //reset count to fill stack Array
+        bitcore.Script.Interpreter.prototype.resetCount();
+
+        //convert the inputScript and outPutScript Strings to script objects
+        var inputScript = P$(inputScriptString);
+        var outputScript = P$(outputScriptString);
+
+        // check whether the transaction was signed or not. If the transaction was not signed no transaction needs to be created
+        if (!signed){
+            // transaction is not signed no transaction needs to be created.
+            var result = bitcore.Script.Interpreter().verify(inputScript,outputScript);
+
+            return bitcore.Script.Interpreter.stackArray;
+        }
+
+        //convert the private key into a public key and address
+        var publicKey = new bitcore.PublicKey.fromPrivateKey(privateKey);
+        var address = publicKey.toAddress();
+
+        //create utox
+        var utox = createUtox(outputScript, address); //the address to where the transaktion is sent, is not relevant for the debugging, as no follow up operations are performed on the completed transaction.
+
+        //create transaction from utox
+        var transaction = createTransactionFromUtox(utox, inputScript, publicKey);
+
+        //sign the transaction
+        var option = P$.getValueByKey('selectedSigType'); //selectedSigType stems from app.js -> function get sigType.
+        var signedTransaction = signTransaction(transaction, privateKey, option);
+
+        //extract the inputScript containing the signature from the signedTransaction
+        var signedInputScript = bitcore.Script(signedTransaction.inputs[0]._script);
+
+        //evaluate the scripts and the functions
+        var result  = bitcore.Script.Interpreter().verify(signedInputScript, outputScript, signedTransaction);
+
+        return bitcore.Script.Interpreter.stackArray;
+    };
+
+    /**
+     *
+     * @param transaction
+     * @param privateKey
+     */
+    function signTransaction(transaction, privateKey, option){ //todo implement option properly
+        option = option || bitcore.crypto.Signature.SIGHASH_ALL; // default is SIGHASH_ALL, other options include bitcore.Transaction.SIGHASH_NONE =1 todo list other defaults
+        transaction.sign(privateKey, option);
+        return transaction;
+    }
+
+    /**
+     *
+     * @param utox
+     * @param inputScript
+     * @param publicKey
+     * @returns {Transaction|Number}
+     */
+    function createTransactionFromUtox(utox, inputScript, publicKey){
+
+        //create a address from the public key
+        var address = publicKey.toAddress();
+
+        var transaction = bitcore.Transaction()
+            .from(utox,publicKey)
+            .to(address, 100000000);
+        /* further options list of options that can be specified in order to create transactions
+         * .change(changeAddress)
+         */
+
+        //setting the inputScript of the transaction. ToDo this still needs to be tested.
+        transaction.inputs[0]._script.chunks = inputScript.chunks;
+
+        return transaction;
+    }
+
+    /**
+     * This is a helper function, that creates a utox (unspent transaction output)
+     * @param outputScript
+     * @param toAddress
+     * @returns {*}
+     */
+    function createUtox(outputScript, toAddress){
+
+        //creating the data object in order to be able to create a utox
+        var data = new Object(); // creating the data opbject to create an unspent tx
+        data.txid ='00baf6626abc2df808da36a518c69f09b0d2ed0a79421ccfde4f559d2e42128b'; // {String} the previous transaction id
+        //data.txId = '00baf6626abc2df808da36a518c69f09b0d2ed0a79421ccfde4f559d2e42128b'; // {String=} alias for 'txid'
+        //data.vout = 0; // {number} the index in the transaction
+        data.outputIndex = 0; // {number=} alias for 'vout'
+        //data.scriptPubKey = outputScript; // {string|Script} the script that must be resolved to release the funds
+        data.script = outputScript; // {string|Script=} alias for 'scriptPubKey' (Output Script)
+        //data.amount = 1; // {number} amount of bitcoins associated
+        data.satoshis =100000000; // {number=} alias for 'amount', but expressed in satoshis (1 BTC = 1e8 satoshis)
+        //data.address = toAddress; // {sting | Address=} the associated address to the script, if provided.
+
+        var utox = bitcore.Transaction.UnspentOutput(data);
+        return utox;
+    }
+
+
+    /**
+     *
+     * @returns {*}
+     */
     bitcore.Script.Interpreter.prototype.step = function () {
         var bool = interpreter.call(this);
 
@@ -14,22 +130,27 @@ var count = 0;
         return bool;
     };
 
+    /**
+     *
+     * @param _this
+     */
     bitcore.Script.Interpreter.prototype.printStack = function (_this) {
         here = Object.assign(this, _this);
         var fRequireMinimal = (here.flags & bitcore.Script.Interpreter.SCRIPT_VERIFY_MINIMALDATA) !== 0;
 
         // Read instruction
         var pc = here.pc -1;
-        console.log(pc);
+        //console.log(pc);
         var chunk = here.script.chunks[pc];
         //here.pc++;
         //console.log(chunk)
         var opcodenum = chunk.opcodenum;
 
         var op_code = getKeyByValue(bitcore.Opcode.map, opcodenum);
+        console.log('OP_CODE: '+op_code)
 
-        stackArray[count] = new Array();
-        stackArray[count][0] = op_code;
+        bitcore.Script.Interpreter.stackArray[count] = new Array();
+        bitcore.Script.Interpreter.stackArray[count][0] = op_code;
         window.stack_trace += 'Opcodenum: ' + op_code + '\n';
 
         //console.log(here);
@@ -39,15 +160,19 @@ var count = 0;
         console.log('--------- start of stack --------');
         //bitcore.crypto.BN.fromScriptNumBuffer(here.stack[here.stack.length - 1], fRequireMinimal); //todo, can this line be removed? until now ther seems to be no impact
         // console.log(Object.assign({},this));
-        var size = here.stack[0].length;
-        if (size < 4){size = 4;} //default value of size is 4, see function BN.fromScriptNumBuffer from bitcore-lib
+
+        //this is not needed, buffer size can be determined using here.stack[i].length
+        // var size = here.stack[pc].length; //acces the current element on the stack an get its length, in order to specify non default values for the buffer size.
+        // if (size < 4){size = 4;} //default value of size is 4, see function BN.fromScriptNumBuffer from bitcore-lib
+
+
         for (var i = 0; i < here.stack.length; i++) {
             // console.log('here');
-            var bn = bitcore.crypto.BN.fromScriptNumBuffer(here.stack[i], fRequireMinimal, size);
+            var bn = bitcore.crypto.BN.fromScriptNumBuffer(here.stack[i], fRequireMinimal, here.stack[i].length); //todo keys and signeatures are not displayed properly. not sure why here.stack[i] returns a Untit8Array which needs to be converted. maybe... :/
             //console.log(bn);
             window.stack_trace += 'Stack element[' + i + '] = ' + bn.words[0] + '\n';
             console.log('Stack element[' + i + '] = ' + bn.words[0]);
-            stackArray[count][i+1] = bn.words[0];
+            bitcore.Script.Interpreter.stackArray[count][i+1] = bn.words[0];
         }
         window.stack_trace += '--------- end of stack --------' + '\n\n';
         console.log('--------- end of stack --------');
@@ -68,10 +193,25 @@ var count = 0;
                     return prop;
             }
         }
+        /*OP_CODE 1-75 are not defined. Opcode 1-75: The next opcode bytes is data to be pushed onto the stack.
+        * insted of displaying 'undefined' as an opcode the actual number of the opcode is now displayed.*/
+        return value;
+
     }
 
-    window.resetCount = function () {
+    /**
+     *
+     */
+    bitcore.Script.Interpreter.prototype.resetCount = function () { // todo dont have this function on window but on bitcore.Script.Interpreter.
         count =0;
+    }
+
+    /**
+     *
+     * @returns {number}
+     */
+    bitcore.Script.Interpreter.prototype.getCount = function (){
+        return count;
     }
 
 

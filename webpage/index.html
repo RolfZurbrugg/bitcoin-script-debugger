@@ -5,10 +5,10 @@
     <script src="bower_components/bitcore-lib/bitcore-lib.js"></script>
     <script src="bower_components/bitcore-mnemonic/bitcore-mnemonic.js"></script>
     <script src="jquery.js"></script>
-    <!--<script src="parser.js"></script>-->
+    <script src="parser.js"></script>
     <script src="accesStack.js"></script>
     <!-- <script src="test.js"></script> -->
-    <script src="prototypingWithTXSigneaturs.js"></script>
+    <!--<script src="prototypingWithTXSigneaturs.js"></script>-->
     <script src="app.js"></script>
     <link rel="stylesheet" href="main.css"/>
     <link rel="shortcut icon" type="image/x-icon" href="bitcoinScriptDebuggerIcon.png"/>
@@ -24,8 +24,14 @@
     <p>
         <textarea name="OutputScript" id="os" cols="40" rows="10"></textarea>
         <br/>add private key selection here <br/>
-        <input type="button" name="signInputScript" id="sis" onclick="signScript();" value="Sign Script"/>
-        <textarea name="InputScriptSig" is="iss" cols="30" rows="1"></textarea>
+        <input type="button" name="signInputScript" id="sis" onclick="sign();" value="Sign Input Script"/>
+        <select id="sigType" onchange="getSigType()">
+            <option value="" selected>--- please select a sig type ---</option>
+            <option value="SIGHASH_ALL">SIGHASH_ALL</option>
+            <option value="SIGHASH_NONE">SIGHASH_NONE</option>
+            <option value="SIGHASH_SINGLE">SIGHASH_SINGLE</option>
+            <option value="SIGHASH_ANYONECANPAY">SIGHASH_ANYONECANPAY</option>
+        </select>
     </p>
     <p>
         <input type="button" name="RunScript" id="runs" onclick="runScript(this);" value="Run Script"/>
@@ -45,12 +51,12 @@
 <!--THE CONTAINER WHERE WE'll ADD THE DYNAMIC TABLE-->
 <div id="cont"></div>
 
-<p>
-    <input type="button" id="bt" value="Sumbit Data" onclick="sumbit()" />
-</p>
+<!--<p>-->
+    <!--<input type="button" id="bt" value="Sumbit Data" onclick="sumbit()" />-->
+<!--</p>-->
 
-<p id="tx">
-    <b>Create a Transaction</b>
+<p>
+    <input type="button" id="addBasicScript" value="Basic Script" />
 </p>
 
 </body>
