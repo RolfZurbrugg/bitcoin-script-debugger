@@ -253,6 +253,12 @@ console.log('input script with sig');
 var tx3ScriptWithSig = bitcore.Script(tx3.inputs[0]._script);
 console.log(tx3ScriptWithSig);
 
+console.log('signature');
+var sigArr = tx3.getSignatures(privateKey,1);
+console.log(sigArr[0]);
+var scriptSig = bitcore.Script.buildPublicKeyIn(sigArr[0].signature.toDER(),1);
+console.log('script sig\n'+scriptSig);
+
 console.log('output scripts of tx3');
 // var tx3InputScript = bitcore.Script(tx3.outputs[0]._script);
 // console.log(tx3InputScript.toString()); // why am i getting a pay to pubkey hash script here OP_DUP OP_HASH160 <pubKeyHash> OP_EQUALVERIFY OP_CHECKSIG

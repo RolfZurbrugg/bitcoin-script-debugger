@@ -8,6 +8,7 @@ var PRIVATE_KEY = 1;
 var PUBLIC_KEY = 2;
 var ADDRESS   = 3;
 var signed = false;
+P$.initVariableMap();
 
 /**
  * This function takes the input and output script with id 'is', 'os' respectivly
@@ -16,7 +17,7 @@ var signed = false;
  */
 function runScript(form) {
 
-    window.stackArray = new Array(); // this step is necessary in order to remove results form the array from previous calls.
+    // window.stackArray = new Array(); // this step is necessary in order to remove results form the array from previous calls.
 
     clearStack();
 
@@ -30,7 +31,7 @@ function runScript(form) {
     //var result = bitcore.Script.Interpreter().verify(script_i, script_o);
    // window.resetCount();
 
-    var stackArray = bitcore.Script.Interpreter.prototype.debug(input_script_string, output_script_string, privk, signed);
+    var stackArray = bitcore.Script.Interpreter.prototype.debug(input_script_string, output_script_string, getSelectedPrivateKey(), signed);
     console.log(stackArray);
 
    // window.stack_trace += '\n' + 'Result: ' + result;
@@ -38,6 +39,15 @@ function runScript(form) {
     $('#stt').val(window.stack_trace);
 }
 
+function getSelectedPrivateKey() {
+    //todo implement drop down, that alows for key selection
+    var privK_n = $('#privateKeySelection').val();
+    return P$.getValueByKey(privK_n);
+}
+
+/**
+ *
+ */
 function sign() {
     signed = true;
     console.log(signed);
@@ -147,15 +157,20 @@ function addRow() {
         }
 
         if (c == 1) {
+            var privKeyName = 'privK_' + createdAdressId;
             addTextBox(document, td, privateKey.toString());
+            P$.addKeyValuePair(privKeyName, privateKey);
+            addPrivateKeyToDropDown(privKeyName);
         }
 
         if (c == 2) {
             addTextBox(document, td, publicKey.toString());
+            P$.addKeyValuePair('pubK_' + createdAdressId, publicKey);
         }
 
         if (c == 3) {
             addTextBox(document, td, address);
+            P$.addKeyValuePair('addr_' + createdAdressId, publicKey);
         }
 
         if (c == 4) {           // FIRST COLUMN.
@@ -170,9 +185,11 @@ function addRow() {
             button.setAttribute('onclick', 'removeRow(this)');
 
             td.appendChild(button);
+
+            //ToDo remove key pairs and address from Variable Map
         }
-        else { //todo handle this properly
-            console.log('this should never be the case');
+        else { //todo why does this case occour?
+
         }
     }
     createdAdressId++;
@@ -223,34 +240,64 @@ function sumbit() {
     console.log(values);
 }
 
+/**
+ * ToDo find a better option than after private keys are currently displayed in the wrong order.
+ * @param privateKeyVariable
+ */
+function addPrivateKeyToDropDown(privateKeyVariable){
+    var selectHTML='';
+
+    selectHTML += '\n'+'<option value="'+privateKeyVariable+'">'+privateKeyVariable+'</option>';
+    $('#keySelectionElement0').after(selectHTML);
+}
+
+/**
+ *
+ * @param num
+ * @returns {*}
+ */
 function getPubKeyFromTable(num){
     var pubKeyString = getTableValue(num, PUBLIC_KEY); //getting the public key string out of the dynamic table
     var pubKey = new bitcore.PublicKey(pubKeyString);
     return pubKey;
 }
 
+/**
+ *
+ * @param num
+ * @returns {*}
+ */
 function getPrivatKeyFromTable(num){
     var privateKeyString = getTableValue(num, PRIVATE_KEY);
     var privateKey = new bitcore.PrivateKey(privateKeyString);
     return privateKey;
 }
 
-
-
-// creating a set of keys and addresses for testing ToDo the map schould be created dinamicly.
-var privk = new bitcore.PrivateKey();
-var pubk = new bitcore.PublicKey.fromPrivateKey(privk);
-var address = pubk.toAddress();
-
-
-
-//ToDo add metthods for the dynamic creation of key value pairs. Static elemets created for testing.
-P$.initVariableMap(); //ToDo not sure if it is good practice to load map manualy @Sami
-P$.addKeyValuePair('privK_1',privk);
-P$.addKeyValuePair('pubK_1',pubk);
-P$.addKeyValuePair('addr_1', address);
-
-
+/**
+ *
+ */
 function loadBaiscDemoScript(){
-    var inputScriptString;
+    var inputScriptString =     'OP_1\n' +
+                                'OP_1\n' +
+                                'OP_ADD';
+
+    var outputScriptString =    'OP_2\n' +
+                                'OP_EQUAL';
+
+    setInputScript(inputScriptString);
+    setOutPutScript(outputScriptString);
 }
+
+/**
+ *
+ */
+function loadP2PKDemoScript() {
+    var inputScriptString = '';
+
+    var outputScriptString =    'pubK_0\n' +
+                                'OP_CHECKSIG';
+
+    setInputScript(inputScriptString);
+    setOutPutScript(outputScriptString);
+}
+

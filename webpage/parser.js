@@ -68,12 +68,22 @@ var bitcore = require('bitcore-lib');
      * todo this map should be created on load.
      */
     Parser.__proto__.initVariableMap = function () {
+
         Parser.prototype.variableMap = {
             SIGHASH_ALL:    bitcore.crypto.Signature.SIGHASH_ALL,
             SIGHASH_NONE:   bitcore.crypto.Signature.SIGHASH_NONE,
             SIGHASH_SINGLE: bitcore.crypto.Signature.SIGHASH_SINGLE,
             SIGHASH_ANYONECANPAY: bitcore.crypto.Signature.SIGHASH_ANYONECANPAY
         }
+
+        // creating a set of keys and addresses for use in default scripts
+        var privk = new bitcore.PrivateKey();
+        var pubk = new bitcore.PublicKey.fromPrivateKey(privk);
+        var address = pubk.toAddress();
+
+        P$.addKeyValuePair('privK_0',privk);
+        P$.addKeyValuePair('pubK_0',pubk);
+        P$.addKeyValuePair('addr_0', address);
     };
 
     /**
@@ -107,6 +117,9 @@ var bitcore = require('bitcore-lib');
     Parser.__proto__.deleteKeyValuePair = function (key) {
         delete Parser.prototype.variableMap[key];
     };
+
+
+
 
 
     Parser.init.prototype = Parser.prototype;

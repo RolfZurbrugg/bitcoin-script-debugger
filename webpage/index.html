@@ -27,7 +27,7 @@
         <input type="button" name="signInputScript" id="sis" onclick="sign();" value="Sign Input Script"/>
         <select id="sigType" onchange="getSigType()">
             <option value="" selected>--- please select a sig type ---</option>
-            <option value="SIGHASH_ALL">SIGHASH_ALL</option>
+            <option value="SIGHASH_ALL">SIGHASH_ALL (Default)</option>
             <option value="SIGHASH_NONE">SIGHASH_NONE</option>
             <option value="SIGHASH_SINGLE">SIGHASH_SINGLE</option>
             <option value="SIGHASH_ANYONECANPAY">SIGHASH_ANYONECANPAY</option>
@@ -44,6 +44,11 @@
     </p>
 </form>
 
+<p>Please Select Private Key<br/>
+    <select id="privateKeySelection">
+        <option id="keySelectionElement0" value="privK_0" selected>privK_0</option>
+    </select>
+</p>
 <p>
     <input type="button" id="addRow" value="Add New Row" onclick="addRow()" />
 </p>
@@ -55,8 +60,9 @@
     <!--<input type="button" id="bt" value="Sumbit Data" onclick="sumbit()" />-->
 <!--</p>-->
 
-<p>
-    <input type="button" id="addBasicScript" value="Basic Script" />
+<p> Demo Scripts<br/>
+    <input type="button" id="addBasicScript" value="Basic Script" onclick="loadBaiscDemoScript()"/><br/>
+    <input type="button" id="addP2PKScript" value="P2PK" onclick="loadP2PKDemoScript()"/>
 </p>
 
 </body>
