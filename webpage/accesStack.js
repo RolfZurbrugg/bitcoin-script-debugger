@@ -1,7 +1,7 @@
 var bitcore = require('bitcore-lib');
 
-bitcore.Script.Interpreter.stackArray = new Array();
-var count = 0; //the count is needed in orded to fill the bitcore.Script.Interpreter.stackArray properly
+
+var count = 0; //the count is needed in orded to fill the Parser.prototype.stackArray properly
 
 
 (function (interpreter) {
@@ -22,6 +22,9 @@ var count = 0; //the count is needed in orded to fill the bitcore.Script.Interpr
         //reset count to fill stack Array
         bitcore.Script.Interpreter.prototype.resetCount();
 
+        //initialize stackArray
+        Parser.prototype.stackArray = new Array();
+
         //convert the private key into a public key and address
         var publicKey = new bitcore.PublicKey.fromPrivateKey(privateKey);
         var address = publicKey.toAddress();
@@ -35,8 +38,8 @@ var count = 0; //the count is needed in orded to fill the bitcore.Script.Interpr
             var outputScript = P$(outputScriptString);
             // transaction is not signed no transaction needs to be created.
             var result = bitcore.Script.Interpreter().verify(inputScript,outputScript);
-
-            return bitcore.Script.Interpreter.stackArray;
+            //todo apend result to end of stackArray
+            return Parser.prototype.stackArray;
         }else{
             //create tx and add it to variableMap
             var utox = P$.createUtox(P$(outputScriptString), publicKey);
@@ -67,8 +70,8 @@ var count = 0; //the count is needed in orded to fill the bitcore.Script.Interpr
 
         //evaluate the scripts and the functions
         var result  = bitcore.Script.Interpreter().verify(inputScript, outputScript, P$.getValueByKey('tx'));
-
-        return bitcore.Script.Interpreter.stackArray;
+        console.log(count);
+        return Parser.prototype.stackArray;
     };
 
     /**
@@ -140,8 +143,8 @@ var count = 0; //the count is needed in orded to fill the bitcore.Script.Interpr
         var op_code = getKeyByValue(bitcore.Opcode.map, opcodenum);
         console.log('OP_CODE: '+op_code)
 
-        bitcore.Script.Interpreter.stackArray[count] = new Array();
-        bitcore.Script.Interpreter.stackArray[count][0] = op_code;
+        Parser.prototype.stackArray[count] = new Array();
+        Parser.prototype.stackArray[count][0] = op_code;
         window.stack_trace += 'Opcodenum: ' + op_code + '\n';
 
         //console.log(here);
@@ -163,7 +166,7 @@ var count = 0; //the count is needed in orded to fill the bitcore.Script.Interpr
             //console.log(bn);
             window.stack_trace += 'Stack element[' + i + '] = ' + bn.words[0] + '\n';
             console.log('Stack element[' + i + '] = ' + bn.words[0]);
-            bitcore.Script.Interpreter.stackArray[count][i+1] = bn.words[0];
+            Parser.prototype.stackArray[count][i+1] = bn.words[0];
         }
         window.stack_trace += '--------- end of stack --------' + '\n\n';
         console.log('--------- end of stack --------');

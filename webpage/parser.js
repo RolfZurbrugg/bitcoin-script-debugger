@@ -28,14 +28,14 @@ var bitcore = require('bitcore-lib');
         for(var i=0; i<opcode_arr.length; i++){
             // if a value in the opcode_arr corresponds to a variable -> replace variable
             if (/(privK_\n*)/.test(opcode_arr[i])   || //test for private key variable
-                /(pubK_\n*)/.test(opcode_arr[i])    || //test for publik key varible
+                /(pubK_\n*)/.test(opcode_arr[i])    || //test for public key variable
                 /(addr_\n*)/.test(opcode_arr[i])){     //test for address
 
 
                 var variable = P$.getValueByKey(opcode_arr[i]); //ToDo find a better name instead of variable
                 script.add(variable.toBuffer());
 
-            }else if (/(pubKHash_\n*)/.test(opcode_arr[i])){ //test for pubkik key hash){
+            }else if (/(pubKHash_\n*)/.test(opcode_arr[i])){ //test for pubkik key hash. pubkey hash is already a buffer.
                 var variable = P$.getValueByKey(opcode_arr[i]);
                 script.add(variable);
             }

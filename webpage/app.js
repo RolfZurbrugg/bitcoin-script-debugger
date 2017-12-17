@@ -289,6 +289,7 @@ function getPrivatKeyFromTable(num){
  *
  */
 function loadBaiscDemoScript(){
+    signed =false;
     var inputScriptString =     'OP_1\n' +
                                 'OP_1\n' +
                                 'OP_ADD';
@@ -465,17 +466,18 @@ function createPubKeyHash (pubKey, hashType){
             pubKeyHash= bitcore.crypto.Hash.sha512(pubKey.toBuffer());
             break;
 
-        case 'hmac' :
-            pubKeyHash= bitcore.crypto.Hash.hmac(pubKey.toBuffer()); //todo takes other arguments
-            break;
-
-        case 'sha256hmac' :
-            pubKeyHash= bitcore.crypto.Hash.sha256hmac(pubKey.toBuffer()); //todo takes other arguments
-            break;
-
-        case 'sha512hmac' :
-            pubKeyHash= bitcore.crypto.Hash.sha512hmac(pubKey.toBuffer()); //todo takes other arguments
-            break;
+        // following cryptographic functions are available, but are disabled here because they are not used in bitcoin scripts.
+        // case 'hmac' :
+        //     pubKeyHash= bitcore.crypto.Hash.hmac(pubKey.toBuffer()); //todo takes other arguments
+        //     break;
+        //
+        // case 'sha256hmac' :
+        //     pubKeyHash= bitcore.crypto.Hash.sha256hmac(pubKey.toBuffer()); //todo takes other arguments
+        //     break;
+        //
+        // case 'sha512hmac' :
+        //     pubKeyHash= bitcore.crypto.Hash.sha512hmac(pubKey.toBuffer()); //todo takes other arguments
+        //     break;
     }
 
     return pubKeyHash;
