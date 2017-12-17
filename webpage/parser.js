@@ -11,16 +11,15 @@ var bitcore = require('bitcore-lib');
 (function (global) {
     
     var Parser = function (script_text) {
-        return new Parser.init(script_text);
+        return new Parser.init(script_text); //ToDo why new parser
     }
 
 
-    //todo extend the parser to be able to handle variables. This could maby be done using a map of all the variables.
     Parser.init = function (script_text) {
 
-        var opcode_arr = script_text.split(/\s+|\r+/);
+        var opcode_arr = script_text.split(/\s+|\r+/); //spliting text on whitespace or new line.
 
-        var script = bitcore.Script();
+        var script = new bitcore.Script();
 
         if(script_text === ''){ //if a script is empty return a empty script
             return script;
@@ -36,8 +35,19 @@ var bitcore = require('bitcore-lib');
                 var variable = P$.getValueByKey(opcode_arr[i]); //ToDo find a better name instead of variable
                 script.add(variable.toBuffer());
 
-            }else if (/(sig)/.test(opcode_arr[i])){ //test for signature
-                //do nothing, because the signature ist appended to the script automatically after a transaction is signed.
+            }else if (/(pubKHash_\n*)/.test(opcode_arr[i])){ //test for pubkik key hash){
+                var variable = P$.getValueByKey(opcode_arr[i]);
+                script.add(variable);
+            }
+            else if (/(sig)/.test(opcode_arr[i])){ //test for signature
+               var sig = P$.getValueByKey(opcode_arr[i]);
+
+               var scriptContainingSig = bitcore.Script.buildPublicKeyIn(sig.signature.toDER());
+               //script.prototype.buildPublicKeyIn(sig.signature.toDER(), sig.sigtype);
+                console.log('sigscript');
+                console.log(scriptContainingSig);
+                console.log(scriptContainingSig.toString());
+                script.add(scriptContainingSig);
             }
             else {
                 script.add(opcode_arr[i]);
@@ -45,6 +55,7 @@ var bitcore = require('bitcore-lib');
         }
 
         console.log(script);
+        console.log(script.toString());
         return script;
 
 
@@ -80,10 +91,12 @@ var bitcore = require('bitcore-lib');
         var privk = new bitcore.PrivateKey();
         var pubk = new bitcore.PublicKey.fromPrivateKey(privk);
         var address = pubk.toAddress();
+        var pubkHASH160 = bitcore.crypto.Hash.sha256ripemd160(pubk.toBuffer());
 
         P$.addKeyValuePair('privK_0',privk);
         P$.addKeyValuePair('pubK_0',pubk);
         P$.addKeyValuePair('addr_0', address);
+        P$.addKeyValuePair('pubKHash_0',pubkHASH160)
     };
 
     /**
@@ -118,7 +131,57 @@ var bitcore = require('bitcore-lib');
         delete Parser.prototype.variableMap[key];
     };
 
+    /**
+     * This is a helper function, that creates a utox (unspent transaction output)
+     * @param outputScript
+     * @param toAddress
+     * @returns {*}
+     */
+    Parser.__proto__.createUtox = function (outputScript, toAddress){
 
+        //creating the data object in order to be able to create a utox
+        var data = new Object(); // creating the data opbject to create an unspent tx
+        data.txid ='00baf6626abc2df808da36a518c69f09b0d2ed0a79421ccfde4f559d2e42128b'; // {String} the previous transaction id
+        //data.txId = '00baf6626abc2df808da36a518c69f09b0d2ed0a79421ccfde4f559d2e42128b'; // {String=} alias for 'txid'
+        //data.vout = 0; // {number} the index in the transaction
+        data.outputIndex = 0; // {number=} alias for 'vout'
+        //data.scriptPubKey = outputScript; // {string|Script} the script that must be resolved to release the funds
+        data.script = outputScript; // {string|Script=} alias for 'scriptPubKey' (Output Script)
+        //data.amount = 1; // {number} amount of bitcoins associated
+        data.satoshis =100000000; // {number=} alias for 'amount', but expressed in satoshis (1 BTC = 1e8 satoshis)
+        //data.address = toAddress; // {sting | Address=} the associated address to the script, if provided.
+
+        var utox = bitcore.Transaction.UnspentOutput(data);
+        return utox;
+    }
+
+    /**
+     *
+     * @param utox
+     * @param inputScript
+     * @param publicKey
+     * @returns {Transaction|Number}
+     */
+    Parser.__proto__.createTransactionFromUtox = function (utox, publicKey){
+
+        //create a address from the public key
+        var address = publicKey.toAddress();
+
+        var transaction = bitcore.Transaction()
+            .from(utox,publicKey)
+            .to(address, 100000000);
+        /* further options list of options that can be specified in order to create transactions
+         * .change(changeAddress)
+         */
+
+        return transaction;
+    };
+
+    Parser.__proto__.setSignature = function (tx, privateKey, option){
+        var sigArray = tx.getSignatures(privateKey, option);
+        var sig = sigArray[0]; //at the moment only one signature is supported
+        P$.addKeyValuePair('sig', sig);
+    }
 
 
 

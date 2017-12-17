@@ -22,37 +22,51 @@ var count = 0; //the count is needed in orded to fill the bitcore.Script.Interpr
         //reset count to fill stack Array
         bitcore.Script.Interpreter.prototype.resetCount();
 
-        //convert the inputScript and outPutScript Strings to script objects
-        var inputScript = P$(inputScriptString);
-        var outputScript = P$(outputScriptString);
-
-        // check whether the transaction was signed or not. If the transaction was not signed no transaction needs to be created
-        if (!signed){
-            // transaction is not signed no transaction needs to be created.
-            var result = bitcore.Script.Interpreter().verify(inputScript,outputScript);
-
-            return bitcore.Script.Interpreter.stackArray;
-        }
-
         //convert the private key into a public key and address
         var publicKey = new bitcore.PublicKey.fromPrivateKey(privateKey);
         var address = publicKey.toAddress();
 
+
+
+        // check whether the transaction was signed or not. If the transaction was not signed no transaction needs to be created
+        if (!signed){
+            //convert the inputScript and outPutScript Strings to script objects
+            var inputScript = P$(inputScriptString);
+            var outputScript = P$(outputScriptString);
+            // transaction is not signed no transaction needs to be created.
+            var result = bitcore.Script.Interpreter().verify(inputScript,outputScript);
+
+            return bitcore.Script.Interpreter.stackArray;
+        }else{
+            //create tx and add it to variableMap
+            var utox = P$.createUtox(P$(outputScriptString), publicKey);
+            var tx = P$.createTransactionFromUtox(utox, publicKey);
+            P$.addKeyValuePair('tx', tx);
+
+            //signe the transaction
+            P$.setSignature(tx, privateKey, P$.getValueByKey('selectedSigType'));
+        }
+
+        //convert the inputScript and outPutScript Strings to script objects
+        var inputScript = P$(inputScriptString);
+        var outputScript = P$(outputScriptString);
+
+
         //create utox
-        var utox = createUtox(outputScript, address); //the address to where the transaktion is sent, is not relevant for the debugging, as no follow up operations are performed on the completed transaction.
+        // var utox = createUtox(outputScript, address); //the address to where the transaktion is sent, is not relevant for the debugging, as no follow up operations are performed on the completed transaction.
 
         //create transaction from utox
-        var transaction = createTransactionFromUtox(utox, inputScript, publicKey);
+        // var transaction = P$.createTransactionFromUtox(utox, publicKey);
 
         //sign the transaction
-        var option = P$.getValueByKey('selectedSigType'); //selectedSigType stems from app.js -> function get sigType.
-        var signedTransaction = signTransaction(transaction, privateKey, option);
+        // var option = P$.getValueByKey('selectedSigType'); //selectedSigType stems from app.js -> function get sigType.
+        // var signedTransaction = signTransaction(transaction, privateKey, option);
 
         //extract the inputScript containing the signature from the signedTransaction
-        var signedInputScript = bitcore.Script(signedTransaction.inputs[0]._script);
+        // var signedInputScript = bitcore.Script(signedTransaction.inputs[0]._script);
 
         //evaluate the scripts and the functions
-        var result  = bitcore.Script.Interpreter().verify(signedInputScript, outputScript, signedTransaction);
+        var result  = bitcore.Script.Interpreter().verify(inputScript, outputScript, P$.getValueByKey('tx'));
 
         return bitcore.Script.Interpreter.stackArray;
     };
@@ -68,32 +82,9 @@ var count = 0; //the count is needed in orded to fill the bitcore.Script.Interpr
         return transaction;
     }
 
-    /**
-     *
-     * @param utox
-     * @param inputScript
-     * @param publicKey
-     * @returns {Transaction|Number}
-     */
-    function createTransactionFromUtox(utox, inputScript, publicKey){
-
-        //create a address from the public key
-        var address = publicKey.toAddress();
-
-        var transaction = bitcore.Transaction()
-            .from(utox,publicKey)
-            .to(address, 100000000);
-        /* further options list of options that can be specified in order to create transactions
-         * .change(changeAddress)
-         */
-
-        //setting the inputScript of the transaction. ToDo this still needs to be tested.
-        transaction.inputs[0]._script.chunks = inputScript.chunks;
-
-        return transaction;
-    }
 
     /**
+     * ToDo this can be removed was moved to parser
      * This is a helper function, that creates a utox (unspent transaction output)
      * @param outputScript
      * @param toAddress

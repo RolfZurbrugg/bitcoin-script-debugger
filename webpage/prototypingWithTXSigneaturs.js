@@ -307,3 +307,14 @@ console.log('result test: '+result);
 //     }
 // }
 
+
+var hash = bitcore.crypto.Hash.sha1(publicKey.toBuffer());
+
+console.log(hash);
+
+var hashStr = bitcore.crypto.BN.fromScriptNumBuffer(hash, true, hash.length);
+console.log(hash.toString('hex'));
+
+var hashScript = bitcore.Script().add(hash);
+console.log(hashScript.toString());
+

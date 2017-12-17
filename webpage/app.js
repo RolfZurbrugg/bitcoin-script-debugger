@@ -10,6 +10,7 @@ var ADDRESS   = 3;
 var signed = false;
 P$.initVariableMap();
 
+
 /**
  * This function takes the input and output script with id 'is', 'os' respectivly
  * and evaluates the script
@@ -52,13 +53,14 @@ function sign() {
     signed = true;
     console.log(signed);
 
-    var inputScriptString = getInputScript();
-    if(inputScriptString === ''){ //if the inputscript is empty the key word sig can be on the first line
-        inputScriptString += 'sig';
-    }else{ //if the inputscript is not empty the sig key word should be appended on a new line for visual pleasure.
-        inputScriptString += '\nsig';
-    }
-    setInputScript(inputScriptString);
+    // This is no longer neccessary
+    // var inputScriptString = getInputScript();
+    // if(inputScriptString === ''){ //if the inputscript is empty the key word sig can be on the first line
+    //     inputScriptString += 'sig';
+    // }else{ //if the inputscript is not empty the sig key word should be appended on a new line for visual pleasure.
+    //     inputScriptString += '\nsig';
+    // }
+    // setInputScript(inputScriptString);
 }
 
 /**
@@ -96,7 +98,7 @@ function clearStack() {
 
 function getSigType() {
     var sigType = $('#sigType').val();
-    P$.addKeyValuePair('selectedSigType',P$.getValueByKey(sigType)); //todo @sami is it better if selectedSigType was a konstant.
+    P$.addKeyValuePair('selectedSigType',P$.getValueByKey(sigType));
 }
 
 
@@ -161,11 +163,14 @@ function addRow() {
             addTextBox(document, td, privateKey.toString());
             P$.addKeyValuePair(privKeyName, privateKey);
             addPrivateKeyToDropDown(privKeyName);
+            addVariableToHashCreateDropDown(privKeyName);
         }
 
         if (c == 2) {
+            var pubKeyName = 'pubK_' + createdAdressId;
             addTextBox(document, td, publicKey.toString());
-            P$.addKeyValuePair('pubK_' + createdAdressId, publicKey);
+            P$.addKeyValuePair(pubKeyName, publicKey);
+            addVariableToHashCreateDropDown(pubKeyName);
         }
 
         if (c == 3) {
@@ -251,6 +256,13 @@ function addPrivateKeyToDropDown(privateKeyVariable){
     $('#keySelectionElement0').after(selectHTML);
 }
 
+function addVariableToHashCreateDropDown(publicKeyVariable) {
+    var selectHTML='';
+
+    selectHTML += '\n'+'<option value="'+publicKeyVariable+'">'+publicKeyVariable+'</option>';
+    $('#selectionPubKeyElement0').after(selectHTML);
+}
+
 /**
  *
  * @param num
@@ -292,7 +304,7 @@ function loadBaiscDemoScript(){
  *
  */
 function loadP2PKDemoScript() {
-    var inputScriptString = '';
+    var inputScriptString =     'sig';
 
     var outputScriptString =    'pubK_0\n' +
                                 'OP_CHECKSIG';
@@ -301,3 +313,176 @@ function loadP2PKDemoScript() {
     setOutPutScript(outputScriptString);
 }
 
+
+/**
+ *
+ */
+function loadP2PHDemoScript() {
+    var inputScriptString =     'sig\n' +
+                                'pubK_0';
+
+    var outputScriptString =    'OP_DUP\n' +
+                                'OP_HASH160\n' +
+                                'pubKHash_0\n' +
+                                'OP_EQUALVERIFY\n' +
+                                'OP_CHECKSIG';
+
+    setInputScript(inputScriptString);
+    setOutPutScript(outputScriptString);
+}
+
+
+/**
+ * table for hashes
+ *
+ */
+
+// ARRAY FOR HEADER.
+var createdHashId = 1;
+var hashTableHead = new Array();
+hashTableHead = ['ID', 'Publik Key', 'Hash', 'Type', ''];      // SIMPLY ADD OR REMOVE VALUES IN THE ARRAY FOR TABLE HEADERS.
+
+// FIRST CREATE A TABLE STRUCTURE BY ADDING A FEW HEADERS AND
+// ADD THE TABLE TO YOUR WEB PAGE.
+function createHashTable() {
+    var empHashTable = document.createElement('table');
+    empHashTable.setAttribute('id', 'empHashTable');            // SET THE TABLE ID.
+
+    var tr = empHashTable.insertRow(-1);
+
+    for (var h = 0; h < hashTableHead.length; h++) {
+        var th = document.createElement('th');          // TABLE HEADER.
+        th.innerHTML = hashTableHead[h];
+        tr.appendChild(th);
+    }
+
+    var div = document.getElementById('contHashTable');
+    div.appendChild(empHashTable);    // ADD THE TABLE TO YOUR WEB PAGE.
+}
+
+// ADD A NEW ROW TO THE TABLE.s
+function hashTableAddRow() {
+    var empTab = document.getElementById('empHashTable');
+
+    var rowCnt = empTab.rows.length;        // GET TABLE ROW COUNT.
+    var tr = empTab.insertRow(rowCnt);      // TABLE ROW.
+    tr = empTab.insertRow(rowCnt);
+
+
+    // get selected pubKey
+    var selectedPubKey = $('#selectPubKeyForHash').val();
+    var pubKey = P$.getValueByKey(selectedPubKey);
+
+    // get selected hash function
+    var selectedHashFunction = $('#selectHashFunktion').val();
+
+
+
+    for (var c = 0; c < hashTableHead.length; c++) {
+        var td = document.createElement('td');          // TABLE DEFINITION.
+        td = tr.insertCell(c);
+
+        if (c == 0) {
+            addTextBox(document, td, createdHashId);
+        }
+
+        if (c == 1) {
+            var pubKeyHashName = 'pubKHash_' + createdHashId;
+            var pubKeyHash = createPubKeyHash(pubKey, selectedHashFunction);
+            P$.addKeyValuePair(pubKeyHashName, pubKeyHash);
+            addTextBox(document, td, pubKey.toString());
+        }
+
+        if (c == 2) {
+            var pubKeyHashName = 'pubKHash_' + createdHashId;
+            var pubKeyHash = P$.getValueByKey(pubKeyHashName);
+            addTextBox(document, td, pubKeyHash.toString('hex'));
+        }
+
+        if (c == 3) {
+            addTextBox(document, td, selectedHashFunction);
+
+        }
+
+        if (c == 4) {           // FIRST COLUMN.
+            // ADD A BUTTON.
+            var button = document.createElement('input');
+
+            // SET INPUT ATTRIBUTE.
+            button.setAttribute('type', 'button');
+            button.setAttribute('value', 'Remove');
+
+            // ADD THE BUTTON's 'onclick' EVENT.
+            button.setAttribute('onclick', 'removeRowPubKeyHashTable(this)');
+
+            td.appendChild(button);
+
+            //ToDo remove key pairs and address from Variable Map
+        }
+        else { //todo why does this case occour?
+
+        }
+    }
+    createdHashId++;
+}
+
+// DELETE TABLE ROW.
+function removeRowPubKeyHashTable(oButton) {
+    var empTab = document.getElementById('empHashTable');
+    empTab.deleteRow(oButton.parentNode.parentNode.rowIndex);       // BUTTON -> TD -> TR.
+}
+
+function createPubKeyHash (pubKey, hashType){
+
+    var pubKeyHash = null;
+
+    switch (hashType){
+        case 'sha1' :
+            pubKeyHash= bitcore.crypto.Hash.sha1(pubKey.toBuffer());
+            break;
+
+        case 'sha256' :
+            pubKeyHash= bitcore.crypto.Hash.sha256(pubKey.toBuffer());
+            break;
+
+        case 'sha256sha256' :
+            pubKeyHash= bitcore.crypto.Hash.sha256sha256(pubKey.toBuffer());
+            break;
+
+        case 'ripemd160' :
+            pubKeyHash= bitcore.crypto.Hash.ripemd160(pubKey.toBuffer());
+            break;
+
+        case 'sha256ripemd160' :
+            pubKeyHash= bitcore.crypto.Hash.sha256ripemd160(pubKey.toBuffer());
+            break;
+
+        case 'sha512' :
+            pubKeyHash= bitcore.crypto.Hash.sha512(pubKey.toBuffer());
+            break;
+
+        case 'sha512' :
+            pubKeyHash= bitcore.crypto.Hash.sha512(pubKey.toBuffer());
+            break;
+
+        case 'hmac' :
+            pubKeyHash= bitcore.crypto.Hash.hmac(pubKey.toBuffer()); //todo takes other arguments
+            break;
+
+        case 'sha256hmac' :
+            pubKeyHash= bitcore.crypto.Hash.sha256hmac(pubKey.toBuffer()); //todo takes other arguments
+            break;
+
+        case 'sha512hmac' :
+            pubKeyHash= bitcore.crypto.Hash.sha512hmac(pubKey.toBuffer()); //todo takes other arguments
+            break;
+    }
+
+    return pubKeyHash;
+}
+
+function initTables(){
+    createTable();
+    createHashTable();
+
+}

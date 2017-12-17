@@ -8,13 +8,13 @@
     <script src="parser.js"></script>
     <script src="accesStack.js"></script>
     <!-- <script src="test.js"></script> -->
-    <!--<script src="prototypingWithTXSigneaturs.js"></script>-->
+    <script src="prototypingWithTXSigneaturs.js"></script>
     <script src="app.js"></script>
     <link rel="stylesheet" href="main.css"/>
     <link rel="shortcut icon" type="image/x-icon" href="bitcoinScriptDebuggerIcon.png"/>
     <title>Bitcoin Script Debugger</title>
 </head>
-<body onload="createTable()">
+<body onload="initTables()">
 <form name="IOScript">
     <p>Input Script</p>
     <p>
@@ -22,15 +22,17 @@
     </p>
     <p>Output Script</p>
     <p>
-        <textarea name="OutputScript" id="os" cols="40" rows="10"></textarea>
-        <br/>add private key selection here <br/>
-        <input type="button" name="signInputScript" id="sis" onclick="sign();" value="Sign Input Script"/>
+        <textarea name="OutputScript" id="os" cols="40" rows="10"></textarea><br/><br/>
+        <input type="button" name="signInputScript" id="sis" onclick="sign();" value="Sign Transaction"/>
         <select id="sigType" onchange="getSigType()">
             <option value="" selected>--- please select a sig type ---</option>
             <option value="SIGHASH_ALL">SIGHASH_ALL (Default)</option>
             <option value="SIGHASH_NONE">SIGHASH_NONE</option>
             <option value="SIGHASH_SINGLE">SIGHASH_SINGLE</option>
             <option value="SIGHASH_ANYONECANPAY">SIGHASH_ANYONECANPAY</option>
+        </select>
+        <select id="privateKeySelection">
+            <option id="keySelectionElement0" value="privK_0" selected>privK_0</option>
         </select>
     </p>
     <p>
@@ -44,11 +46,11 @@
     </p>
 </form>
 
-<p>Please Select Private Key<br/>
-    <select id="privateKeySelection">
-        <option id="keySelectionElement0" value="privK_0" selected>privK_0</option>
-    </select>
-</p>
+<!--<p>Please Select Private Key<br/>-->
+    <!--<select id="privateKeySelection">-->
+        <!--<option id="keySelectionElement0" value="privK_0" selected>privK_0</option>-->
+    <!--</select>-->
+<!--</p>-->
 <p>
     <input type="button" id="addRow" value="Add New Row" onclick="addRow()" />
 </p>
@@ -62,7 +64,27 @@
 
 <p> Demo Scripts<br/>
     <input type="button" id="addBasicScript" value="Basic Script" onclick="loadBaiscDemoScript()"/><br/>
-    <input type="button" id="addP2PKScript" value="P2PK" onclick="loadP2PKDemoScript()"/>
+    <input type="button" id="addP2PKScript" value="P2PK" onclick="loadP2PKDemoScript()"/><br/>
+    <input type="button" id="addP2PHScript" value="P2PH" onclick="loadP2PHDemoScript()"/>
+</p>
+
+<p>
+    <select id="selectPubKeyForHash">
+        <option id="selectionPubKeyElement0" value="pubK_0" selected>pubK_0</option>
+    </select>
+    <select id="selectHashFunktion">
+        <option id="sha1" value="sha1">sha1</option>
+        <option id="sha256" value="sha256">sha256</option>
+        <option id="sha256sha256" value="sha256sha256">sha256sha256</option>
+        <option id="ripemd160" value="ripemd160">ripemd160</option>
+        <option id="sha256ripemd160" value="sha256ripemd160">sha256ripemd160</option>
+        <option id="sha512" value="sha512">sha512</option>
+        <option id="hmac" value="hmac">hmac</option>
+        <option id="sha256hmac" value="sha256hmac">sha256hmac</option>
+        <option id="sha512hmac" value="sha512hmac">sha512hmac</option>
+    </select>
+    <input type="button" id="addNewHash" value="Add Hash" onclick="hashTableAddRow()" /><br/>
+    <div id="contHashTable"></div>
 </p>
 
 </body>
