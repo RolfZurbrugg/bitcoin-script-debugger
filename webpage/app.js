@@ -497,6 +497,13 @@ function checkIfStandardScript(script){
     return script.isStandard();
 }
 
+/**
+ * the signature is generated once the script is run. So evaluating if a script
+ * is standard when it contains the variable sig an exception will occur while parsing.
+ * so a script containing a signature mus be run befor evaluating.
+ * ToDo in order to avoid this, the signature and the transaction would need to be created at the point
+ * ToDo in which the button sign is clicked.
+ */
 function checkInputScriptIfStandard (){
     var scriptString = getInputScript();
     var script = P$(scriptString);
