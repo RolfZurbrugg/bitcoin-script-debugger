@@ -117,6 +117,39 @@ var bitcore = require('bitcore-lib');
     };
 
     /**
+     * This function returns the variable map as an array.
+     * @returns {Array}
+     */
+    Parser.__proto__.getVariableMapAsArray = function(){
+        return  convertMapToArray(P$.getVariableMap());
+    };
+
+    /**
+     * helper function, it converts a given map to an array.
+     * @param map
+     * @returns {Array}
+     */
+    function convertMapToArray(map){
+        var keyVal;
+        var value;
+        var count = 0;
+        var array = new Array();
+
+        Object.keys(map).forEach(function(key){ //iterate over all key value pairs in the map
+            array[count] = new Array();
+            keyVal = key; // extract the value of the key
+            value = map[key]; // extract the value corresponding to the given key.
+
+            array[count][0] = keyVal;
+            array[count][1] = value;
+
+            count++;
+        });
+
+        return array;
+    }
+
+    /**
      * this function removes all set key value pairs from the map.
      */
     Parser.__proto__.clearMap = function() {

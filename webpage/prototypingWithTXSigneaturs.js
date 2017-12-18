@@ -318,3 +318,6 @@ console.log(hash.toString('hex'));
 var hashScript = bitcore.Script().add(hash);
 console.log(hashScript.toString());
 
+
+
+

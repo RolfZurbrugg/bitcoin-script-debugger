@@ -488,3 +488,4 @@ function initTables(){
     createHashTable();
 
 }
+
