@@ -62,6 +62,15 @@ var bitcore = require('bitcore-lib');
     }
 
     /**
+     * Methods for interaction with the stackArray
+     */
+
+    Parser.__proto__.getStackArray = function (){
+        return Parser.prototype.stackArray;
+    }
+
+
+    /**
      * methods for interaction with the variableMap
       */
 

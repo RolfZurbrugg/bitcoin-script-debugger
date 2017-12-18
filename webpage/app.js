@@ -468,15 +468,15 @@ function createPubKeyHash (pubKey, hashType){
 
         // following cryptographic functions are available, but are disabled here because they are not used in bitcoin scripts.
         // case 'hmac' :
-        //     pubKeyHash= bitcore.crypto.Hash.hmac(pubKey.toBuffer()); //todo takes other arguments
+        //     pubKeyHash= bitcore.crypto.Hash.hmac(pubKey.toBuffer());
         //     break;
         //
         // case 'sha256hmac' :
-        //     pubKeyHash= bitcore.crypto.Hash.sha256hmac(pubKey.toBuffer()); //todo takes other arguments
+        //     pubKeyHash= bitcore.crypto.Hash.sha256hmac(pubKey.toBuffer());
         //     break;
         //
         // case 'sha512hmac' :
-        //     pubKeyHash= bitcore.crypto.Hash.sha512hmac(pubKey.toBuffer()); //todo takes other arguments
+        //     pubKeyHash= bitcore.crypto.Hash.sha512hmac(pubKey.toBuffer());
         //     break;
     }
 
