@@ -319,5 +319,5 @@ var hashScript = bitcore.Script().add(hash);
 console.log(hashScript.toString());
 
 
-
+console.log('is script standard?: '+ outputScript.isStandard());
 

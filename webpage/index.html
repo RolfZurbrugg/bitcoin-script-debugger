@@ -18,11 +18,16 @@
 <form name="IOScript">
     <p>Input Script</p>
     <p>
-        <textarea name="InputScript" id="is" cols="40" rows="10"></textarea>
+        <textarea name="InputScript" id="is" cols="40" rows="10"></textarea><br/>
+        <input type="button" name="Is standard script" id="isStandardInputScript" onclick="checkInputScriptIfStandard();" value="Is standard script"/>
+    <p id="isInputScriptStandardVal">hello test me</p>
     </p>
     <p>Output Script</p>
     <p>
-        <textarea name="OutputScript" id="os" cols="40" rows="10"></textarea><br/><br/>
+        <textarea name="OutputScript" id="os" cols="40" rows="10"></textarea><br/>
+        <input type="button" name="Is standard script" id="isStandardOutputScript" onclick="checkOutputScriptIfStandard();" value="Is standard script"/>
+    <p id="isOUtputScriptStandardVal">hello test me</p>
+        <br/><br/>
         <input type="button" name="signInputScript" id="sis" onclick="sign();" value="Sign Transaction"/>
         <select id="sigType" onchange="getSigType()">
             <option value="" selected>--- please select a sig type ---</option>
@@ -65,7 +70,7 @@
 <p> Demo Scripts<br/>
     <input type="button" id="addBasicScript" value="Basic Script" onclick="loadBaiscDemoScript()"/><br/>
     <input type="button" id="addP2PKScript" value="P2PK" onclick="loadP2PKDemoScript()"/><br/>
-    <input type="button" id="addP2PHScript" value="P2PH" onclick="loadP2PHDemoScript()"/>
+    <input type="button" id="addP2PKHScript" value="P2PKH" onclick="loadP2PKHDemoScript()"/>
 </p>
 
 <p>

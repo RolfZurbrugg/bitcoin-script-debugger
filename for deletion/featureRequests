@@ -3,13 +3,13 @@
 ### a reference list.
 
 
-- Display / generate key pairs and their respective adreses and hashes
+Done - Display / generate key pairs and their respective adreses and hashes
 
 
-- Allow variables to be used instead of the full keys, hashes, adresses.
+Done - Allow variables to be used instead of the full keys, hashes, adresses.
 
 
-- The abilety to load example scripts that can be executed
+Done - The abilety to load example scripts that can be executed
 
 
 - Implement a function to chech if a script is considered a standard script or not
@@ -19,18 +19,18 @@
     Block chain length, current time, transaction time, lock time, ...
 
 
-- Syntax highlighting, detect op codes, variables (see above) , and other formated inputs
+(Sami) - Syntax highlighting, detect op codes, variables (see above) , and other formated inputs
 
 
-- Display the script stack
+(Done) - Display the script stack
 
 
-- Be able to step through the script line by line
+(Sami) - Be able to step through the script line by line
 
 
-- Autoformat scripts, beatufy slopy script formating at the press of a button.
+(Sami) - Autoformat scripts, beatufy slopy script formating at the press of a button.
 
 
-- Be able to specifie input and outputscript
+(Done) - Be able to specifie input and outputscript
 
 

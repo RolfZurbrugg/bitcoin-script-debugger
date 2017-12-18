@@ -318,7 +318,7 @@ function loadP2PKDemoScript() {
 /**
  *
  */
-function loadP2PHDemoScript() {
+function loadP2PKHDemoScript() {
     var inputScriptString =     'sig\n' +
                                 'pubK_0';
 
@@ -487,5 +487,27 @@ function initTables(){
     createTable();
     createHashTable();
 
+}
+
+/**
+ * check if scripts are standard
+ */
+
+function checkIfStandardScript(script){
+    return script.isStandard();
+}
+
+function checkInputScriptIfStandard (){
+    var scriptString = getInputScript();
+    var script = P$(scriptString);
+    var isStandard =  checkIfStandardScript(script);
+    $('#isInputScriptStandardVal').text(isStandard);
+}
+
+function checkOutputScriptIfStandard (){
+    var scriptString = getOutputScript();
+    var script = P$(scriptString);
+    var isStandard =  checkIfStandardScript(script);
+    $('#isOUtputScriptStandardVal').text(isStandard);
 }
 
