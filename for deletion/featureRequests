@@ -12,7 +12,7 @@ Done - Allow variables to be used instead of the full keys, hashes, adresses.
 Done - The abilety to load example scripts that can be executed
 
 
-- Implement a function to chech if a script is considered a standard script or not
+Done - Implement a function to chech if a script is considered a standard script or not
 
 
 - Be able to manipulate exterior variables including but not limited to:

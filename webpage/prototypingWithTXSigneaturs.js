@@ -321,3 +321,22 @@ console.log(hashScript.toString());
 
 console.log('is script standard?: '+ outputScript.isStandard());
 
+
+
+//test with strings to buffer
+var str = 'hello world';
+var strBuf = convertStringToBuffer(str);
+console.log(strBuf);
+console.log(bitcore.crypto.Hash.sha1(strBuf).toString('hex'));
+
+
+function convertStringToBuffer(string){
+    var binary_string = window.atob(string); //convert base64 string to binary (https://developer.mozilla.org/en-US/docs/Web/API/WindowBase64/Base64_encoding_and_decoding)
+    var len = binary_string.length;
+    var bytes = new Uint8Array(len);
+
+    for (var i=0; i<len; i++){
+        bytes[i] = binary_string.charCodeAt(i);
+    }
+    return bytes;
+}

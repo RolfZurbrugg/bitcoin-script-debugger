@@ -35,7 +35,7 @@ var bitcore = require('bitcore-lib');
                 var variable = P$.getValueByKey(opcode_arr[i]); //ToDo find a better name instead of variable
                 script.add(variable.toBuffer());
 
-            }else if (/(pubKHash_\n*)/.test(opcode_arr[i])){ //test for pubkik key hash. pubkey hash is already a buffer.
+            }else if (/(pubKHash_\n*)/.test(opcode_arr[i])){ // ToDo rename this to hash //test for pubkik key hash. pubkey hash is already a buffer.
                 var variable = P$.getValueByKey(opcode_arr[i]);
                 script.add(variable);
             }
@@ -223,7 +223,24 @@ var bitcore = require('bitcore-lib');
         var sigArray = tx.getSignatures(privateKey, option);
         var sig = sigArray[0]; //at the moment only one signature is supported
         P$.addKeyValuePair('sig', sig);
-    }
+    };
+
+
+    /**
+     * This function converts any string to a Uint8Array.
+     * @param string
+     * @returns {Uint8Array}
+     */
+    Parser.__proto__.convertStringToBuffer = function (string){
+        var binary_string = window.atob(string); //convert base64 string to binary (https://developer.mozilla.org/en-US/docs/Web/API/WindowBase64/Base64_encoding_and_decoding)
+        var len = binary_string.length;
+        var bytes = new Uint8Array(len);
+
+        for (var i=0; i<len; i++){
+            bytes[i] = binary_string.charCodeAt(i);
+        }
+        return bytes;
+    };
 
 
 
