@@ -324,7 +324,7 @@ function loadP2PKHDemoScript() {
 
     var outputScriptString =    'OP_DUP\n' +
                                 'OP_HASH160\n' +
-                                'pubKHash_0\n' +
+                                'hash_0\n' +
                                 'OP_EQUALVERIFY\n' +
                                 'OP_CHECKSIG';
 
@@ -388,14 +388,14 @@ function hashTableAddRow() {
         }
 
         if (c == 1) {
-            var pubKeyHashName = 'pubKHash_' + createdHashId;
+            var pubKeyHashName = 'hash_' + createdHashId;
             var pubKeyHash = createPubKeyHash(pubKey, selectedHashFunction);
             P$.addKeyValuePair(pubKeyHashName, pubKeyHash);
             addTextBox(document, td, pubKey.toString());
         }
 
         if (c == 2) {
-            var pubKeyHashName = 'pubKHash_' + createdHashId;
+            var pubKeyHashName = 'hash_' + createdHashId;
             var pubKeyHash = P$.getValueByKey(pubKeyHashName);
             addTextBox(document, td, pubKeyHash.toString('hex'));
         }

@@ -35,11 +35,11 @@ var bitcore = require('bitcore-lib');
                 var variable = P$.getValueByKey(opcode_arr[i]); //ToDo find a better name instead of variable
                 script.add(variable.toBuffer());
 
-            }else if (/(pubKHash_\n*)/.test(opcode_arr[i])){ // ToDo rename this to hash //test for pubkik key hash. pubkey hash is already a buffer.
+            }else if (/(hash_\n*)/.test(opcode_arr[i])){ //test for pubkik key hash. pubkey hash is already a buffer. testing for the key word hash_<number>
                 var variable = P$.getValueByKey(opcode_arr[i]);
                 script.add(variable);
             }
-            else if (/(sig)/.test(opcode_arr[i])){ //test for signature
+            else if (/(sig)/.test(opcode_arr[i])){ //test for key word sig
                var sig = P$.getValueByKey(opcode_arr[i]);
 
                var scriptContainingSig = bitcore.Script.buildPublicKeyIn(sig.signature.toDER());
@@ -105,7 +105,7 @@ var bitcore = require('bitcore-lib');
         P$.addKeyValuePair('privK_0',privk);
         P$.addKeyValuePair('pubK_0',pubk);
         P$.addKeyValuePair('addr_0', address);
-        P$.addKeyValuePair('pubKHash_0',pubkHASH160)
+        P$.addKeyValuePair('hash_0',pubkHASH160)
     };
 
     /**
