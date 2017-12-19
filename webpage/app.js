@@ -1,14 +1,13 @@
 var bitcore = require('bitcore-lib');
 
 
+
 console.log('app.js ready');
 
-//constants needed for accessing the generated keys in the script parsing
+//constants needed for accessing the generated key pairs in the table in the script parsing
 var PRIVATE_KEY = 1;
 var PUBLIC_KEY = 2;
 var ADDRESS   = 3;
-var signed = false;
-P$.initVariableMap();
 
 
 /**
@@ -18,30 +17,20 @@ P$.initVariableMap();
  */
 function runScript(form) {
 
-    // window.stackArray = new Array(); // this step is necessary in order to remove results form the array from previous calls.
 
     clearStack();
 
     var input_script_string = getInputScript();
     var output_script_string = getOutputScript();
 
-    // var script_i = getInputScript();
-    // var script_o = getOutputScript();
-
-
-    //var result = bitcore.Script.Interpreter().verify(script_i, script_o);
-   // window.resetCount();
-
-    var stackArray = bitcore.Script.Interpreter.prototype.debug(input_script_string, output_script_string, getSelectedPrivateKey(), signed);
+    var stackArray = bitcore.Script.Interpreter.prototype.debug(input_script_string, output_script_string);
     console.log(stackArray);
 
-   // window.stack_trace += '\n' + 'Result: ' + result;
 
     $('#stt').val(window.stack_trace);
 }
 
 function getSelectedPrivateKey() {
-    //todo implement drop down, that alows for key selection
     var privK_n = $('#privateKeySelection').val();
     return P$.getValueByKey(privK_n);
 }
@@ -49,18 +38,13 @@ function getSelectedPrivateKey() {
 /**
  *
  */
-function sign() {
-    signed = true;
-    $('#isSigned').text('TX Signed: '+signed);
+function setSignature() {
+    var privK = getSelectedPrivateKey();
+    var option = getSigType();
+    setTransaction(privK,option,'sig_1');
 }
 
-/**
- *
- */
-function removeSig() {
-    signed = false;
-    $('#isSigned').text('TX Signed: '+signed);
-}
+
 
 /**
  * Functions for accessing the input and output script text boxes.
@@ -97,7 +81,8 @@ function clearStack() {
 
 function getSigType() {
     var sigType = $('#sigType').val();
-    P$.addKeyValuePair('selectedSigType',P$.getValueByKey(sigType));
+    var option = P$.getValueByKey(sigType);
+    return option;
 }
 
 
@@ -245,7 +230,6 @@ function sumbit() {
 }
 
 /**
- * ToDo find a better option than after private keys are currently displayed in the wrong order.
  * @param privateKeyVariable
  */
 function addPrivateKeyToDropDown(privateKeyVariable){
@@ -288,7 +272,6 @@ function getPrivatKeyFromTable(num){
  *
  */
 function loadBaiscDemoScript(){
-    signed =false;
     var inputScriptString =     'OP_1\n' +
                                 'OP_1\n' +
                                 'OP_ADD';
@@ -304,14 +287,16 @@ function loadBaiscDemoScript(){
  *
  */
 function loadP2PKDemoScript() {
-    signed = true;
-    var inputScriptString =     'sig';
+    var inputScriptString =     'sig_0';
 
     var outputScriptString =    'pubK_0\n' +
                                 'OP_CHECKSIG';
 
     setInputScript(inputScriptString);
     setOutPutScript(outputScriptString);
+
+    //creating a new tx on the fly.
+    setTransaction('privK_0');
 }
 
 
@@ -319,8 +304,7 @@ function loadP2PKDemoScript() {
  *
  */
 function loadP2PKHDemoScript() {
-    signed = true;
-    var inputScriptString =     'sig\n' +
+    var inputScriptString =     'sig_0\n' +
                                 'pubK_0';
 
     var outputScriptString =    'OP_DUP\n' +
@@ -331,6 +315,8 @@ function loadP2PKHDemoScript() {
 
     setInputScript(inputScriptString);
     setOutPutScript(outputScriptString);
+
+    setTransaction('privK_0');
 }
 
 
@@ -338,7 +324,6 @@ function loadP2PKHDemoScript() {
  *
  */
 function loadP2SHDemoScript() {
-    signed =false;
     var inputScriptString =     'str_0';
 
     var outputScriptString =    'OP_HASH160\n' +
@@ -350,28 +335,27 @@ function loadP2SHDemoScript() {
 }
 
 /**
- *
+ * this doesnt work, as bitcore-lib doesnt allow the signing of non standard transacrtions.
  */
-function loadNonStandardScript() {
-    signed = true;
-    var inputScriptString =     'sig\n' +
-                                'pubK_0\n' +
-                                'str_0';
-
-    var outputScriptString =    'OP_HASH160\n' +
-                                'hash_00\n' +
-                                'OP_EQUALVERIFY\n' +
-                                'OP_CHECKSIG';
-
-    setInputScript(inputScriptString);
-    setOutPutScript(outputScriptString);
-}
+// function loadNonStandardScript() {
+//     var inputScriptString =     'sig_0\n' +
+//                                 'pubK_0\n' +
+//                                 'str_0';
+//
+//     var outputScriptString =    'OP_HASH160\n' +
+//                                 'hash_00\n' +
+//                                 'OP_EQUALVERIFY\n' +
+//                                 'OP_CHECKSIG';
+//
+//     setInputScript(inputScriptString);
+//     setOutPutScript(outputScriptString);
+//
+//     setTransaction('privK_0');
 
 /**
  *
  */
 function loadOPReturnScript() {
-    signed = false;
     var inputScriptString =     '';
 
     var outputScriptString =    'OP_RETURN\n' +
@@ -380,6 +364,36 @@ function loadOPReturnScript() {
     setInputScript(inputScriptString);
     setOutPutScript(outputScriptString);
 }
+
+/**
+ *
+ */
+function loadMultiSigScript() {
+    var inputScriptString =     'sig_0\n' +
+                                'sig_00';
+
+    var outputScriptString =    '2\n' +
+                                'pubK_0\n' +
+                                'pubK_00\n' +
+                                'pubK_000\n' +
+                                '3\n' +
+                                'OP_CHECKMULTISIGVERIFY';
+
+    setInputScript(inputScriptString);
+    setOutPutScript(outputScriptString);
+}
+
+function setTransaction(privKStr, option, sigVar) {
+    option = option || bitcore.crypto.Signature.SIGHASH_ALL;
+    sigVar = sigVar || 'sig_0'
+    P$.createTransaction(P$(getOutputScript()),P$.getValueByKey(privKStr));
+    var tx = P$.getValueByKey('tx');
+    var sigArray = tx.getSignatures(P$.getValueByKey(privKStr),option);
+    var sig = sigArray[0]; //at the moment only one signature is supported
+    P$.addKeyValuePair(sigVar,sig);
+    console.log(sigVar);
+}
+
 
 /**
  * table for hashes
@@ -577,6 +591,7 @@ function checkOutputScriptIfStandard (){
  */
 function addHashValue() {
     var selectedHashFunction = $('#selectStringHashFunktion').val();
+    var option = P$.getValueByKey(selectedHashFunction);
     var stringToHash = $('#StringToHash').val();
     var stringBuffer = P$.convertStringToBuffer(stringToHash);
     var hash = createHash(stringBuffer,selectedHashFunction);

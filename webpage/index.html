@@ -8,7 +8,7 @@
     <script src="parser.js"></script>
     <script src="accesStack.js"></script>
     <!-- <script src="test.js"></script> -->
-    <script src="prototypingWithTXSigneaturs.js"></script>
+    <!--<script src="prototypingWithTXSigneaturs.js"></script>-->
     <script src="app.js"></script>
     <link rel="stylesheet" href="main.css"/>
     <link rel="shortcut icon" type="image/x-icon" href="bitcoinScriptDebuggerIcon.png"/>
@@ -29,7 +29,7 @@
     <p id="isOUtputScriptStandardVal">hello test me</p>
     <p>
         <br/><br/>
-        <input type="button" name="signInputScript" id="sis" onclick="sign();" value="Sign Transaction"/>
+        <input type="button" name="set_Signature" id="sis" onclick="setSignature();" value="Set signature"/>
         <select id="sigType" onchange="getSigType()">
             <option value="" selected>--- please select a sig type ---</option>
             <option value="SIGHASH_ALL">SIGHASH_ALL (Default)</option>
@@ -40,7 +40,6 @@
         <select id="privateKeySelection">
             <option id="keySelectionElement0" value="privK_0" selected>privK_0</option>
         </select>
-        <input type="button" name="btn_removeSig" id="btn_removeSig" onclick="removeSig();" value="remove sig"/>
         <p id="isSigned"><p/>
     </p>
     <p>
@@ -75,7 +74,8 @@
     <input type="button" id="addP2PKScript" value="P2PK" onclick="loadP2PKDemoScript()"/><br/>
     <input type="button" id="addP2PKHScript" value="P2PKH" onclick="loadP2PKHDemoScript()"/><br/>
     <input type="button" id="addP2SHScript" value="P2SH" onclick="loadP2SHDemoScript()"/><br/>
-    <input type="button" id="addNonStandardScript" value="Non Standard Script" onclick="loadNonStandardScript()"/><br/>
+    <!--<input type="button" id="addNonStandardScript" value="Non Standard Script" onclick="loadNonStandardScript()"/><br/>-->
+    <input type="button" id="addMultiSigScript" value="Multi Sig Script" onclick="loadMultiSigScript()"/><br/>
     <input type="button" id="addOPReturnScript" value="OP_RETURN" onclick="loadOPReturnScript()"/>
 </p>
 

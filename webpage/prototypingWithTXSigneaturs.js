@@ -358,3 +358,23 @@ console.log(testScript);
 // var base64str = Base64Encode(stringToTest);
 
 // console.log(base64str);
+
+// var utox = P$.createUtox(bitcore.Script());
+// console.log(utox);
+// return [new bitcore.TransactionSignature({
+//     publicKey: publicKey,
+//     prevTxId: this.prevTxId,
+//     outputIndex: this.outputIndex,
+//     inputIndex: index,
+//     signature: Sighash.sign(transaction, privateKey, sigtype, index, this.output.script),
+//     sigtype: sigtype
+// })];
+
+// overwriting the get sig method todo over write it properly
+
+
+
+
+
+console.log('proto changed');
+
