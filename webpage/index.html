@@ -27,6 +27,7 @@
         <textarea name="OutputScript" id="os" cols="40" rows="10"></textarea><br/>
         <input type="button" name="Is standard script" id="isStandardOutputScript" onclick="checkOutputScriptIfStandard();" value="Is standard script"/>
     <p id="isOUtputScriptStandardVal">hello test me</p>
+    <p>
         <br/><br/>
         <input type="button" name="signInputScript" id="sis" onclick="sign();" value="Sign Transaction"/>
         <select id="sigType" onchange="getSigType()">
@@ -39,6 +40,8 @@
         <select id="privateKeySelection">
             <option id="keySelectionElement0" value="privK_0" selected>privK_0</option>
         </select>
+        <input type="button" name="btn_removeSig" id="btn_removeSig" onclick="removeSig();" value="remove sig"/>
+        <p id="isSigned"><p/>
     </p>
     <p>
         <input type="button" name="RunScript" id="runs" onclick="runScript(this);" value="Run Script"/>
@@ -72,7 +75,8 @@
     <input type="button" id="addP2PKScript" value="P2PK" onclick="loadP2PKDemoScript()"/><br/>
     <input type="button" id="addP2PKHScript" value="P2PKH" onclick="loadP2PKHDemoScript()"/><br/>
     <input type="button" id="addP2SHScript" value="P2SH" onclick="loadP2SHDemoScript()"/><br/>
-    <input type="button" id="addNonStandardScript" value="Non Standard Script" onclick="loadNonStandardScript()"/>
+    <input type="button" id="addNonStandardScript" value="Non Standard Script" onclick="loadNonStandardScript()"/><br/>
+    <input type="button" id="addOPReturnScript" value="OP_RETURN" onclick="loadOPReturnScript()"/>
 </p>
 
 <p>

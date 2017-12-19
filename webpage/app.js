@@ -51,16 +51,15 @@ function getSelectedPrivateKey() {
  */
 function sign() {
     signed = true;
-    console.log(signed);
+    $('#isSigned').text('TX Signed: '+signed);
+}
 
-    // This is no longer neccessary
-    // var inputScriptString = getInputScript();
-    // if(inputScriptString === ''){ //if the inputscript is empty the key word sig can be on the first line
-    //     inputScriptString += 'sig';
-    // }else{ //if the inputscript is not empty the sig key word should be appended on a new line for visual pleasure.
-    //     inputScriptString += '\nsig';
-    // }
-    // setInputScript(inputScriptString);
+/**
+ *
+ */
+function removeSig() {
+    signed = false;
+    $('#isSigned').text('TX Signed: '+signed);
 }
 
 /**
@@ -363,6 +362,20 @@ function loadNonStandardScript() {
                                 'hash_00\n' +
                                 'OP_EQUALVERIFY\n' +
                                 'OP_CHECKSIG';
+
+    setInputScript(inputScriptString);
+    setOutPutScript(outputScriptString);
+}
+
+/**
+ *
+ */
+function loadOPReturnScript() {
+    signed = false;
+    var inputScriptString =     '';
+
+    var outputScriptString =    'OP_RETURN\n' +
+                                'str_0';
 
     setInputScript(inputScriptString);
     setOutPutScript(outputScriptString);
