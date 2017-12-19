@@ -330,13 +330,31 @@ console.log(strBuf);
 console.log(bitcore.crypto.Hash.sha1(strBuf).toString('hex'));
 
 
-function convertStringToBuffer(string){
-    var binary_string = window.atob(string); //convert base64 string to binary (https://developer.mozilla.org/en-US/docs/Web/API/WindowBase64/Base64_encoding_and_decoding)
-    var len = binary_string.length;
-    var bytes = new Uint8Array(len);
+//
 
-    for (var i=0; i<len; i++){
-        bytes[i] = binary_string.charCodeAt(i);
-    }
-    return bytes;
-}
+// expanding parser to recognize strings
+
+var script_text = 'some op codes here  some more op codes';
+
+var opcode_arr = script_text.split(/""|\r+/);
+
+
+console.log(opcode_arr);
+
+
+var testScript = bitcore.Script();
+var stB = new bitcore.deps.Buffer(script_text);
+testScript.add(stB);
+console.log(stB);
+console.log(publicKey.toBuffer());
+console.log(testScript);
+
+
+
+
+
+// var stringToTest = 'hladfsfj328974;23#$%@#$^';
+
+// var base64str = Base64Encode(stringToTest);
+
+// console.log(base64str);

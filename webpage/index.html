@@ -70,7 +70,8 @@
 <p> Demo Scripts<br/>
     <input type="button" id="addBasicScript" value="Basic Script" onclick="loadBaiscDemoScript()"/><br/>
     <input type="button" id="addP2PKScript" value="P2PK" onclick="loadP2PKDemoScript()"/><br/>
-    <input type="button" id="addP2PKHScript" value="P2PKH" onclick="loadP2PKHDemoScript()"/>
+    <input type="button" id="addP2PKHScript" value="P2PKH" onclick="loadP2PKHDemoScript()"/><br/>
+    <input type="button" id="addP2SHScript" value="P2SH" onclick="loadP2SHDemoScript()"/>
 </p>
 
 <p>
@@ -91,6 +92,26 @@
     </select>
     <input type="button" id="addNewHash" value="Add Hash" onclick="hashTableAddRow()" /><br/>
     <div id="contHashTable"></div>
+</p>
+<p>
+    <textarea name="StringToHash" id="StringToHash" cols="20" rows="1"></textarea>
+    <select id="selectStringHashFunktion">
+        <option id="Ssha1" value="sha1">sha1</option>
+        <option id="Ssha256" value="sha256">sha256</option>
+        <option id="Ssha256sha256" value="sha256sha256">sha256sha256</option>
+        <option id="Sripemd160" value="ripemd160">ripemd160</option>
+        <option id="Ssha256ripemd160" value="sha256ripemd160">sha256ripemd160</option>
+        <option id="Ssha512" value="sha512">sha512</option>
+        <!--following options are disabled, they are not needed for bitcoin scripting-->
+        <!--<option id="hmac" value="hmac">hmac</option>-->
+        <!--<option id="sha256hmac" value="sha256hmac">sha256hmac</option>-->
+        <!--<option id="sha512hmac" value="sha512hmac">sha512hmac</option>-->
+    </select>
+    <input type="button" id="addNewStringHash" value="Add Hash" onclick="addHashValue()" /><br/>
+</p>
+<p>
+    <textarea name="stringVar" id="StringVar" cols="20" rows="1"></textarea>
+    <input type="button" id="addStringVar" value="add string var" onclick="addStringVar()"/>
 </p>
 
 </body>

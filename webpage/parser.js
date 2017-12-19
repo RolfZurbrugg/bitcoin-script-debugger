@@ -7,7 +7,6 @@
 
 var bitcore = require('bitcore-lib');
 
-
 (function (global) {
     
     var Parser = function (script_text) {
@@ -35,7 +34,8 @@ var bitcore = require('bitcore-lib');
                 var variable = P$.getValueByKey(opcode_arr[i]); //ToDo find a better name instead of variable
                 script.add(variable.toBuffer());
 
-            }else if (/(hash_\n*)/.test(opcode_arr[i])){ //test for pubkik key hash. pubkey hash is already a buffer. testing for the key word hash_<number>
+            }
+            else if (/(hash_\n*)/.test(opcode_arr[i])){ //test for pubkik key hash. pubkey hash is already a buffer. testing for the key word hash_<number>
                 var variable = P$.getValueByKey(opcode_arr[i]);
                 script.add(variable);
             }
@@ -48,6 +48,11 @@ var bitcore = require('bitcore-lib');
                 console.log(scriptContainingSig);
                 console.log(scriptContainingSig.toString());
                 script.add(scriptContainingSig);
+            }
+            else if (/(str_\n*)/.test(opcode_arr[i])){ // test for a string variable
+                var str = P$.getValueByKey(opcode_arr[i]);
+                var strBuf = P$.convertStringToBuffer(str);
+                script.add(strBuf);
             }
             else {
                 script.add(opcode_arr[i]);
@@ -94,7 +99,7 @@ var bitcore = require('bitcore-lib');
             SIGHASH_NONE:   bitcore.crypto.Signature.SIGHASH_NONE,
             SIGHASH_SINGLE: bitcore.crypto.Signature.SIGHASH_SINGLE,
             SIGHASH_ANYONECANPAY: bitcore.crypto.Signature.SIGHASH_ANYONECANPAY
-        }
+        };
 
         // creating a set of keys and addresses for use in default scripts
         var privk = new bitcore.PrivateKey();
@@ -105,7 +110,14 @@ var bitcore = require('bitcore-lib');
         P$.addKeyValuePair('privK_0',privk);
         P$.addKeyValuePair('pubK_0',pubk);
         P$.addKeyValuePair('addr_0', address);
-        P$.addKeyValuePair('hash_0',pubkHASH160)
+        P$.addKeyValuePair('hash_0',pubkHASH160);
+
+        var str = 'bitcoin rocks';
+        var strBuf = P$.convertStringToBuffer(str);
+        var hashStr = bitcore.crypto.Hash.sha256ripemd160(strBuf);
+
+        P$.addKeyValuePair('hash_00', hashStr);
+        P$.addKeyValuePair('str_0',str);
     };
 
     /**
@@ -232,13 +244,7 @@ var bitcore = require('bitcore-lib');
      * @returns {Uint8Array}
      */
     Parser.__proto__.convertStringToBuffer = function (string){
-        var binary_string = window.atob(string); //convert base64 string to binary (https://developer.mozilla.org/en-US/docs/Web/API/WindowBase64/Base64_encoding_and_decoding)
-        var len = binary_string.length;
-        var bytes = new Uint8Array(len);
-
-        for (var i=0; i<len; i++){
-            bytes[i] = binary_string.charCodeAt(i);
-        }
+        var bytes = new bitcore.deps.Buffer(string);
         return bytes;
     };
 

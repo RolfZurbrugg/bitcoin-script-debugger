@@ -334,6 +334,20 @@ function loadP2PKHDemoScript() {
 
 
 /**
+ *
+ */
+function loadP2SHDemoScript() {
+    var inputScriptString =     'str_0';
+
+    var outputScriptString =    'OP_HASH160\n' +
+                                'hash_00\n' +
+                                'OP_EQUAL';
+
+    setInputScript(inputScriptString);
+    setOutPutScript(outputScriptString);
+}
+
+/**
  * table for hashes
  *
  */
@@ -389,7 +403,7 @@ function hashTableAddRow() {
 
         if (c == 1) {
             var pubKeyHashName = 'hash_' + createdHashId;
-            var pubKeyHash = createPubKeyHash(pubKey, selectedHashFunction);
+            var pubKeyHash = createHash(pubKey, selectedHashFunction);
             P$.addKeyValuePair(pubKeyHashName, pubKeyHash);
             addTextBox(document, td, pubKey.toString());
         }
@@ -433,37 +447,40 @@ function removeRowPubKeyHashTable(oButton) {
     empTab.deleteRow(oButton.parentNode.parentNode.rowIndex);       // BUTTON -> TD -> TR.
 }
 
-function createPubKeyHash (pubKey, hashType){
+function createHash (obj, hashType){
 
-    var pubKeyHash = null;
+    if( obj instanceof bitcore.PublicKey){
+        obj = obj.toBuffer();
+    }
+    var hash = null;
 
     switch (hashType){
         case 'sha1' :
-            pubKeyHash= bitcore.crypto.Hash.sha1(pubKey.toBuffer());
+            hash= bitcore.crypto.Hash.sha1(obj);
             break;
 
         case 'sha256' :
-            pubKeyHash= bitcore.crypto.Hash.sha256(pubKey.toBuffer());
+            hash= bitcore.crypto.Hash.sha256(obj);
             break;
 
         case 'sha256sha256' :
-            pubKeyHash= bitcore.crypto.Hash.sha256sha256(pubKey.toBuffer());
+            hash= bitcore.crypto.Hash.sha256sha256(obj);
             break;
 
         case 'ripemd160' :
-            pubKeyHash= bitcore.crypto.Hash.ripemd160(pubKey.toBuffer());
+            hash= bitcore.crypto.Hash.ripemd160(obj);
             break;
 
         case 'sha256ripemd160' :
-            pubKeyHash= bitcore.crypto.Hash.sha256ripemd160(pubKey.toBuffer());
+            hash= bitcore.crypto.Hash.sha256ripemd160(obj);
             break;
 
         case 'sha512' :
-            pubKeyHash= bitcore.crypto.Hash.sha512(pubKey.toBuffer());
+            hash= bitcore.crypto.Hash.sha512(obj);
             break;
 
         case 'sha512' :
-            pubKeyHash= bitcore.crypto.Hash.sha512(pubKey.toBuffer());
+            hash= bitcore.crypto.Hash.sha512(obj);
             break;
 
         // following cryptographic functions are available, but are disabled here because they are not used in bitcoin scripts.
@@ -480,7 +497,7 @@ function createPubKeyHash (pubKey, hashType){
         //     break;
     }
 
-    return pubKeyHash;
+    return hash;
 }
 
 function initTables(){
@@ -511,6 +528,9 @@ function checkInputScriptIfStandard (){
     $('#isInputScriptStandardVal').text(isStandard);
 }
 
+/**
+ *
+ */
 function checkOutputScriptIfStandard (){
     var scriptString = getOutputScript();
     var script = P$(scriptString);
@@ -518,3 +538,26 @@ function checkOutputScriptIfStandard (){
     $('#isOUtputScriptStandardVal').text(isStandard);
 }
 
+/**
+ *
+ */
+function addHashValue() {
+    var selectedHashFunction = $('#selectStringHashFunktion').val();
+    var stringToHash = $('#StringToHash').val();
+    var stringBuffer = P$.convertStringToBuffer(stringToHash);
+    var hash = createHash(stringBuffer,selectedHashFunction);
+    P$.addKeyValuePair('hash_'+createdHashId, hash);
+    console.log('hash_'+createdHashId);
+    createdHashId++;
+}
+
+/**
+ *
+ */
+var stringVarCount = 1;
+function addStringVar() {
+    var str = $('#StringVar').val();
+    P$.addKeyValuePair('str_'+stringVarCount,str);
+    console.log('str_'+stringVarCount);
+    stringVarCount++;
+}
