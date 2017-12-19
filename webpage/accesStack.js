@@ -20,7 +20,7 @@ var count = 0; //the count is needed in orded to fill the Parser.prototype.stack
         signed = signed || false;
 
         //reset count to fill stack Array
-        bitcore.Script.Interpreter.prototype.resetCount();
+        bitcore.Script.Interpreter.prototype.resetCount(); //todo move this some where else
 
         //initialize stackArray
         Parser.prototype.stackArray = new Array();
@@ -41,13 +41,14 @@ var count = 0; //the count is needed in orded to fill the Parser.prototype.stack
             //todo apend result to end of stackArray
             return Parser.prototype.stackArray;
         }else{
-            //create tx and add it to variableMap
-            var utox = P$.createUtox(P$(outputScriptString), publicKey);
-            var tx = P$.createTransactionFromUtox(utox, publicKey);
-            P$.addKeyValuePair('tx', tx);
-
-            //signe the transaction
-            P$.setSignature(tx, privateKey, P$.getValueByKey('selectedSigType'));
+            //todo remove this section
+            // //create tx and add it to variableMap
+            // var utox = P$.createUtox(P$(outputScriptString), publicKey);
+            // var tx = P$.createTransactionFromUtox(utox, publicKey);
+            // //P$.addKeyValuePair('tx', tx);
+            //
+            // //signe the transaction
+            // P$.createSig(tx, privateKey, P$.getValueByKey('selectedSigType'));
         }
 
         //convert the inputScript and outPutScript Strings to script objects
@@ -71,45 +72,46 @@ var count = 0; //the count is needed in orded to fill the Parser.prototype.stack
         //evaluate the scripts and the functions
         var result  = bitcore.Script.Interpreter().verify(inputScript, outputScript, P$.getValueByKey('tx'));
         console.log(count);
+        console.log(result);
         return Parser.prototype.stackArray;
     };
 
-    /**
-     *
-     * @param transaction
-     * @param privateKey
-     */
-    function signTransaction(transaction, privateKey, option){ //todo implement option properly
-        option = option || bitcore.crypto.Signature.SIGHASH_ALL; // default is SIGHASH_ALL, other options include bitcore.Transaction.SIGHASH_NONE =1 todo list other defaults
-        transaction.sign(privateKey, option);
-        return transaction;
-    }
+    // /**
+    //  *
+    //  * @param transaction
+    //  * @param privateKey
+    //  */
+    // function signTransaction(transaction, privateKey, option){ //todo implement option properly
+    //     option = option || bitcore.crypto.Signature.SIGHASH_ALL; // default is SIGHASH_ALL, other options include bitcore.Transaction.SIGHASH_NONE =1 todo list other defaults
+    //     transaction.sign(privateKey, option);
+    //     return transaction;
+    // }
 
 
-    /**
-     * ToDo this can be removed was moved to parser
-     * This is a helper function, that creates a utox (unspent transaction output)
-     * @param outputScript
-     * @param toAddress
-     * @returns {*}
-     */
-    function createUtox(outputScript, toAddress){
-
-        //creating the data object in order to be able to create a utox
-        var data = new Object(); // creating the data opbject to create an unspent tx
-        data.txid ='00baf6626abc2df808da36a518c69f09b0d2ed0a79421ccfde4f559d2e42128b'; // {String} the previous transaction id
-        //data.txId = '00baf6626abc2df808da36a518c69f09b0d2ed0a79421ccfde4f559d2e42128b'; // {String=} alias for 'txid'
-        //data.vout = 0; // {number} the index in the transaction
-        data.outputIndex = 0; // {number=} alias for 'vout'
-        //data.scriptPubKey = outputScript; // {string|Script} the script that must be resolved to release the funds
-        data.script = outputScript; // {string|Script=} alias for 'scriptPubKey' (Output Script)
-        //data.amount = 1; // {number} amount of bitcoins associated
-        data.satoshis =100000000; // {number=} alias for 'amount', but expressed in satoshis (1 BTC = 1e8 satoshis)
-        //data.address = toAddress; // {sting | Address=} the associated address to the script, if provided.
-
-        var utox = bitcore.Transaction.UnspentOutput(data);
-        return utox;
-    }
+    // /**
+    //  * ToDo this can be removed was moved to parser
+    //  * This is a helper function, that creates a utox (unspent transaction output)
+    //  * @param outputScript
+    //  * @param toAddress
+    //  * @returns {*}
+    //  */
+    // function createUtox(outputScript, toAddress){
+    //
+    //     //creating the data object in order to be able to create a utox
+    //     var data = new Object(); // creating the data opbject to create an unspent tx
+    //     data.txid ='00baf6626abc2df808da36a518c69f09b0d2ed0a79421ccfde4f559d2e42128b'; // {String} the previous transaction id
+    //     //data.txId = '00baf6626abc2df808da36a518c69f09b0d2ed0a79421ccfde4f559d2e42128b'; // {String=} alias for 'txid'
+    //     //data.vout = 0; // {number} the index in the transaction
+    //     data.outputIndex = 0; // {number=} alias for 'vout'
+    //     //data.scriptPubKey = outputScript; // {string|Script} the script that must be resolved to release the funds
+    //     data.script = outputScript; // {string|Script=} alias for 'scriptPubKey' (Output Script)
+    //     //data.amount = 1; // {number} amount of bitcoins associated
+    //     data.satoshis =100000000; // {number=} alias for 'amount', but expressed in satoshis (1 BTC = 1e8 satoshis)
+    //     //data.address = toAddress; // {sting | Address=} the associated address to the script, if provided.
+    //
+    //     var utox = bitcore.Transaction.UnspentOutput(data);
+    //     return utox;
+    // }
 
 
     /**
@@ -133,10 +135,10 @@ var count = 0; //the count is needed in orded to fill the Parser.prototype.stack
         var fRequireMinimal = (here.flags & bitcore.Script.Interpreter.SCRIPT_VERIFY_MINIMALDATA) !== 0;
 
         // Read instruction
-        var pc = here.pc -1;
-        //console.log(pc);
-        var chunk = here.script.chunks[pc];
-        //here.pc++;
+        var _pc = here.pc -1;
+        //console.log(_pc);
+        var chunk = here.script.chunks[_pc];
+        //here._pc++;
         //console.log(chunk)
         var opcodenum = chunk.opcodenum;
 
@@ -156,7 +158,7 @@ var count = 0; //the count is needed in orded to fill the Parser.prototype.stack
         // console.log(Object.assign({},this));
 
         //this is not needed, buffer size can be determined using here.stack[i].length
-        // var size = here.stack[pc].length; //acces the current element on the stack an get its length, in order to specify non default values for the buffer size.
+        // var size = here.stack[_pc].length; //acces the current element on the stack an get its length, in order to specify non default values for the buffer size.
         // if (size < 4){size = 4;} //default value of size is 4, see function BN.fromScriptNumBuffer from bitcore-lib
 
 
