@@ -39,9 +39,14 @@ function getSelectedPrivateKey() {
  *
  */
 function setSignature() {
-    var privK = getSelectedPrivateKey();
+    var privK = $('#privateKeySelection').val();
     var option = getSigType();
     setTransaction(privK,option,'sig_1');
+    $('#sigSet').text('true');
+}
+
+function removeSig() {
+    $('#sigSet').text('false');
 }
 
 

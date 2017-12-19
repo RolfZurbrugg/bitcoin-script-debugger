@@ -29,6 +29,7 @@
     <p id="isOUtputScriptStandardVal">hello test me</p>
     <p>
         <br/><br/>
+        <p id="sigSet"></p>
         <input type="button" name="set_Signature" id="sis" onclick="setSignature();" value="Set signature"/>
         <select id="sigType" onchange="getSigType()">
             <option value="" selected>--- please select a sig type ---</option>
@@ -40,7 +41,7 @@
         <select id="privateKeySelection">
             <option id="keySelectionElement0" value="privK_0" selected>privK_0</option>
         </select>
-        <p id="isSigned"><p/>
+    <input type="button" name="rem_Signature" id="remSig" onclick="removeSig();" value="Remove Sig"/>
     </p>
     <p>
         <input type="button" name="RunScript" id="runs" onclick="runScript(this);" value="Run Script"/>
