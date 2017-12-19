@@ -193,6 +193,12 @@ var bitcore = require('bitcore-lib');
      */
     Parser.__proto__.createUtox = function (outputScript, toAddress){
 
+        if(!outputScript.isStandard()){ //the problem is if a script is not standard the bitcore client refuses to sign a transaction containing a non standard script.
+            var pubKey = P$.getValueByKey('pubK_0');
+            outputScript = new bitcore.Script().add(pubKey.toBuffer()).add('OP_CHECKSIG');
+            var debug =outputScript.isStandard();
+        }
+
         //creating the data object in order to be able to create a utox
         var data = new Object(); // creating the data opbject to create an unspent tx
         data.txid ='00baf6626abc2df808da36a518c69f09b0d2ed0a79421ccfde4f559d2e42128b'; // {String} the previous transaction id
@@ -231,6 +237,12 @@ var bitcore = require('bitcore-lib');
         return transaction;
     };
 
+    /**
+     *
+     * @param tx
+     * @param privateKey
+     * @param option
+     */
     Parser.__proto__.setSignature = function (tx, privateKey, option){
         var sigArray = tx.getSignatures(privateKey, option);
         var sig = sigArray[0]; //at the moment only one signature is supported

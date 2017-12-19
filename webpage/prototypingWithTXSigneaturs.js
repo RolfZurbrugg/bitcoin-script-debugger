@@ -324,10 +324,10 @@ console.log('is script standard?: '+ outputScript.isStandard());
 
 
 //test with strings to buffer
-var str = 'hello world';
-var strBuf = convertStringToBuffer(str);
-console.log(strBuf);
-console.log(bitcore.crypto.Hash.sha1(strBuf).toString('hex'));
+// var str = 'hello world';
+// var strBuf = convertStringToBuffer(str);
+// console.log(strBuf);
+// console.log(bitcore.crypto.Hash.sha1(strBuf).toString('hex'));
 
 
 //

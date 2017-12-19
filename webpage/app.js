@@ -305,6 +305,7 @@ function loadBaiscDemoScript(){
  *
  */
 function loadP2PKDemoScript() {
+    signed = true;
     var inputScriptString =     'sig';
 
     var outputScriptString =    'pubK_0\n' +
@@ -319,6 +320,7 @@ function loadP2PKDemoScript() {
  *
  */
 function loadP2PKHDemoScript() {
+    signed = true;
     var inputScriptString =     'sig\n' +
                                 'pubK_0';
 
@@ -337,11 +339,30 @@ function loadP2PKHDemoScript() {
  *
  */
 function loadP2SHDemoScript() {
+    signed =false;
     var inputScriptString =     'str_0';
 
     var outputScriptString =    'OP_HASH160\n' +
                                 'hash_00\n' +
                                 'OP_EQUAL';
+
+    setInputScript(inputScriptString);
+    setOutPutScript(outputScriptString);
+}
+
+/**
+ *
+ */
+function loadNonStandardScript() {
+    signed = true;
+    var inputScriptString =     'sig\n' +
+                                'pubK_0\n' +
+                                'str_0';
+
+    var outputScriptString =    'OP_HASH160\n' +
+                                'hash_00\n' +
+                                'OP_EQUALVERIFY\n' +
+                                'OP_CHECKSIG';
 
     setInputScript(inputScriptString);
     setOutPutScript(outputScriptString);
