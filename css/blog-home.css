@@ -1,0 +1,53 @@
+/*!
+ * Start Bootstrap - Blog Home (https://startbootstrap.com/template-overviews/blog-home)
+ * Copyright 2013-2017 Start Bootstrap
+ * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap-blog-home/blob/master/LICENSE)
+ */
+
+body {
+  padding-top: 54px;
+}
+
+@media (min-width: 992px) {
+  body {
+    padding-top: 56px;
+  }
+}
+
+.panel-body.editor {
+  padding: 5px;
+}
+
+.input-xs {
+  height: 22px;
+  padding: 1px 5px;
+  font-size: 12px;
+  line-height: 1.5;
+  border-radius: 3px;
+}
+
+.input-xs, select.input-xs {
+  height: 22px;
+  line-height: 20px;
+}
+
+/* Customize Bootstrap */
+
+.navbar-default .navbar-nav > li > a:hover {
+  background-color: #efefef;
+  color: #555;
+}
+
+/* https://stackoverflow.com/questions/19203816/vertical-divider-doesnt-work-in-bootstrap-3 */
+
+.navbar .divider-vertical {
+  height: 50px;
+  margin: 0 9px;
+  border-right: 1px solid #ffffff;
+  border-left: 1px solid #f2f2f2;
+}
+
+.navbar-inverse .divider-vertical {
+  border-right-color: #222222;
+  border-left-color: #111111;
+}

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="A Bitcoin Script Debugger to facilitate teaching and learning of Bitcoin Scripts.">
+  <meta name="author" content="Rolf Zurbrügg, Samuel Egger">
+
+  <title>Bitcoin Script Debugger</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="css/blog-home.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <span class="navbar-brand" href="#">Bitcoin Script Debugger</span>
+      </div>
+
+      <form class="navbar-form navbar-left">
+        <button type="button" title="Run Script" class="btn btn-default" id="btnRun" onclick="runScript();">
+          <span class="glyphicon glyphicon-play"></span>
+        </button>
+        <button type="button" title="Step Backward" class="btn btn-default">
+          <span class="glyphicon glyphicon-step-backward"></span>
+        </button>
+        <button type="button" title="Step Forward" class="btn btn-default" id="btnStepForward" onclick="stepForwardScript();">
+          <span class="glyphicon glyphicon-step-forward"></span>
+        </button>
+        <button type="button" title="Stop Execution" class="btn btn-default" id="btnStop" onclick="stopScript();">
+          <span class="glyphicon glyphicon-stop"></span>
+        </button>
+        <button type="button" title="Auto Format" class="btn btn-default" style="margin-left: 15px">
+          <span class="glyphicon glyphicon-align-left"></span>
+        </button>
+      </form>
+
+      <ul class="nav navbar-nav navbar-right">
+        <li class="nav-item">
+          <a class="nav-link" href="#">User Manual</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">About</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Page Content -->
+  <div class="container">
+
+    <hr>
+
+    <div class="row">
+
+      <!-- Editors Column -->
+      <div class="col-md-8">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            Input Script
+            <form class="form-inline pull-right">
+              <button class="btn btn-default btn-xs ">Sign</button>
+              <select class="form-control input-xs">
+                <option>Mustard</option>
+                <option>Ketchup</option>
+                <option>Relish</option>
+              </select>
+            </form>
+            <div class="clearfix"></div>
+          </div>
+          <div class="panel-body editor">
+            <textarea class="form-control" rows="5" id="inputScript">OP_1 OP_1 OP_ADD</textarea>
+          </div>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-heading">Output Script</div>
+          <div class="panel-body editor">
+            <textarea class="form-control" rows="5" id="outputScript">OP_2 OP_EQUAL</textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Debug Info Column -->
+      <div class="col-md-4">
+
+        <!-- Execution Stack -->
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            Execution Stack
+            <div class="clearfix"></div>
+          </div>
+          <div class="panel-body" style="overflow:scroll">
+            <table class="table table-striped" id="stack">
+              <col width="80">
+              <thead>
+                <tr>
+                  <th>Pos #</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>0</td>
+                  <td>50</td>
+                </tr>
+                <tr>
+                  <td>1</td>
+                  <td>0</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>1</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Variables -->
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            Script Variables
+            <div class="clearfix"></div>
+          </div>
+          <div class="panel-body" style="overflow:scroll">
+            <table class="table table-striped">
+              <col width="80">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>&lt;sig&gt;</td>
+                  <td>0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!-- /.row -->
+
+  </div>
+  <!-- /.container -->
+
+  <!-- Footer -->
+  <footer class="py-5 bg-dark">
+    <div class="container">
+      <hr>
+      <p class="m-0 text-center text-white">Copyright &copy; Rolf Zurbrügg, Samuel Egger 2017</p>
+    </div>
+  </footer>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+
+  <!-- Bitcore JavaScript -->
+  <script src="vendor/bitcore-lib/bitcore-lib.js"></script>
+  <script src="vendor/bitcore-mnemonic/bitcore-mnemonic.js"></script>
+
+  <!-- Custom JavaScript -->
+  <script src="js/parser.js"></script>
+  <script src="js/accesStack.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+
+</html>
