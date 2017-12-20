@@ -2,7 +2,8 @@ var bitcore = require('bitcore-lib');
 
 /**
  * Enabeling this override allows signatures to be generated, but an error is caused when using these signatures.
- * The reason as to why this happens is unknown at this point.
+ * The reason seams to be that the the signature don't match up with the object the are verified again.
+ * This can be enabled for development purposes.
  *
  * here we override the bitcore Input.PublicKey.prototype.getSignature function.
  * This function can be found int the bitcore-lib under /lib/transaction/input/publickey.js
@@ -46,7 +47,7 @@ var bitcore = require('bitcore-lib');
 var _numOfSigs = 1; //this variable is used to keep track of how many signatures are created and increment their variable name correctly
 
 (function (global) {
-    
+
     var Parser = function (script_text) {
         return new Parser.init(script_text); //ToDo why new parser
     };
@@ -78,9 +79,9 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
                 script.add(variable);
             }
             else if (/(sig_[0-9])/.test(opcode_arr[i])){ //test for key word sig_<number>
-               var sig = P$.getValueByKey(opcode_arr[i]);
+                var sig = P$.getValueByKey(opcode_arr[i]);
 
-               var scriptContainingSig = bitcore.Script.buildPublicKeyIn(sig.signature.toDER());
+                var scriptContainingSig = bitcore.Script.buildPublicKeyIn(sig.signature.toDER());
                 console.log('sigscript');
                 console.log(scriptContainingSig);
                 console.log(scriptContainingSig.toString());
@@ -118,7 +119,7 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
 
     /**
      * methods for interaction with the variableMap
-      */
+     */
 
     /**
      * given a key returns the corresponding value
@@ -136,7 +137,7 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
      * @returns {{}}
      */
     Parser.getVariableMap = function () {
-      return Parser.prototype.variableMap;
+        return Parser.prototype.variableMap;
     };
 
     /**
@@ -200,15 +201,24 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
         //var privk = new bitcore.PrivateKey();
         //var pubk = new bitcore.PublicKey.fromPrivateKey(privk);
 
-        if(!outputScript.isStandard()){ //the problem is if a script is not standard the bitcore client refuses to sign a transaction containing a non standard script.
-            outputScript = new bitcore.Script().add(pubK.toBuffer()).add('OP_CHECKSIG');
-            var debug =outputScript.isStandard();
-            if(!outputScript.isStandard()){
-                this.errstr = 'SCRITP IS NON STANDARD';
-            }
+        if(Array.isArray(pubK)){
+            pubK = pubK[0];
         }
 
-        //creating the data object in order to be able to create a utox
+
+        /**
+         * this is necessary because otherwise following error is thrown by bitcore:
+         *  Trying to sign unsupported output type (only P2PKH and P2SH multisig inputs are supported)
+         */
+            // if(!outputScript.isStandard()){ //the problem is if a script is not standard the bitcore client refuses to sign a transaction containing a non standard script.
+            //     outputScript = new bitcore.Script().add(pubK.toBuffer()).add('OP_CHECKSIG');
+            //     var debug =outputScript.isStandard();
+            //     if(!outputScript.isStandard()){
+            //         this.errstr = 'SCRIPT IS NON STANDARD';
+            //     }
+            // }
+
+            //creating the data object in order to be able to create a utox
         var data = new Object(); // creating the data opbject to create an unspent tx
         data.txid ='00baf6626abc2df808da36a518c69f09b0d2ed0a79421ccfde4f559d2e42128b'; // {String} the previous transaction id
         //data.txId = '00baf6626abc2df808da36a518c69f09b0d2ed0a79421ccfde4f559d2e42128b'; // {String=} alias for 'txid'
@@ -233,12 +243,37 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
      */
     Parser.createTransactionFromUtox = function (utox, publicKey){
 
-        //create a address from the public key
-        var address = publicKey.toAddress();
+        var address;
+        var amount = 100000000;
 
-        var transaction = bitcore.Transaction()
-            .from(utox,publicKey)
-            .to(address, 100000000);
+        if(Array.isArray(publicKey)){
+            address = new Array();
+            amount = new Array();
+            for (var i=0; i<publicKey.length; i++){
+                address[i] = publicKey[i].toAddress();
+                amount[i] = 1000000;
+            }
+        } else{
+            address = publicKey.toAddress();
+        }
+
+        //create a address from the public key
+
+
+        var transaction = bitcore.Transaction();
+
+
+        if (Array.isArray(address)){
+            var threshold = 0; //'Number of required signatures must be greater than the number of public keys'
+            transaction.from(utox,publicKey,threshold);
+            for(var i=0; i< address.length; i++){
+                transaction.to(address[i], amount[i]);
+            }
+        }else{
+            transaction.from(utox,publicKey)
+            transaction.to(address, amount);
+        }
+
         /* further options list of options that can be specified in order to create transactions
          * .change(changeAddress)
          */
@@ -248,10 +283,10 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
 
     Parser.createTransaction = function(outputScript, privateKey){
         var pubKey;
-        if(privateKey === Array){
+        if(Array.isArray(privateKey)){
             pubKey = new Array();
-            for(var i=0; i<pubKeyArr.length; i++){
-                pubKey.add(privateKey[i].toPublicKey());
+            for(var i=0; i<privateKey.length; i++){
+                pubKey[i]= privateKey[i].toPublicKey();
             }
         }else{
             pubKey = privateKey.toPublicKey();

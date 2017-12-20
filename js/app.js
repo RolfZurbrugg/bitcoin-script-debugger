@@ -459,8 +459,41 @@ function loadMultiSigScript() {
         '3\n' +
         'OP_CHECKMULTISIGVERIFY';
 
+
     setInputScript(inputScriptString);
     setOutPutScript(outputScriptString);
+    var privKArr = ['privK_0','privK_00','privK_000'];
+    setTransactionMultisig(privKArr);
+}
+
+
+function setTransactionMultisig(privKStrArr, option) {
+    option = option || bitcore.crypto.Signature.SIGHASH_ALL;
+    var privKArr = new Array();
+
+    //loop over each private key variable in array and get the actual private key.
+    for (var i=0; i<privKStrArr.length; i++){
+        privKArr[i] = P$.getValueByKey(privKStrArr[i]);
+    }
+
+    P$.createTransaction(P$(getOutputScript()),privKArr);   //get the string representation of the output script and parse
+                                                            // it to return a string obj which is then passed to the createTransction function.
+    //get the created transaction
+    var tx = P$.getValueByKey('tx');
+
+    var sigArr = new Array(); //create an array for all transaction signatures to be stored temporarily
+
+    //loop over all provided private keys and sign the tx with them.
+    for (var i=0; i<privKArr.length; i++){
+        var sigArray = tx.getSignatures(privKArr[i],option);
+        sigArr[i] = sigArray[0];
+    }
+
+    //loop over all signatures in sigArr and add them to the Variable map.
+    for (var i=0; i<sigArr.length; i++){
+        P$.addKeyValuePair('sig_1'+i,sigArr[i]); //the signature variables for the multisig will be of form sig_1<number>
+        console.log('sig_1'+i);
+    }
 }
 
 function setTransaction(privKStr, option, sigVar) {
