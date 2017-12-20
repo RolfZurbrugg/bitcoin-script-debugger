@@ -1,5 +1,5 @@
 var bitcore = require('bitcore-lib');
-
+console.log('app js ready');
 //constants needed for accessing the generated key pairs in the table in the script parsing
 var PRIVATE_KEY = 1;
 var PUBLIC_KEY = 2;
@@ -351,7 +351,7 @@ function getPrivatKeyFromTable(num) {
 /**
  *
  */
-function loadBaiscDemoScript() {
+function loadDemoScript() {
     var inputScriptString = 'OP_1\n' +
         'OP_1\n' +
         'OP_ADD';

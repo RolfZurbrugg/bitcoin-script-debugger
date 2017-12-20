@@ -72,11 +72,13 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
 
                 var variable = P$.getValueByKey(opcode_arr[i]); //ToDo find a better name instead of variable
                 script.add(variable.toBuffer());
+                script.chunks[script.chunks.length-1].debug = {start: {line: 0, ch:0}, end: {line:0, ch:0}};
 
             }
             else if (/(hash_[0-9])/.test(opcode_arr[i])){ //test for pubkik key hash. pubkey hash is already a buffer. testing for the key word hash_<number>
                 var variable = P$.getValueByKey(opcode_arr[i]);
                 script.add(variable);
+                script.chunks[script.chunks.length-1].debug = {start: {line: 0, ch:0}, end: {line:0, ch:0}};
             }
             else if (/(sig_[0-9])/.test(opcode_arr[i])){ //test for key word sig_<number>
                 var sig = P$.getValueByKey(opcode_arr[i]);
@@ -86,18 +88,28 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
                 console.log(scriptContainingSig);
                 console.log(scriptContainingSig.toString());
                 script.add(scriptContainingSig);
+                script.chunks[script.chunks.length-1].debug = {start: {line: 0, ch:0}, end: {line:0, ch:0}};
             }
             else if (/(str_[0-9])/.test(opcode_arr[i])){ // test for a string variable
                 var str = P$.getValueByKey(opcode_arr[i]);
                 var strBuf = P$.convertStringToBuffer(str);
                 script.add(strBuf);
+                script.chunks[script.chunks.length-1].debug = {start: {line: 0, ch:0}, end: {line:0, ch:0}};
             }
             else if ((/(^[0-9])/).test(opcode_arr[i])){ //test for a number. ^ denotes that the string must start with a number. [0-9]* will then match any following numbers.
                 var num = Number(opcode_arr[i]); //convert the string to a number
                 script.add(bitcore.Opcode.smallInt(num));
+                script.chunks[script.chunks.length-1].debug = {start: {line: 0, ch:0}, end: {line:0, ch:0}};
             }
             else {
-                script.add(opcode_arr[i]);
+                //error handling to test if (opcode_arr[i]) is an opcode
+                    if(P$.testIfOpcode(opcode_arr[i]))
+                    {
+                        script.add(opcode_arr[i]);
+                        script.chunks[script.chunks.length-1].debug = {start: {line: 0, ch:0}, end: {line:0, ch:0}};
+                    }else {
+                        throw 'Opcode: '+opcode_arr[i]+' is not defined. Error at position:'+i;
+                    }
             }
         }
 
@@ -106,7 +118,23 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
         return script;
 
 
-    }
+    };
+
+    /**
+     * This functions tests if a provided string is considered an opcode.
+     * @param str
+     * @returns {boolean}
+     */
+    Parser.testIfOpcode = function (str) {
+        var map = bitcore.Opcode.map;
+        for( var prop in map ) {
+            if( map.hasOwnProperty( prop ) ) {
+                if( prop === str )
+                    return true;
+            }
+        }
+        return false;
+    };
 
     /**
      * Methods for interaction with the stackArray
@@ -114,7 +142,7 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
 
     Parser.getStackArray = function (){
         return Parser.prototype.stackArray;
-    }
+    };
 
 
     /**

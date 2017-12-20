@@ -75,18 +75,23 @@ var _countStackArray = 0; //the _countStackArray is needed in orded to fill the 
         var fRequireMinimal = (here.flags & bitcore.Script.Interpreter.SCRIPT_VERIFY_MINIMALDATA) !== 0;
 
         // Read instruction
-        var _pc = here.pc -1;
+        var _pc = here.pc -1; // the program counter needs to be decremented because the code from bitcore-lib has allready incremented their counter and my code gets executed after that.
         //console.log(_pc);
         var chunk = here.script.chunks[_pc];
         //here._pc++;
         //console.log(chunk)
         var opcodenum = chunk.opcodenum;
 
-        var op_code = getKeyByValueOfOpCodes(bitcore.Opcode.map, opcodenum);
-        console.log('OP_CODE: '+op_code)
+        var op_code = getKeyByValueOfOpCodes(opcodenum);
+        console.log('OP_CODE: '+op_code);
+
+        //extract and add the debug from the chunk and add the opcode to it
+        var debug = chunk.debug;
+        debug.opcode = op_code;
+
 
         Parser.prototype.stackArray[_countStackArray] = new Array();
-        Parser.prototype.stackArray[_countStackArray][0] = op_code;
+        Parser.prototype.stackArray[_countStackArray][0] = debug;
         window.stack_trace += 'Opcodenum: ' + op_code + '\n';
 
         //console.log(here);
@@ -122,8 +127,9 @@ var _countStackArray = 0; //the _countStackArray is needed in orded to fill the 
      * @param value integer representation of the op_code number
      * @returns {string} returns a string representation of the op_code corresponding to its value (integer) representation.
      */
-    var getKeyByValueOfOpCodes = function( map, value ) {
-        for( var prop in map ) {
+    var getKeyByValueOfOpCodes = function( value ) {
+        var map = bitcore.Opcode.map;
+            for( var prop in map ) {
             if( map.hasOwnProperty( prop ) ) {
                 if( map[ prop ] === value )
                     return prop;
