@@ -5,11 +5,11 @@
     <script src="bower_components/bitcore-lib/bitcore-lib.js"></script>
     <script src="bower_components/bitcore-mnemonic/bitcore-mnemonic.js"></script>
     <script src="jquery.js"></script>
-    <script src="parser.js"></script>
-    <script src="accesStack.js"></script>
+    <script src="../../js/parser.js"></script>
+    <script src="../../js/accesStack.js"></script>
     <!-- <script src="test.js"></script> -->
     <!--<script src="prototypingWithTXSigneaturs.js"></script>-->
-    <script src="app.js"></script>
+    <script src="../../js/app.js"></script>
     <link rel="stylesheet" href="main.css"/>
     <link rel="shortcut icon" type="image/x-icon" href="bitcoinScriptDebuggerIcon.png"/>
     <title>Bitcoin Script Debugger</title>
@@ -18,13 +18,13 @@
 <form name="IOScript">
     <p>Input Script / Script Sig</p>
     <p>
-        <textarea name="InputScript" id="is" cols="40" rows="10"></textarea><br/>
+        <textarea name="InputScript" id="inputScript" cols="40" rows="10"></textarea><br/>
         <input type="button" name="Is standard script" id="isStandardInputScript" onclick="checkInputScriptIfStandard();" value="Is standard script"/>
     <p id="isInputScriptStandardVal">hello test me</p>
     </p>
     <p>Output Script / Script Pubkey</p>
     <p>
-        <textarea name="OutputScript" id="os" cols="40" rows="10"></textarea><br/>
+        <textarea name="OutputScript" id="outputScript" cols="40" rows="10"></textarea><br/>
         <input type="button" name="Is standard script" id="isStandardOutputScript" onclick="checkOutputScriptIfStandard();" value="Is standard script"/>
     <p id="isOUtputScriptStandardVal">hello test me</p>
     <p>
@@ -71,7 +71,7 @@
 <!--</p>-->
 
 <p> Demo Scripts<br/>
-    <input type="button" id="addBasicScript" value="Basic Script" onclick="loadBaiscDemoScript()"/><br/>
+    <input type="button" id="addBasicScript" value="Basic Script" onclick="loadBasicDemoScript()"/><br/>
     <input type="button" id="addP2PKScript" value="P2PK" onclick="loadP2PKDemoScript()"/><br/>
     <input type="button" id="addP2PKHScript" value="P2PKH" onclick="loadP2PKHDemoScript()"/><br/>
     <input type="button" id="addP2SHScript" value="P2SH" onclick="loadP2SHDemoScript()"/><br/>
