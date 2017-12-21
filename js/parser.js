@@ -33,8 +33,6 @@ var bitcore = require('bitcore-lib');
 // })();
 
 
-
-
 /**
  * The parser takes a string containing opcodes which are either separated by white spaces or
  * carriage return. It will return a bitcore script object containing the script.
@@ -55,32 +53,65 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
 
     Parser.init = function (script_text) {
 
+        var positionstring = script_text;
+
+        var index = 0;
+
+        var index2 = 0;
+
+        var line = 0;
+
         var opcode_arr = script_text.split(/\s+|\r+/); //spliting text on whitespace or new line. Trailing white spaces or new lines will cause an error
 
         var script = new bitcore.Script();
 
-        if(script_text === ''){ //if a script is empty return a empty script
+        function addDebugToChunk() {
+
+            index = script_text.indexOf(opcode_arr[i], index); //the index of matched op code is set. The previous value of index is used as an offset to avoid matching the same op code multiple times.
+            line = script_text.substr(0, index).split('\n').length; //the line number is extracted by counting the amount of line brakes between the start of the script_text string and the currently matched op code in the script_text string.
+
+            //if the opcode is on a new line the position string needs to be shorttend to not contain the previous line.
+            if (positionstring.substring(0, index2 + opcode_arr[i].length).split('\n').length > 1) { //this test if the string up to the end of the currently matched op_codes contains any new line characters.
+                index2 = 0;
+                positionstring = script_text.substring(index + opcode_arr[i].length, script_text.length); //the position string is shortend to only contain the original string after the currently matched opcode
+            }
+            else { //the index2 is set to the index of the currently matched op code in the position string.
+                index2 = positionstring.indexOf(opcode_arr[i], index2);
+            }
+
+            //the debug attribute is added to the script chunk.
+            script.chunks[script.chunks.length - 1].debug = {
+                start: {line: line, ch: index2},
+                end: {line: line, ch: index2 + opcode_arr[i].length}
+            };
+
+            index += opcode_arr[i].length; //index is set to the index corresponding to the end of the matched op code in the script_text
+            index2 += opcode_arr[i].length; //index2 is set to the index corresponding to the end of the matched op code in the positionstring
+
+        }
+
+        if (script_text === '') { //if a script is empty return a empty script
             return script;
         }
 
-        for(var i=0; i<opcode_arr.length; i++){
+        for (var i = 0; i < opcode_arr.length; i++) {
             // if a value in the opcode_arr corresponds to a variable -> replace variable
-            if (/(privK_[0-9])/.test(opcode_arr[i])   || //test for private key variable
-                /(pubK_[0-9])/.test(opcode_arr[i])    || //test for public key variable
-                /(addr_[0-9])/.test(opcode_arr[i])){     //test for address
-
+            if (/(privK_[0-9])/.test(opcode_arr[i]) || //test for private key variable
+                /(pubK_[0-9])/.test(opcode_arr[i]) || //test for public key variable
+                /(addr_[0-9])/.test(opcode_arr[i])) {     //test for address
 
                 var variable = P$.getValueByKey(opcode_arr[i]); //ToDo find a better name instead of variable
                 script.add(variable.toBuffer());
-                script.chunks[script.chunks.length-1].debug = {start: {line: 0, ch:0}, end: {line:0, ch:0}};
+                addDebugToChunk(this);
 
             }
-            else if (/(hash_[0-9])/.test(opcode_arr[i])){ //test for pubkik key hash. pubkey hash is already a buffer. testing for the key word hash_<number>
+            else if (/(hash_[0-9])/.test(opcode_arr[i])) { //test for pubkik key hash. pubkey hash is already a buffer. testing for the key word hash_<number>
                 var variable = P$.getValueByKey(opcode_arr[i]);
                 script.add(variable);
-                script.chunks[script.chunks.length-1].debug = {start: {line: 0, ch:0}, end: {line:0, ch:0}};
+
+                addDebugToChunk(this);
             }
-            else if (/(sig_[0-9])/.test(opcode_arr[i])){ //test for key word sig_<number>
+            else if (/(sig_[0-9])/.test(opcode_arr[i])) { //test for key word sig_<number>
                 var sig = P$.getValueByKey(opcode_arr[i]);
 
                 var scriptContainingSig = bitcore.Script.buildPublicKeyIn(sig.signature.toDER());
@@ -88,28 +119,31 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
                 console.log(scriptContainingSig);
                 console.log(scriptContainingSig.toString());
                 script.add(scriptContainingSig);
-                script.chunks[script.chunks.length-1].debug = {start: {line: 0, ch:0}, end: {line:0, ch:0}};
+
+                addDebugToChunk(this);
             }
-            else if (/(str_[0-9])/.test(opcode_arr[i])){ // test for a string variable
+            else if (/(str_[0-9])/.test(opcode_arr[i])) { // test for a string variable
                 var str = P$.getValueByKey(opcode_arr[i]);
                 var strBuf = P$.convertStringToBuffer(str);
                 script.add(strBuf);
-                script.chunks[script.chunks.length-1].debug = {start: {line: 0, ch:0}, end: {line:0, ch:0}};
+
+
+                addDebugToChunk(this);
             }
-            else if ((/(^[0-9])/).test(opcode_arr[i])){ //test for a number. ^ denotes that the string must start with a number. [0-9]* will then match any following numbers.
+            else if ((/(^[0-9])/).test(opcode_arr[i])) { //test for a number. ^ denotes that the string must start with a number. [0-9]* will then match any following numbers.
                 var num = Number(opcode_arr[i]); //convert the string to a number
                 script.add(bitcore.Opcode.smallInt(num));
-                script.chunks[script.chunks.length-1].debug = {start: {line: 0, ch:0}, end: {line:0, ch:0}};
+
+                addDebugToChunk(this);
             }
             else {
                 //error handling to test if (opcode_arr[i]) is an opcode
-                    if(P$.testIfOpcode(opcode_arr[i]))
-                    {
-                        script.add(opcode_arr[i]);
-                        script.chunks[script.chunks.length-1].debug = {start: {line: 0, ch:0}, end: {line:0, ch:0}};
-                    }else {
-                        throw 'Opcode: '+opcode_arr[i]+' is not defined. Error at position:'+i;
-                    }
+                if (P$.testIfOpcode(opcode_arr[i])) {
+                    script.add(opcode_arr[i]);
+                    addDebugToChunk(this);
+                } else {
+                    throw 'Opcode: ' + opcode_arr[i] + ' is not defined. Error at position:' + i;
+                }
             }
         }
 
@@ -127,9 +161,9 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
      */
     Parser.testIfOpcode = function (str) {
         var map = bitcore.Opcode.map;
-        for( var prop in map ) {
-            if( map.hasOwnProperty( prop ) ) {
-                if( prop === str )
+        for (var prop in map) {
+            if (map.hasOwnProperty(prop)) {
+                if (prop === str)
                     return true;
             }
         }
@@ -140,7 +174,7 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
      * Methods for interaction with the stackArray
      */
 
-    Parser.getStackArray = function (){
+    Parser.getStackArray = function () {
         return Parser.prototype.stackArray;
     };
 
@@ -154,10 +188,9 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
      * @param key {string}
      * @returns {*}
      */
-    Parser.getValueByKey = function(key){
+    Parser.getValueByKey = function (key) {
         return Parser.prototype.variableMap[key];
     };
-
 
 
     /**
@@ -172,8 +205,8 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
      * This function returns the variable map as an array.
      * @returns {Array}
      */
-    Parser.getVariableMapAsArray = function(){
-        return  convertMapToArray(P$.getVariableMap());
+    Parser.getVariableMapAsArray = function () {
+        return convertMapToArray(P$.getVariableMap());
     };
 
     /**
@@ -181,13 +214,13 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
      * @param map
      * @returns {Array}
      */
-    function convertMapToArray(map){
+    function convertMapToArray(map) {
         var keyVal;
         var value;
         var count = 0;
         var array = new Array();
 
-        Object.keys(map).forEach(function(key){ //iterate over all key value pairs in the map
+        Object.keys(map).forEach(function (key) { //iterate over all key value pairs in the map
             array[count] = new Array();
             keyVal = key; // extract the value of the key
             value = map[key]; // extract the value corresponding to the given key.
@@ -206,7 +239,7 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
      * @param key {string}
      * @param value {object}
      */
-    Parser.addKeyValuePair = function(key, value){
+    Parser.addKeyValuePair = function (key, value) {
         Parser.prototype.variableMap[key] = value;
     };
 
@@ -224,12 +257,12 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
      * @param toAddress
      * @returns {*}
      */
-    Parser.createUtox = function (outputScript, pubK){
+    Parser.createUtox = function (outputScript, pubK) {
 
         //var privk = new bitcore.PrivateKey();
         //var pubk = new bitcore.PublicKey.fromPrivateKey(privk);
 
-        if(Array.isArray(pubK)){
+        if (Array.isArray(pubK)) {
             pubK = pubK[0];
         }
 
@@ -248,14 +281,14 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
 
             //creating the data object in order to be able to create a utox
         var data = new Object(); // creating the data opbject to create an unspent tx
-        data.txid ='00baf6626abc2df808da36a518c69f09b0d2ed0a79421ccfde4f559d2e42128b'; // {String} the previous transaction id
+        data.txid = '00baf6626abc2df808da36a518c69f09b0d2ed0a79421ccfde4f559d2e42128b'; // {String} the previous transaction id
         //data.txId = '00baf6626abc2df808da36a518c69f09b0d2ed0a79421ccfde4f559d2e42128b'; // {String=} alias for 'txid'
         //data.vout = 0; // {number} the index in the transaction
         data.outputIndex = 0; // {number=} alias for 'vout'
         //data.scriptPubKey = outputScript; // {string|Script} the script that must be resolved to release the funds
         data.script = outputScript; // {string|Script=} alias for 'scriptPubKey' (Output Script)
         //data.amount = 1; // {number} amount of bitcoins associated
-        data.satoshis =100000000; // {number=} alias for 'amount', but expressed in satoshis (1 BTC = 1e8 satoshis)
+        data.satoshis = 100000000; // {number=} alias for 'amount', but expressed in satoshis (1 BTC = 1e8 satoshis)
         //data.address = toAddress; // {sting | Address=} the associated address to the script, if provided.
 
         var utox = bitcore.Transaction.UnspentOutput(data);
@@ -269,19 +302,19 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
      * @param publicKey
      * @returns {Transaction|Number}
      */
-    Parser.createTransactionFromUtox = function (utox, publicKey){
+    Parser.createTransactionFromUtox = function (utox, publicKey) {
 
         var address;
         var amount = 100000000;
 
-        if(Array.isArray(publicKey)){
+        if (Array.isArray(publicKey)) {
             address = new Array();
             amount = new Array();
-            for (var i=0; i<publicKey.length; i++){
+            for (var i = 0; i < publicKey.length; i++) {
                 address[i] = publicKey[i].toAddress();
                 amount[i] = 1000000;
             }
-        } else{
+        } else {
             address = publicKey.toAddress();
         }
 
@@ -291,14 +324,14 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
         var transaction = bitcore.Transaction();
 
 
-        if (Array.isArray(address)){
+        if (Array.isArray(address)) {
             var threshold = 0; //'Number of required signatures must be greater than the number of public keys'
-            transaction.from(utox,publicKey,threshold);
-            for(var i=0; i< address.length; i++){
+            transaction.from(utox, publicKey, threshold);
+            for (var i = 0; i < address.length; i++) {
                 transaction.to(address[i], amount[i]);
             }
-        }else{
-            transaction.from(utox,publicKey)
+        } else {
+            transaction.from(utox, publicKey)
             transaction.to(address, amount);
         }
 
@@ -309,14 +342,14 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
         return transaction;
     };
 
-    Parser.createTransaction = function(outputScript, privateKey){
+    Parser.createTransaction = function (outputScript, privateKey) {
         var pubKey;
-        if(Array.isArray(privateKey)){
+        if (Array.isArray(privateKey)) {
             pubKey = new Array();
-            for(var i=0; i<privateKey.length; i++){
-                pubKey[i]= privateKey[i].toPublicKey();
+            for (var i = 0; i < privateKey.length; i++) {
+                pubKey[i] = privateKey[i].toPublicKey();
             }
-        }else{
+        } else {
             pubKey = privateKey.toPublicKey();
         }
 
@@ -346,13 +379,13 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
      * @param string
      * @returns {Uint8Array}
      */
-    Parser.convertStringToBuffer = function (string){
+    Parser.convertStringToBuffer = function (string) {
         var bytes = new bitcore.deps.Buffer(string);
         return bytes;
     };
 
 
-    Parser.test = function(){
+    Parser.test = function () {
         console.log('test test');
     };
 
@@ -387,8 +420,8 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
      *
      */
     Parser.prototype.variableMap = {
-        SIGHASH_ALL:    bitcore.crypto.Signature.SIGHASH_ALL,
-        SIGHASH_NONE:   bitcore.crypto.Signature.SIGHASH_NONE,
+        SIGHASH_ALL: bitcore.crypto.Signature.SIGHASH_ALL,
+        SIGHASH_NONE: bitcore.crypto.Signature.SIGHASH_NONE,
         SIGHASH_SINGLE: bitcore.crypto.Signature.SIGHASH_SINGLE,
         SIGHASH_ANYONECANPAY: bitcore.crypto.Signature.SIGHASH_ANYONECANPAY
     };
@@ -403,21 +436,21 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
     var address = pubk0.toAddress();
     var pubkHASH160 = bitcore.crypto.Hash.sha256ripemd160(pubk0.toBuffer());
 
-    P$.addKeyValuePair('privK_0',privk0);
-    P$.addKeyValuePair('pubK_0',pubk0);
-    P$.addKeyValuePair('privK_00',privk00);
-    P$.addKeyValuePair('pubK_00',pubk00);
-    P$.addKeyValuePair('privK_000',privk000);
-    P$.addKeyValuePair('pubK_000',pubk000);
+    P$.addKeyValuePair('privK_0', privk0);
+    P$.addKeyValuePair('pubK_0', pubk0);
+    P$.addKeyValuePair('privK_00', privk00);
+    P$.addKeyValuePair('pubK_00', pubk00);
+    P$.addKeyValuePair('privK_000', privk000);
+    P$.addKeyValuePair('pubK_000', pubk000);
     P$.addKeyValuePair('addr_0', address);
-    P$.addKeyValuePair('hash_0',pubkHASH160);
+    P$.addKeyValuePair('hash_0', pubkHASH160);
 
     var str = 'bitcoin rocks';
     var strBuf = P$.convertStringToBuffer(str);
     var hashStr = bitcore.crypto.Hash.sha256ripemd160(strBuf);
 
     P$.addKeyValuePair('hash_00', hashStr);
-    P$.addKeyValuePair('str_0',str);
+    P$.addKeyValuePair('str_0', str);
 
     // this is usles because tx needs to be created with the pubkey belonging to the private key that signs it.
     // /**
