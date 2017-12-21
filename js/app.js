@@ -1,5 +1,5 @@
 var bitcore = require('bitcore-lib');
-console.log('app js ready');
+
 //constants needed for accessing the generated key pairs in the table in the script parsing
 var PRIVATE_KEY = 1;
 var PUBLIC_KEY = 2;
@@ -8,8 +8,16 @@ var ADDRESS = 3;
 var isDebug = false;
 var stackArray = [];
 var stepIndex = 0;
+var cm = null;
 
-$(function() {
+
+
+$(function () {
+    cm = CodeMirror.fromTextArea(document.getElementById("inputScript"), {
+        lineNumbers: true,
+        mode: "script"
+    });
+
     handleState();
 });
 
@@ -18,6 +26,10 @@ $(function() {
  * and evaluates the script
  */
 function runScript() {
+    var tokenInfo = cm.getTokenAt({ line: 0, ch: 1 }, true);
+    var doc = cm.getDoc();
+    doc.markText({ line: 0, ch: tokenInfo.start }, { line: 0, ch: tokenInfo.end }, { className: "active-token" });
+
     var input_script_string = getInputScript();
     var output_script_string = getOutputScript();
 
@@ -62,27 +74,39 @@ function stepBackwardScript() {
     stepIndex--;
 }
 
+function autoFormatScript() {
+    var totalLines = cm.lineCount();
+    cm.autoFormatRange({ line: 0, ch: 0 }, { line: totalLines });
+}
+
+function format(script) {
+    var unformatted = script;
+    var formatted = '';
+
+    // Ensure no line intends
+    var lines = unformatted.split('\n');
+    for (var i = 0; i < lines.length; i++) {
+        if (lines[i]) {
+            formatted += lines[i].trim() + '\n';
+        }
+    }
+
+    // New line for each opcode
+    formatted = formatted.replace(/ OP_/gi, '\nOP_');
+
+    // Make all op codes uppercase
+    formatted = formatted.replace(/\bOP_\S*/gi, function (match) {
+        return match.toUpperCase();
+    });
+
+    return formatted;
+}
+
 function handleState() {
-    // btnStepForward
-    if (isDebug && stepIndex >= stackArray.length - 1) {
-        $("#btnStepForward").attr("disabled", "disabled");
-    } else {
-        $("#btnStepForward").removeAttr("disabled");
-    }
-
-    // btnStop
-    if (isDebug) {
-        $("#btnStop").removeAttr("disabled");
-    } else {
-        $("#btnStop").attr("disabled", "disabled");
-    }
-
-    // btnRun
-    if (isDebug) {
-        $("#btnRun").attr("disabled", "disabled");
-    } else {
-        $("#btnRun").removeAttr("disabled");
-    }
+    $("#btnStepForward").disableIf(isDebug && stepIndex >= stackArray.length - 1);
+    $("#btnStop").disableIf(!isDebug);
+    $("#btnRun").disableIf(isDebug);
+    $("#btnAutoFormat").disableIf(isDebug);
 }
 
 function evaluateScript() {
@@ -351,7 +375,7 @@ function getPrivatKeyFromTable(num) {
 /**
  *
  */
-function loadDemoScript() {
+function loadBaiscDemoScript() {
     var inputScriptString = 'OP_1\n' +
         'OP_1\n' +
         'OP_ADD';
@@ -459,41 +483,8 @@ function loadMultiSigScript() {
         '3\n' +
         'OP_CHECKMULTISIGVERIFY';
 
-
     setInputScript(inputScriptString);
     setOutPutScript(outputScriptString);
-    var privKArr = ['privK_0','privK_00','privK_000'];
-    setTransactionMultisig(privKArr);
-}
-
-
-function setTransactionMultisig(privKStrArr, option) {
-    option = option || bitcore.crypto.Signature.SIGHASH_ALL;
-    var privKArr = new Array();
-
-    //loop over each private key variable in array and get the actual private key.
-    for (var i=0; i<privKStrArr.length; i++){
-        privKArr[i] = P$.getValueByKey(privKStrArr[i]);
-    }
-
-    P$.createTransaction(P$(getOutputScript()),privKArr);   //get the string representation of the output script and parse
-                                                            // it to return a string obj which is then passed to the createTransction function.
-    //get the created transaction
-    var tx = P$.getValueByKey('tx');
-
-    var sigArr = new Array(); //create an array for all transaction signatures to be stored temporarily
-
-    //loop over all provided private keys and sign the tx with them.
-    for (var i=0; i<privKArr.length; i++){
-        var sigArray = tx.getSignatures(privKArr[i],option);
-        sigArr[i] = sigArray[0];
-    }
-
-    //loop over all signatures in sigArr and add them to the Variable map.
-    for (var i=0; i<sigArr.length; i++){
-        P$.addKeyValuePair('sig_1'+i,sigArr[i]); //the signature variables for the multisig will be of form sig_1<number>
-        console.log('sig_1'+i);
-    }
 }
 
 function setTransaction(privKStr, option, sigVar) {

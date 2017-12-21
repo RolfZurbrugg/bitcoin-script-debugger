@@ -31,6 +31,10 @@ body {
   line-height: 20px;
 }
 
+.active-token {
+  background-color: khaki;
+}
+
 /* Customize Bootstrap */
 
 .navbar-default .navbar-nav > li > a:hover {
@@ -50,4 +54,10 @@ body {
 .navbar-inverse .divider-vertical {
   border-right-color: #222222;
   border-left-color: #111111;
+}
+
+/* Customize Code Mirror */
+
+.CodeMirror {
+  height: 200px;
 }

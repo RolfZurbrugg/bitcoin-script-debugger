@@ -13,6 +13,9 @@
   <!-- Bootstrap core CSS -->
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
+  <!-- Code Mirror -->
+  <link rel="stylesheet" href="vendor/codemirror/lib/codemirror.css">
+
   <!-- Custom styles for this template -->
   <link href="css/blog-home.css" rel="stylesheet">
 
@@ -40,7 +43,7 @@
         <button type="button" title="Stop Execution" class="btn btn-default" id="btnStop" onclick="stopScript();">
           <span class="glyphicon glyphicon-stop"></span>
         </button>
-        <button type="button" title="Auto Format" class="btn btn-default" style="margin-left: 15px">
+        <button type="button" title="Auto Format" class="btn btn-default" style="margin-left: 15px" id="btnAutoFormat" onclick="autoFormatScript(); this.blur();">
           <span class="glyphicon glyphicon-align-left"></span>
         </button>
       </form>
@@ -100,7 +103,7 @@
             Execution Stack
             <div class="clearfix"></div>
           </div>
-          <div class="panel-body" style="overflow:scroll">
+          <div class="panel-body" style="overflow:scroll; height: 311px;">
             <table class="table table-striped" id="stack">
               <col width="80">
               <thead>
@@ -110,18 +113,6 @@
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>0</td>
-                  <td>50</td>
-                </tr>
-                <tr>
-                  <td>1</td>
-                  <td>0</td>
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td>1</td>
-                </tr>
               </tbody>
             </table>
           </div>
@@ -133,7 +124,7 @@
             Script Variables
             <div class="clearfix"></div>
           </div>
-          <div class="panel-body" style="overflow:scroll">
+          <div class="panel-body" style="overflow:scroll; height: 211px;">
             <table class="table table-striped">
               <col width="80">
               <thead>
@@ -175,9 +166,15 @@
   <script src="vendor/bitcore-lib/bitcore-lib.js"></script>
   <script src="vendor/bitcore-mnemonic/bitcore-mnemonic.js"></script>
 
+  <!-- Code Mirror -->
+  <script src="vendor/codemirror/lib/codemirror.js"></script>
+  <script src="vendor/codemirror/addon/mode/simple.js"></script>
+
   <!-- Custom JavaScript -->
+  <script src="js/jQueryExtensions.js"></script>
   <script src="js/parser.js"></script>
   <script src="js/accesStack.js"></script>
+  <script src="js/codeMirrorExtensions.js"></script>
   <script src="js/app.js"></script>
 
 </body>
