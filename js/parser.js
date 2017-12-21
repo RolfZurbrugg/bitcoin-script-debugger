@@ -1,5 +1,30 @@
 var bitcore = require('bitcore-lib');
 
+
+//todo this function in bitcore-lib.js needs to be alltered by disabeling two lines.
+// /**
+//  * @constructor
+//  */
+// function MultiSigInput(input, pubkeys, threshold, signatures) {
+//     Input.apply(this, arguments);
+//     var self = this;
+//     pubkeys = pubkeys || input.publicKeys;
+//     threshold = threshold || input.threshold;
+//     signatures = signatures || input.signatures;
+//     this.publicKeys = _.sortBy(pubkeys, function(publicKey) { return publicKey.toString('hex'); }); Todo this line needs to be disabled for multisig to work.
+//     // $.checkState(Script.buildMultisigOut(this.publicKeys, threshold).equals(this.output.script), Todo this line needs to be disabled for multisig to work.
+//     //   'Provided public keys don\'t match to the provided output script');
+//     this.publicKeyIndex = {};
+//     _.each(this.publicKeys, function(publicKey, index) {
+//         self.publicKeyIndex[publicKey.toString()] = index;
+//     });
+//     this.threshold = threshold;
+//     // Empty array of signatures
+//     this.signatures = signatures ? this._deserializeSignatures(signatures) : new Array(this.publicKeys.length);
+// }
+// inherits(MultiSigInput, Input);
+
+
 /**
  * Enabeling this override allows signatures to be generated, but an error is caused when using these signatures.
  * The reason seams to be that the the signature don't match up with the object the are verified again.
@@ -131,8 +156,21 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
                 addDebugToChunk(this);
             }
             else if ((/(^[0-9])/).test(opcode_arr[i])) { //test for a number. ^ denotes that the string must start with a number. [0-9]* will then match any following numbers.
+                //ToDo add chech if number is in range of allowed numbers.
                 var num = Number(opcode_arr[i]); //convert the string to a number
                 script.add(bitcore.Opcode.smallInt(num));
+
+                addDebugToChunk(this);
+            }
+            else if((/redeemScript/.test(opcode_arr[i]))){
+                var variable  = P$.getValueByKey(opcode_arr[i]);
+                script.add(variable);
+
+                addDebugToChunk(this);
+            }
+            else if((/redeemScriptHash/.test(opcode_arr[i]))){
+                var variable  = P$.getValueByKey(opcode_arr[i]);
+                script.add(variable.toBuffer());
 
                 addDebugToChunk(this);
             }
@@ -325,7 +363,7 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
 
 
         if (Array.isArray(address)) {
-            var threshold = 0; //'Number of required signatures must be greater than the number of public keys'
+            var threshold = P$.getValueByKey('threshold'); //the threshold defines how many signatures are required.
             transaction.from(utox, publicKey, threshold);
             for (var i = 0; i < address.length; i++) {
                 transaction.to(address[i], amount[i]);
@@ -355,6 +393,8 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
 
         var utox = P$.createUtox(outputScript, pubKey); //the adress is not important for our purposes.
         var tx = P$.createTransactionFromUtox(utox, pubKey);
+
+
         P$.addKeyValuePair('tx', tx);
     };
 
@@ -384,10 +424,6 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
         return bytes;
     };
 
-
-    Parser.test = function () {
-        console.log('test test');
-    };
 
     Parser.init.prototype = Parser.prototype;
 
@@ -451,29 +487,6 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
 
     P$.addKeyValuePair('hash_00', hashStr);
     P$.addKeyValuePair('str_0', str);
-
-    // this is usles because tx needs to be created with the pubkey belonging to the private key that signs it.
-    // /**
-    //  * creation of a dummy transaction which is used to create and verify signatures.
-    //  */
-    // var _pk = new bitcore.PrivateKey(); // values needed for creation of
-    // var _pubk = new bitcore.PublicKey.fromPrivateKey(_pk);
-    // var _addr = _pubk.toAddress();
-    // var _utox = P$.createUtox(bitcore.Script(),_addr); // create a dummy utox
-    // var _tx = P$.createTransactionFromUtox(_utox,_pubk);
-    // P$.addKeyValuePair('tx', _tx);
-    //
-    //
-    // /**
-    //  * create signatures for demo scripts
-    //  */
-    // var sigArray_0 = _tx.getSignatures(privk0,bitcore.crypto.Signature.SIGHASH_ALL);
-    // var sig_0 = sigArray_0[0];
-    // P$.addKeyValuePair('sig_0',sig_0);
-    //
-    // var sigArray_00 = _tx.getSignatures(privk00,bitcore.crypto.Signature.SIGHASH_ALL);
-    // var sig_00 = sigArray_00[0];
-    // P$.addKeyValuePair('sig_00',sig_00);
 
     console.log('variable map initialized');
 

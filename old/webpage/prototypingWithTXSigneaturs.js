@@ -373,8 +373,14 @@ console.log(testScript);
 // overwriting the get sig method todo over write it properly
 
 
+var multisigScript = bitcore.Script()
+    .add(bitcore.Opcode.smallInt(2))
+    .add(P$.getValueByKey('pubK_0').toBuffer())
+    .add(P$.getValueByKey('pubK_00').toBuffer())
+    .add(P$.getValueByKey('pubK_000').toBuffer())
+    .add(bitcore.Opcode.smallInt(3))
+    .add(bitcore.Opcode.OP_CHECKMULTISIG);
 
-
-
-console.log('proto changed');
+var isStandard = multisigScript.isStandard();
+console.log('standard: '+isStandard);
 

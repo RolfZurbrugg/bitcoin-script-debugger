@@ -414,6 +414,46 @@ function loadP2SHDemoScript() {
     setOutPutScript(outputScriptString);
 }
 
+
+/**
+ * this script causes following error :(
+ * bitcore.ErrorInvalidState: Invalid state: Provided public keys don't hash to the provided output
+ */
+// function  loadP2SHMultisigDemoScript() {
+//     var redeemScriptString = '2\n' +
+//         'pubK_0\n' +
+//         'pubK_00\n' +
+//         'pubK_000\n' +
+//         '3\n' +
+//         'OP_CHECKMULTISIG';
+//
+//     var redeemScript = P$(redeemScriptString);
+//     var redeemScriptBuffer =redeemScript.toBuffer();
+//     P$.addKeyValuePair('redeemScript',redeemScriptBuffer);
+//     var redeemScriptHash = createHash(redeemScriptBuffer,'sha256ripemd160');
+//     P$.addKeyValuePair('redeemScriptHash',redeemScriptHash);
+//
+//     var inputScriptString = 'OP_0\n' +
+//         'sig_10\n' +
+//         'sig_11\n' +
+//         'redeemScript';
+//
+//     var outputScriptString = 'OP_HASH160\n' +
+//         'redeemScriptHash\n' +
+//         'OP_EQUAL';
+//
+//     P$.addKeyValuePair('threshold',2); //the threshold defines how many signatures are required.
+//     setInputScript(inputScriptString);
+//     setOutPutScript(outputScriptString);
+//     var privKArr = ['privK_0','privK_00','privK_000'];
+//     setTransactionMultisig(privKArr);
+//     // setTransaction('privK_0');
+//     // var tx = P$.getValueByKey('tx');
+//     // var sigArray = tx.getSignatures(P$.getValueByKey('privK_00'), bitcore.crypto.Signature.SIGHASH_ALL);
+//     // var sig = sigArray[0];
+//     // P$.addKeyValuePair('sig_00',sig);
+// }
+
 /**
  * this doesnt work, as bitcore-lib doesnt allow the signing of non standard transacrtions.
  */
@@ -431,6 +471,7 @@ function loadP2SHDemoScript() {
 //     setOutPutScript(outputScriptString);
 //
 //     setTransaction('privK_0');
+// }
 
 /**
  *
@@ -449,17 +490,19 @@ function loadOPReturnScript() {
  *
  */
 function loadMultiSigScript() {
-    var inputScriptString = 'sig_0\n' +
-        'sig_00';
+    var inputScriptString = 'OP_0\n' +
+        'sig_10\n' +
+        'sig_11';
 
     var outputScriptString = '2\n' +
         'pubK_0\n' +
         'pubK_00\n' +
         'pubK_000\n' +
         '3\n' +
-        'OP_CHECKMULTISIGVERIFY';
+        'OP_CHECKMULTISIG';
 
 
+    P$.addKeyValuePair('threshold',2); //the threshold defines how many signatures are required.
     setInputScript(inputScriptString);
     setOutPutScript(outputScriptString);
     var privKArr = ['privK_0','privK_00','privK_000'];
