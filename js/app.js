@@ -196,9 +196,7 @@ function markActiveToken() {
         mark.clear();
     }
 
-    var debugInfo = Object.assign({}, stackArray[stepIndex][0]);
-    debugInfo.start.line--;
-    debugInfo.end.line--;
+    var debugInfo = stackArray[stepIndex][0];
     var doc = cmInputScript.getDoc();
     mark = doc.markText(debugInfo.start, debugInfo.end, { className: "active-token" });
 }
