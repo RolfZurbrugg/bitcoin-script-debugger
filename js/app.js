@@ -8,18 +8,33 @@ var ADDRESS = 3;
 var isDebug = false;
 var stackArray = [];
 var stepIndex = 0;
-var cm = null;
 
+var cmInputScript = null;
+var cmOutputScript = null;
 
-
+// entry point
 $(function () {
-    cm = CodeMirror.fromTextArea(document.getElementById("inputScript"), {
+    init();
+});
+
+/**
+ * Initializes the user interface and components.
+ */
+function init() {
+    // configure CodeMirror for input script
+    cmInputScript = CodeMirror.fromTextArea(document.getElementById("inputScript"), {
+        lineNumbers: true,
+        mode: "script"
+    });
+
+    // configure CodeMirror for output script
+    cmOutputScript = CodeMirror.fromTextArea(document.getElementById("outputScript"), {
         lineNumbers: true,
         mode: "script"
     });
 
     handleState();
-});
+}
 
 /**
  * This function takes the input and output script with id 'is', 'os' respectivly
@@ -74,34 +89,25 @@ function stepBackwardScript() {
     stepIndex--;
 }
 
+/**
+ * Formats the input and output script.
+ */
 function autoFormatScript() {
-    var totalLines = cm.lineCount();
-    cm.autoFormatRange({ line: 0, ch: 0 }, { line: totalLines });
+    // format input script
+    cmInputScript.autoFormatRange(
+        { line: 0, ch: 0 },
+        { line: cmInputScript.lineCount() }
+    );
+    // format output script
+    cmOutputScript.autoFormatRange(
+        { line: 0, ch: 0 },
+        { line: cmOutputScript.lineCount() }
+    );
 }
 
-function format(script) {
-    var unformatted = script;
-    var formatted = '';
-
-    // Ensure no line intends
-    var lines = unformatted.split('\n');
-    for (var i = 0; i < lines.length; i++) {
-        if (lines[i]) {
-            formatted += lines[i].trim() + '\n';
-        }
-    }
-
-    // New line for each opcode
-    formatted = formatted.replace(/ OP_/gi, '\nOP_');
-
-    // Make all op codes uppercase
-    formatted = formatted.replace(/\bOP_\S*/gi, function (match) {
-        return match.toUpperCase();
-    });
-
-    return formatted;
-}
-
+/**
+ * Handles the UI state by enabling or disabling user controls.
+ */
 function handleState() {
     $("#btnStepForward").disableIf(isDebug && stepIndex >= stackArray.length - 1);
     $("#btnStop").disableIf(!isDebug);
