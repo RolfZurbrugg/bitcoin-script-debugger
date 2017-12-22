@@ -128,8 +128,8 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
 
             //the debug attribute is added to the script chunk.
             script.chunks[script.chunks.length - 1].debug = {
-                start: {line: line, ch: index2},
-                end: {line: line, ch: index2 + opcode_arr[i].length}
+                start: {line: line -1, ch: index2},
+                end: {line: line -1 , ch: index2 + opcode_arr[i].length}
             };
 
             index += opcode_arr[i].length; //index is set to the index corresponding to the end of the matched op code in the script_text
