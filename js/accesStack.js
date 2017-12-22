@@ -43,7 +43,8 @@ var _countStackArray = 0; //the _countStackArray is needed in orded to fill the 
         // var signedInputScript = bitcore.Script(signedTransaction.inputs[0]._script);
 
         //evaluate the scripts and the functions
-        var result  = bitcore.Script.Interpreter().verify(inputScript, outputScript, P$.getValueByKey('tx'));
+        var nin = undefined;
+        var result  = bitcore.Script.Interpreter().verify(inputScript, outputScript, P$.getValueByKey('tx'), nin,P$.getValueByKey('interpreterFlags') );
         console.log(_countStackArray);
         console.log(result);
         return Parser.prototype.stackArray;
@@ -104,9 +105,9 @@ var _countStackArray = 0; //the _countStackArray is needed in orded to fill the 
             // console.log('here');
             //var bn = bitcore.crypto.BN.fromScriptNumBuffer(here.stack[i], fRequireMinimal, here.stack[i].length);
             //console.log(here);
-            window.stack_trace += 'Stack element[' + i + '] = ' + here.stack[i].toString('hex')) + '\n';
+            window.stack_trace += 'Stack element[' + i + '] = ' + here.stack[i].toString('hex') + '\n';
             console.log('Stack element[' + i + '] = ' + here.stack[i].toString('hex'));
-            Parser.prototype.stackArray[_countStackArray][i+1] = here.stack[i].toString('hex'));
+            Parser.prototype.stackArray[_countStackArray][i+1] = here.stack[i].toString('hex');
         }
         window.stack_trace += '--------- end of stack --------' + '\n\n';
         console.log('--------- end of stack --------');
