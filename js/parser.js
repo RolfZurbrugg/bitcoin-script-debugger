@@ -1,6 +1,10 @@
 var bitcore = require('bitcore-lib');
 
 
+
+
+
+
 //todo this function in bitcore-lib.js needs to be alltered by disabeling two lines.
 // /**
 //  * @constructor
@@ -90,9 +94,10 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
 
         var script = new bitcore.Script();
 
-        function addDebugToChunk() {
+        function addDebugToChunk(_this) {
+            here = Object.assign(this, _this);
 
-            index = script_text.indexOf(opcode_arr[i], index); //the index of matched op code is set. The previous value of index is used as an offset to avoid matching the same op code multiple times.
+            here.index = here.script_text.indexOf(opcode_arr[i], index); //the index of matched op code is set. The previous value of index is used as an offset to avoid matching the same op code multiple times.
             line = script_text.substr(0, index).split('\n').length; //the line number is extracted by counting the amount of line brakes between the start of the script_text string and the currently matched op code in the script_text string.
 
             //if the opcode is on a new line the position string needs to be shorttend to not contain the previous line.
@@ -126,53 +131,115 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
                 /(addr_[0-9])/.test(opcode_arr[i])) {     //test for address
 
                 var variable = P$.getValueByKey(opcode_arr[i]); //ToDo find a better name instead of variable
-                script.add(variable.toBuffer());
-                addDebugToChunk(this);
+                if(variable !== undefined){
+                    script.add(variable.toBuffer());
+                    addDebugToChunk(this);
+                }
+                else{
+                    throw opcode_arr[i] + ' is undefined';
+                }
 
             }
             else if (/(hash_[0-9])/.test(opcode_arr[i])) { //test for pubkik key hash. pubkey hash is already a buffer. testing for the key word hash_<number>
                 var variable = P$.getValueByKey(opcode_arr[i]);
-                script.add(variable);
-
-                addDebugToChunk(this);
+                if(variable !== undefined){
+                    script.add(variable);
+                    addDebugToChunk(this);
+                }
+                else{
+                    throw opcode_arr[i] + ' is undefined';
+                }
             }
             else if (/(sig_[0-9])/.test(opcode_arr[i])) { //test for key word sig_<number>
                 var sig = P$.getValueByKey(opcode_arr[i]);
 
-                var scriptContainingSig = bitcore.Script.buildPublicKeyIn(sig.signature.toDER());
-                console.log('sigscript');
-                console.log(scriptContainingSig);
-                console.log(scriptContainingSig.toString());
-                script.add(scriptContainingSig);
+                if(sig !== undefined){
+                    var scriptContainingSig = bitcore.Script.buildPublicKeyIn(sig.signature.toDER());
+                    // console.log('sigscript');
+                    // console.log(scriptContainingSig);
+                    // console.log(scriptContainingSig.toString());
+                    script.add(scriptContainingSig);
 
-                addDebugToChunk(this);
+                    addDebugToChunk(this);
+                }
+                else{
+                    throw opcode_arr[i] + ' is undefined';
+                }
             }
             else if (/(str_[0-9])/.test(opcode_arr[i])) { // test for a string variable
                 var str = P$.getValueByKey(opcode_arr[i]);
-                var strBuf = P$.convertStringToBuffer(str);
-                script.add(strBuf);
-
-
-                addDebugToChunk(this);
+                if(str !== undefined){
+                    var strBuf = P$.convertStringToBuffer(str);
+                    script.add(strBuf);
+                    addDebugToChunk(this);
+                }
+                else{
+                    throw opcode_arr[i] + ' is undefined';
+                }
             }
             else if ((/(^[0-9])/).test(opcode_arr[i])) { //test for a number. ^ denotes that the string must start with a number. [0-9]* will then match any following numbers.
-                //ToDo add chech if number is in range of allowed numbers.
                 var num = Number(opcode_arr[i]); //convert the string to a number
-                script.add(bitcore.Opcode.smallInt(num));
+                if (num >= 0 && num <= 16){
+                    script.add(bitcore.Opcode.smallInt(num));
+                    addDebugToChunk(this);
+                }
+                else{
+                    throw 'Number: '+num+'is bigger than 16 or smaller than 0';
+                }
 
-                addDebugToChunk(this);
+
+
             }
             else if((/redeemScript/.test(opcode_arr[i]))){
                 var variable  = P$.getValueByKey(opcode_arr[i]);
-                script.add(variable);
+                if (variable !== undefined){
+                    script.add(variable);
+                    addDebugToChunk(this);
+                }
+                else{
+                    throw opcode_arr[i] + ' is undefined';
+                }
 
-                addDebugToChunk(this);
+
             }
             else if((/redeemScriptHash/.test(opcode_arr[i]))){
                 var variable  = P$.getValueByKey(opcode_arr[i]);
-                script.add(variable.toBuffer());
+                if (variable !== undefined){
+                    script.add(variable.toBuffer());
+                    addDebugToChunk(this);
+                }
+                else{
+                    throw opcode_arr[i] + ' is undefined';
+                }
+            }
+            else if((/lockUntil/.test(opcode_arr[i]))){
+                var lockTime = P$.getValueByKey(opcode_arr[i]); //locktime is saved as a buffer when it is created
+                if (lockTime !== undefined){
+                    script.add(lockTime);
+                    addDebugToChunk(this);
+                }
+                else{
+                    throw 'lock time is undefined';
+                }
+            }
+            else if (/OP_PUSHDATA[1-4]/.test(opcode_arr[i])){
+                if(!(/OP_PUSHDATA3/.test(opcode_arr[i]))){
+                   // if(bitcore.util.js.isHexa()){
+                        var string = opcode_arr[i] + ' ' + opcode_arr[i+1]+ ' ' +opcode_arr[i+2];
+                        i++;
+                        i++;
+                        var pushdataScript = bitcore.Script.fromString(string);
+                        script.add(pushdataScript);
+                   // }
+                   //  else{
+                   //      throw opcode_arr[i+1] + 'is not a valid hex string.';
+                   //  }
 
-                addDebugToChunk(this);
+                }
+                else{
+                    throw 'OP_PUSHDATA3 is not an opcode';
+                }
+
             }
             else {
                 //error handling to test if (opcode_arr[i]) is an opcode
@@ -493,3 +560,52 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
 })();
 
 
+// (function () {
+//     /**
+//      * Checks a locktime parameter with the transaction's locktime.
+//      * There are two times of nLockTime: lock-by-blockheight and lock-by-blocktime,
+//      * distinguished by whether nLockTime < LOCKTIME_THRESHOLD = 500000000
+//      *
+//      * See the corresponding code on bitcoin core:
+//      * https://github.com/bitcoin/bitcoin/blob/ffd75adce01a78b3461b3ff05bcc2b530a9ce994/src/script/interpreter.cpp#L1129
+//      *
+//      * @param {BN} nLockTime the locktime read from the script
+//      * @return {boolean} true if the transaction's locktime is less than or equal to
+//      *                   the transaction's locktime
+//      */
+//     bitcore.Interpreter.prototype.checkLockTime = function(nLockTime) {
+//
+//         //var myTx = P$.getValueByKey('dummyTx');
+//         // We want to compare apples to apples, so fail the script
+//         // unless the type of nLockTime being tested is the same as
+//         // the nLockTime in the transaction.
+//         if (!(
+//                 (this.tx.nLockTime <  Interpreter.LOCKTIME_THRESHOLD && nLockTime.lt(Interpreter.LOCKTIME_THRESHOLD_BN)) ||
+//                 (this.tx.nLockTime >= Interpreter.LOCKTIME_THRESHOLD && nLockTime.gte(Interpreter.LOCKTIME_THRESHOLD_BN))
+//             )) {
+//             return false;
+//         }
+//
+//         // Now that we know we're comparing apples-to-apples, the
+//         // comparison is a simple numeric one.
+//         if (nLockTime.gt(new BN(this.tx.nLockTime))) {
+//             return false;
+//         }
+//
+//         // Finally the nLockTime feature can be disabled and thus
+//         // CHECKLOCKTIMEVERIFY bypassed if every txin has been
+//         // finalized by setting nSequence to maxint. The
+//         // transaction would be allowed into the blockchain, making
+//         // the opcode ineffective.
+//         //
+//         // Testing if this vin is not final is sufficient to
+//         // prevent this condition. Alternatively we could test all
+//         // inputs, but testing just this input minimizes the data
+//         // required to prove correct CHECKLOCKTIMEVERIFY execution.
+//         if (!this.tx.inputs[this.nin].isFinal()) {
+//             return false;
+//         }
+//
+//         return true;
+//     };
+// })();

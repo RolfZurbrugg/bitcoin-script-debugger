@@ -384,3 +384,37 @@ var multisigScript = bitcore.Script()
 var isStandard = multisigScript.isStandard();
 console.log('standard: '+isStandard);
 
+
+var myTx = new bitcore.Transaction();
+console.log(myTx);
+var future = new Date(2025,10,30);
+myTx.lockUntilDate(future);
+console.log(myTx);
+
+var myScript = bitcore.Script();
+var nLockTime = myTx.nLockTime;
+console.log(nLockTime);
+var nLockTimeBuffer = bitcore.util.buffer.integerAsBuffer(nLockTime);
+console.log(nLockTimeBuffer);
+myScript.add(nLockTimeBuffer);
+myScript.add('OP_OP_CHECKLOCKTIMEVERIFY').add('OP_1').add('OP_1').add('OP_1');
+var foo = bitcore.Script.Interpreter().verify(myScript);
+console.log(myScript);
+console.log(foo);
+
+
+var _str = 'hello';
+var _strhex = _str.toString('hex');
+var _strhexhex = _strhex.toString('hex');
+
+console.log(_str +'\n'+_strhex+'\n'+_strhexhex);
+
+nLockTimeBuffer[0] = 3;
+console.log(nLockTimeBuffer);
+var hexstr = bitcore.util.buffer.bufferToHex(nLockTimeBuffer);
+hexstr = '0x'+hexstr;
+var _scriptOPpushString = 'OP_PUSHDATA1 4 '+ hexstr;
+console.log(_scriptOPpushString);
+console.log(hexstr);
+var _scriptOpush = P$(_scriptOPpushString);
+console.log(_scriptOpush);

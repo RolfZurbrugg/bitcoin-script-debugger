@@ -71,7 +71,7 @@ var _countStackArray = 0; //the _countStackArray is needed in orded to fill the 
      * @param _this
      */
     bitcore.Script.Interpreter.prototype.printStack = function (_this) {
-        here = Object.assign(this, _this);
+       // here = Object.assign(this, _this);
         var fRequireMinimal = (here.flags & bitcore.Script.Interpreter.SCRIPT_VERIFY_MINIMALDATA) !== 0;
 
         // Read instruction

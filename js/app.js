@@ -379,6 +379,41 @@ function loadP2PKDemoScript() {
     setTransaction('privK_0');
 }
 
+/**
+ *
+ */
+function loadP2PKWithLockTimeDemoScript() {
+    var myTx = new bitcore.Transaction();
+    var lockUntil = new Date(2001,01,01);
+    myTx.lockUntilDate(lockUntil);
+    var nLockTime =  myTx.nLockTime;
+    var nLockTimeBuffer = bitcore.util.buffer.integerAsBuffer(nLockTime);
+    P$.addKeyValuePair('lockUntil',nLockTimeBuffer);
+
+
+    var inputScriptString = 'OP_1';
+
+    var outputScriptString = 'OP_1\n' +
+        'lockUntil\n' +
+        'OP_CHECKLOCKTIMEVERIFY\n' +
+        //'OP_DROP\n' +
+        //'OP_1\n' +
+        'OP_EQUAL';
+
+    setInputScript(inputScriptString);
+    setOutPutScript(outputScriptString);
+
+    //creating a new tx on the fly.
+    setTransaction();
+
+    //add lock time to transaction
+    var future = new Date(2010,10,30);
+    var tx = P$.getValueByKey('tx');
+    tx.lockUntilDate(future); //tx.lockUntilBlockHeight()
+    P$.addKeyValuePair('tx', tx);
+    console.log(tx);
+    console.log(tx.getLockTime());
+}
 
 /**
  *
@@ -542,12 +577,20 @@ function setTransactionMultisig(privKStrArr, option) {
 function setTransaction(privKStr, option, sigVar) {
     option = option || bitcore.crypto.Signature.SIGHASH_ALL;
     sigVar = sigVar || 'sig_0'
+    var signBool = true;
+    if(privKStr === undefined){
+        signBool = false;
+        privKStr = 'privK_0'; //it shoudln't matter which private key is chosen, as it is not needed for validation.
+    }
     P$.createTransaction(P$(getOutputScript()), P$.getValueByKey(privKStr));
     var tx = P$.getValueByKey('tx');
-    var sigArray = tx.getSignatures(P$.getValueByKey(privKStr), option);
-    var sig = sigArray[0]; //at the moment only one signature is supported
-    P$.addKeyValuePair(sigVar, sig);
-    console.log(sigVar);
+
+    if(signBool){
+        var sigArray = tx.getSignatures(P$.getValueByKey(privKStr), option);
+        var sig = sigArray[0]; //at the moment only one signature is supported
+        P$.addKeyValuePair(sigVar, sig);
+        console.log(sigVar);
+    }
 }
 
 
