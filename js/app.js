@@ -5,12 +5,14 @@ var PRIVATE_KEY = 1;
 var PUBLIC_KEY = 2;
 var ADDRESS = 3;
 
-var isDebug = false;
-var stackArray = [];
-var stepIndex = 0;
+var isDebug = false; // true if debug mode is active
+var stackArray = []; // holds the stack trace of the evalutated script
+var stepIndex = 0; // used to step through the stack array
 
 var cmInputScript = null;
 var cmOutputScript = null;
+
+var mark; // holds a reference to the active mark
 
 // entry point
 $(function () {
@@ -66,15 +68,12 @@ function init() {
  * and evaluates the script
  */
 function runScript() {
-    //    var tokenInfo = cm.getTokenAt({ line: 0, ch: 1 }, true);
-    //    var doc = cm.getDoc();
-    //    doc.markText({ line: 0, ch: tokenInfo.start }, { line: 0, ch: tokenInfo.end }, { className: "active-token" });
-
     if (evaluateScript()) {
         isDebug = true;
         stepIndex = stackArray.length - 1;
     }
 
+    markActiveToken();
     displayStackTable(stackArray, stepIndex);
     handleState();
 }
@@ -86,6 +85,10 @@ function stopScript() {
 
     clearStackTable();
     handleState();
+
+    if (mark) {
+        mark.clear();
+    }
 }
 
 function stepForwardScript() {
@@ -101,6 +104,7 @@ function stepForwardScript() {
         stepIndex++;
     }
 
+    markActiveToken();
     displayStackTable(stackArray, stepIndex);
     handleState();
 }
@@ -114,6 +118,7 @@ function stepBackwardScript() {
         stepIndex--;
     }
 
+    markActiveToken();
     displayStackTable(stackArray, stepIndex);
     handleState();
 }
@@ -184,6 +189,18 @@ function displayStackTable(stackArray, index) {
 
 function clearStackTable() {
     $("#stack").find("tr:gt(0)").remove();
+}
+
+function markActiveToken() {
+    if (mark) {
+        mark.clear();
+    }
+
+    var debugInfo = Object.assign({}, stackArray[stepIndex][0]);
+    debugInfo.start.line--;
+    debugInfo.end.line--;
+    var doc = cmInputScript.getDoc();
+    mark = doc.markText(debugInfo.start, debugInfo.end, { className: "active-token" });
 }
 
 function getSelectedPrivateKey() {
