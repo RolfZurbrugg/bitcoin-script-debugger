@@ -33,6 +33,31 @@ function init() {
         mode: "script"
     });
 
+    $("#btnRun").click(function () {
+        runScript();
+        this.blur();
+    });
+
+    $("#btnStepForward").click(function () {
+        stepForwardScript();
+        this.blur();
+    });
+
+    $("#btnStepBackward").click(function () {
+        stepBackwardScript();
+        this.blur();
+    });
+
+    $("#btnStop").click(function () {
+        stopScript();
+        this.blur();
+    });
+
+    $("#btnAutoFormat").click(function () {
+        autoFormatScript();
+        this.blur();
+    });
+
     handleState();
 }
 
@@ -45,48 +70,38 @@ function runScript() {
     //    var doc = cm.getDoc();
     //    doc.markText({ line: 0, ch: tokenInfo.start }, { line: 0, ch: tokenInfo.end }, { className: "active-token" });
 
-    var input_script_string = getInputScript();
-    var output_script_string = getOutputScript();
+    if (evaluateScript()) {
+        isDebug = true;
+        stepIndex = stackArray.length - 1;
+    }
 
-    var stackArray = bitcore.Script.Interpreter().debug(input_script_string, output_script_string);
-
-    console.log(stackArray);
-
-    $('#stt').val(window.stack_trace);
+    displayStackTable(stackArray, stepIndex);
+    handleState();
 }
 
 function stopScript() {
     isDebug = false;
     stackArray = [];
     stepIndex = 0;
-    clearStackTable();
 
+    clearStackTable();
     handleState();
 }
 
 function stepForwardScript() {
     if (!isDebug) {
-
-        try {
-            stackArray = evaluateScript();
-        } catch (err) {
-            console.log(err);
-            $("#alert-error").removeClass("hidden");
-            $("#alert-error-a").text(err);
+        if (!evaluateScript()) {
             return;
         }
-        $("#alert-error").addClass("hidden");
-
         isDebug = true;
-        stepIndex = 0;
+        stepIndex = -1;
     }
-
-    displayStackTable(stackArray, stepIndex);
 
     if (stepIndex < stackArray.length - 1) {
         stepIndex++;
     }
 
+    displayStackTable(stackArray, stepIndex);
     handleState();
 }
 
@@ -95,8 +110,12 @@ function stepBackwardScript() {
         return;
     }
 
-    // TODO: Check boundries
-    stepIndex--;
+    if (stepIndex > 0) {
+        stepIndex--;
+    }
+
+    displayStackTable(stackArray, stepIndex);
+    handleState();
 }
 
 /**
@@ -119,24 +138,46 @@ function autoFormatScript() {
  * Handles the UI state by enabling or disabling user controls.
  */
 function handleState() {
-    $("#btnStepForward").disableIf(isDebug && stepIndex >= stackArray.length - 1);
-    $("#btnStop").disableIf(!isDebug);
     $("#btnRun").disableIf(isDebug);
+    $("#btnStepForward").disableIf(isDebug && stepIndex > stackArray.length - 2);
+    $("#btnStepBackward").disableIf(!isDebug || stepIndex < 1);
+    $("#btnStop").disableIf(!isDebug);
+
     $("#btnAutoFormat").disableIf(isDebug);
+
+    cmInputScript.setOption("readOnly", isDebug);
+    cmOutputScript.setOption("readOnly", isDebug);
 }
 
+/**
+ * Evaluates the user script from the ui and stores the result
+ * in the stackArray. The method returns false if the evaluation fails
+ * and displays the error message in the error box.
+ */
 function evaluateScript() {
-    var input_script_string = getInputScript();
-    var output_script_string = getOutputScript();
+    var inputScript = getInputScript();
+    var outputScript = getOutputScript();
 
-    return bitcore.Script.Interpreter().debug(input_script_string, output_script_string);
+    try {
+        stackArray = bitcore.Script.Interpreter().debug(inputScript, outputScript);
+    } catch (err) {
+        console.log(err);
+        $("#alert-error").removeClass("hidden");
+        $("#alert-error-a").text(err);
+        return false; // evaluation failed
+    }
+    $("#alert-error").addClass("hidden");
+    return true; // evaluation was successfull
 }
 
 function displayStackTable(stackArray, index) {
     clearStackTable();
     var stack = stackArray[index];
     for (var i = 1; i < stack.length; i++) {
-        var row = "<tr><td>" + i + "</td><td>" + stack[i] + "</td></tr>";
+        var row = $.parseHTML("<tr><td>" + i + "</td><td>" + stack[i] + "</td></tr>");
+        if (stepIndex == stackArray.length - 1 && i == stack.length - 1) {
+            $(row).css("background-color", stack[i] == 1 ? "#dff0d8" : "#f2dede");
+        }
         $("#stack > tbody").append(row);
     }
 }
@@ -432,7 +473,7 @@ function loadP2PKDemoScript() {
 /**
  * OP_PUSHDATA Example script
  */
-function loadPushDataDemoScript(){
+function loadPushDataDemoScript() {
     var dataString = P$.convertStringToHex('Bitcoin Rocks', true); //true indicates to function, to add 0x to the start of the returned Hex string
     console.log(dataString);
     var inputScriptString = 'OP_PUSHDATA2 13 ' +
@@ -454,11 +495,11 @@ function loadPushDataDemoScript(){
  */
 function loadP2PKWithLockTimeDemoScript() {
     var myTx = new bitcore.Transaction();
-    var lockUntil = new Date(2001,01,01);
+    var lockUntil = new Date(2001, 01, 01);
     myTx.lockUntilDate(lockUntil);
-    var nLockTime =  myTx.nLockTime;
+    var nLockTime = myTx.nLockTime;
     var nLockTimeBuffer = bitcore.util.buffer.integerAsBuffer(nLockTime);
-    P$.addKeyValuePair('lockUntil',nLockTimeBuffer);
+    P$.addKeyValuePair('lockUntil', nLockTimeBuffer);
 
 
     var inputScriptString = 'OP_1';
@@ -477,7 +518,7 @@ function loadP2PKWithLockTimeDemoScript() {
     setTransaction();
 
     //add lock time to transaction
-    var future = new Date(2010,10,30);
+    var future = new Date(2010, 10, 30);
     var tx = P$.getValueByKey('tx');
     tx.lockUntilDate(future); //tx.lockUntilBlockHeight()
     P$.addKeyValuePair('tx', tx);
@@ -607,10 +648,10 @@ function loadMultiSigScript() {
         'OP_CHECKMULTISIG';
 
 
-    P$.addKeyValuePair('threshold',2); //the threshold defines how many signatures are required.
+    P$.addKeyValuePair('threshold', 2); //the threshold defines how many signatures are required.
     setInputScript(inputScriptString);
     setOutputScript(outputScriptString);
-    var privKArr = ['privK_0','privK_00','privK_000'];
+    var privKArr = ['privK_0', 'privK_00', 'privK_000'];
     setTransactionMultisig(privKArr);
 }
 
@@ -620,27 +661,27 @@ function setTransactionMultisig(privKStrArr, option) {
     var privKArr = new Array();
 
     //loop over each private key variable in array and get the actual private key.
-    for (var i=0; i<privKStrArr.length; i++){
+    for (var i = 0; i < privKStrArr.length; i++) {
         privKArr[i] = P$.getValueByKey(privKStrArr[i]);
     }
 
-    P$.createTransaction(P$(getOutputScript()),privKArr);   //get the string representation of the output script and parse
-                                                            // it to return a string obj which is then passed to the createTransction function.
+    P$.createTransaction(P$(getOutputScript()), privKArr);   //get the string representation of the output script and parse
+    // it to return a string obj which is then passed to the createTransction function.
     //get the created transaction
     var tx = P$.getValueByKey('tx');
 
     var sigArr = new Array(); //create an array for all transaction signatures to be stored temporarily
 
     //loop over all provided private keys and sign the tx with them.
-    for (var i=0; i<privKArr.length; i++){
-        var sigArray = tx.getSignatures(privKArr[i],option);
+    for (var i = 0; i < privKArr.length; i++) {
+        var sigArray = tx.getSignatures(privKArr[i], option);
         sigArr[i] = sigArray[0];
     }
 
     //loop over all signatures in sigArr and add them to the Variable map.
-    for (var i=0; i<sigArr.length; i++){
-        P$.addKeyValuePair('sig_1'+i,sigArr[i]); //the signature variables for the multisig will be of form sig_1<number>
-        console.log('sig_1'+i);
+    for (var i = 0; i < sigArr.length; i++) {
+        P$.addKeyValuePair('sig_1' + i, sigArr[i]); //the signature variables for the multisig will be of form sig_1<number>
+        console.log('sig_1' + i);
     }
 }
 
@@ -648,14 +689,14 @@ function setTransaction(privKStr, option, sigVar) {
     option = option || bitcore.crypto.Signature.SIGHASH_ALL;
     sigVar = sigVar || 'sig_0'
     var signBool = true;
-    if(privKStr === undefined){
+    if (privKStr === undefined) {
         signBool = false;
         privKStr = 'privK_0'; //it shoudln't matter which private key is chosen, as it is not needed for validation.
     }
     P$.createTransaction(P$(getOutputScript()), P$.getValueByKey(privKStr));
     var tx = P$.getValueByKey('tx');
 
-    if(signBool){
+    if (signBool) {
         var sigArray = tx.getSignatures(P$.getValueByKey(privKStr), option);
         var sig = sigArray[0]; //at the moment only one signature is supported
         P$.addKeyValuePair(sigVar, sig);
