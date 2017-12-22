@@ -63,7 +63,7 @@ var bitcore = require('bitcore-lib');
 
 
 /**
- * The parser takes a string containing opcodes which are either separated by white spaces or
+ * The parser takes a string containing opcodes which are either separated by whitespaces or
  * carriage return. It will return a bitcore script object containing the script.
  *
  * ToDo extend this library to be able to do syntax checks
@@ -90,7 +90,24 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
 
         var line = 0;
 
-        var opcode_arr = script_text.split(/\s+|\r+/); //spliting text on whitespace or new line. Trailing white spaces or new lines will cause an error
+
+        /**
+         * extra whitespaces and new line characters need to be removed, before the script is split.
+         */
+        //remove all line brakes '\n' and replace them with whitespaces
+        var script_text_cleaned = script_text.replace('\n', ' ');
+
+        //now remove all excess whitespaces. (\s)+ this regex matches one or more whitespaces.
+        script_text_cleaned = script_text_cleaned.replace(/(\s)+/, ' ');
+
+        //remove leading whitespaces. ^\s+ this matches all lines starting with whitespaces.
+        script_text_cleaned = script_text_cleaned.replace(/^\s+/,'');
+
+        //remove trailing whitespaces. \s+$ this matches all whitespaces at the end of the string.
+        script_text_cleaned = script_text_cleaned.replace(/\s+$/,'');
+
+
+        var opcode_arr = script_text_cleaned.split(/\s+|\r+/); //spliting text on whitespace or new line. Trailing whitespaces or new lines will cause an error
 
         var script = new bitcore.Script();
 
@@ -111,8 +128,8 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
 
             //the debug attribute is added to the script chunk.
             script.chunks[script.chunks.length - 1].debug = {
-                start: {line: line, ch: index2},
-                end: {line: line, ch: index2 + opcode_arr[i].length}
+                start: {line: line -1, ch: index2},
+                end: {line: line -1 , ch: index2 + opcode_arr[i].length}
             };
 
             index += opcode_arr[i].length; //index is set to the index corresponding to the end of the matched op code in the script_text
@@ -224,7 +241,9 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
             }
             else if (/OP_PUSHDATA[1-4]/.test(opcode_arr[i])){
                 if(!(/OP_PUSHDATA3/.test(opcode_arr[i]))){
-                   // if(bitcore.util.js.isHexa()){ //todo make this test ignor the first two characters '0x'
+                    // it is tested if the string is in hexadecimal form, bitcore-lib requiers hex strings to start with
+                    // 0x so the first 2 characters of the string are removed and the rest is tested if it is in hex form
+                    if(bitcore.util.js.isHexa(opcode_arr[i+2].substring(2, opcode_arr[i+2].length))){
                         var string = opcode_arr[i] + ' ' + opcode_arr[i+1]+ ' ' +opcode_arr[i+2];
                         var pushdataScript = bitcore.Script.fromString(string);
                         script.add(pushdataScript);
@@ -232,10 +251,10 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
                     //
                      i++;
                      i++;
-                   // }
-                   //  else{
-                   //      throw opcode_arr[i+1] + 'is not a valid hex string.';
-                   //  }
+                   }
+                    else{
+                        throw opcode_arr[i+1] + 'is not a valid hex string.';
+                    }
 
                 }
                 else{
