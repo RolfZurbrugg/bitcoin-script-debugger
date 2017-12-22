@@ -510,7 +510,7 @@ function loadPushDataDemoScript() {
  */
 function loadP2PKWithLockTimeDemoScript() {
     var myTx = new bitcore.Transaction();
-    var lockUntil = new Date(2001, 01, 01);
+    var lockUntil = new Date(2018, 01, 01);
     myTx.lockUntilDate(lockUntil);
     var nLockTime = myTx.nLockTime;
     var nLockTimeBuffer = bitcore.util.buffer.integerAsBuffer(nLockTime);
@@ -522,7 +522,7 @@ function loadP2PKWithLockTimeDemoScript() {
     var outputScriptString = 'OP_1\n' +
         'lockUntil\n' +
         'OP_CHECKLOCKTIMEVERIFY\n' +
-        //'OP_DROP\n' +
+        'OP_DROP\n' +
         //'OP_1\n' +
         'OP_EQUAL';
 
@@ -533,12 +533,15 @@ function loadP2PKWithLockTimeDemoScript() {
     setTransaction();
 
     //add lock time to transaction
-    var future = new Date(2010, 10, 30);
+    var future = new Date(2019, 10, 30);
     var tx = P$.getValueByKey('tx');
     tx.lockUntilDate(future); //tx.lockUntilBlockHeight()
     P$.addKeyValuePair('tx', tx);
     console.log(tx);
     console.log(tx.getLockTime());
+
+    //set the flag to enable OP_CHECKLOCKTIMEVERIFY in accordance to bip 65
+    P$.addKeyValuePair('interpreterFlags',bitcore.Script.Interpreter.SCRIPT_VERIFY_CHECKLOCKTIMEVERIFY);
 }
 
 /**
