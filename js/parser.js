@@ -142,7 +142,7 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
                     script.add(opcode_arr[i]);
                     addDebugToChunk(this);
                 } else {
-                    throw 'Opcode: ' + opcode_arr[i] + ' is not defined. Error at position:' + i;
+                    throw 'Opcode: ' + opcode_arr[i] + ' is not defined. Error at position: ' + i;
                 }
             }
         }
