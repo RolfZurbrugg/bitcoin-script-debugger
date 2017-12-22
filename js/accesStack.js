@@ -99,21 +99,14 @@ var _countStackArray = 0; //the _countStackArray is needed in orded to fill the 
         //added by rolf
         window.stack_trace += '\n' + '--------- start of stack --------' + '\n';
         console.log('--------- start of stack --------');
-        //bitcore.crypto.BN.fromScriptNumBuffer(here.stack[here.stack.length - 1], fRequireMinimal); //todo, can this line be removed? until now ther seems to be no impact
-        // console.log(Object.assign({},this));
 
-        //this is not needed, buffer size can be determined using here.stack[i].length
-        // var size = here.stack[_pc].length; //acces the current element on the stack an get its length, in order to specify non default values for the buffer size.
-        // if (size < 4){size = 4;} //default value of size is 4, see function BN.fromScriptNumBuffer from bitcore-lib
-
-//todo iterate over script not stack, stack appears to be empty.
         for (var i = 0; i < here.stack.length; i++) {
             // console.log('here');
-            var bn = bitcore.crypto.BN.fromScriptNumBuffer(here.stack[i], fRequireMinimal, here.stack[i].length); //todo keys and signeatures are not displayed properly. not sure why here.stack[i] returns a Untit8Array which needs to be converted. maybe... :/
+            //var bn = bitcore.crypto.BN.fromScriptNumBuffer(here.stack[i], fRequireMinimal, here.stack[i].length);
             //console.log(here);
-            window.stack_trace += 'Stack element[' + i + '] = ' + bn.words[0] + '\n';
-            console.log('Stack element[' + i + '] = ' + bn.words[0]);
-            Parser.prototype.stackArray[_countStackArray][i+1] = bn.words[0];
+            window.stack_trace += 'Stack element[' + i + '] = ' + here.stack[i].toString('hex')) + '\n';
+            console.log('Stack element[' + i + '] = ' + here.stack[i].toString('hex'));
+            Parser.prototype.stackArray[_countStackArray][i+1] = here.stack[i].toString('hex'));
         }
         window.stack_trace += '--------- end of stack --------' + '\n\n';
         console.log('--------- end of stack --------');
@@ -144,9 +137,9 @@ var _countStackArray = 0; //the _countStackArray is needed in orded to fill the 
     /**
      *
      */
-    Parser.prototype.resetCount = function () { // todo dont have this function on window but on bitcore.Script.Interpreter.
+    Parser.prototype.resetCount = function () {
         _countStackArray =0;
-    }
+    };
 
     /**
      *

@@ -438,7 +438,7 @@ function loadPushDataDemoScript(){
     var inputScriptString = 'OP_PUSHDATA2 13 ' +
         dataString;
 
-    var outputScriptString = 'OP_PUSHDATA2 13 ' +
+    var outputScriptString = 'OP_PUSHDATA2 13' +
         dataString + '\n' +
         'OP_EQUAL';
 

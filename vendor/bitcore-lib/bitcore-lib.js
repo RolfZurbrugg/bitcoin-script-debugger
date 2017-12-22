@@ -7269,9 +7269,7 @@ Script.fromString = function(str) {
   }
   var script = new Script();
   script.chunks = [];
-    console.log(str);
   var tokens = str.split(' ');
-  console.log(tokens);
   var i = 0;
   while (i < tokens.length) {
     var token = tokens[i];
@@ -7293,7 +7291,6 @@ Script.fromString = function(str) {
     } else if (opcodenum === Opcode.OP_PUSHDATA1 ||
       opcodenum === Opcode.OP_PUSHDATA2 ||
       opcodenum === Opcode.OP_PUSHDATA4) {
-        console.log(i);
       if (tokens[i + 2].slice(0, 2) !== '0x') {
         throw new Error('Pushdata data must start with 0x');
       }
