@@ -1,5 +1,5 @@
 var bitcore = require('bitcore-lib');
-console.log('app js ready');
+
 //constants needed for accessing the generated key pairs in the table in the script parsing
 var PRIVATE_KEY = 1;
 var PUBLIC_KEY = 2;
@@ -9,15 +9,42 @@ var isDebug = false;
 var stackArray = [];
 var stepIndex = 0;
 
-$(function() {
-    handleState();
+var cmInputScript = null;
+var cmOutputScript = null;
+
+// entry point
+$(function () {
+    init();
 });
+
+/**
+ * Initializes the user interface and components.
+ */
+function init() {
+    // configure CodeMirror for input script
+    cmInputScript = CodeMirror.fromTextArea(document.getElementById("inputScript"), {
+        lineNumbers: true,
+        mode: "script"
+    });
+
+    // configure CodeMirror for output script
+    cmOutputScript = CodeMirror.fromTextArea(document.getElementById("outputScript"), {
+        lineNumbers: true,
+        mode: "script"
+    });
+
+    handleState();
+}
 
 /**
  * This function takes the input and output script with id 'is', 'os' respectivly
  * and evaluates the script
  */
 function runScript() {
+    //    var tokenInfo = cm.getTokenAt({ line: 0, ch: 1 }, true);
+    //    var doc = cm.getDoc();
+    //    doc.markText({ line: 0, ch: tokenInfo.start }, { line: 0, ch: tokenInfo.end }, { className: "active-token" });
+
     var input_script_string = getInputScript();
     var output_script_string = getOutputScript();
 
@@ -39,7 +66,17 @@ function stopScript() {
 
 function stepForwardScript() {
     if (!isDebug) {
-        stackArray = evaluateScript();
+
+        try {
+            stackArray = evaluateScript();
+        } catch (err) {
+            console.log(err);
+            $("#alert-error").removeClass("hidden");
+            $("#alert-error-a").text(err);
+            return;
+        }
+        $("#alert-error").addClass("hidden");
+
         isDebug = true;
         stepIndex = 0;
     }
@@ -62,27 +99,30 @@ function stepBackwardScript() {
     stepIndex--;
 }
 
+/**
+ * Formats the input and output script.
+ */
+function autoFormatScript() {
+    // format input script
+    cmInputScript.autoFormatRange(
+        { line: 0, ch: 0 },
+        { line: cmInputScript.lineCount() }
+    );
+    // format output script
+    cmOutputScript.autoFormatRange(
+        { line: 0, ch: 0 },
+        { line: cmOutputScript.lineCount() }
+    );
+}
+
+/**
+ * Handles the UI state by enabling or disabling user controls.
+ */
 function handleState() {
-    // btnStepForward
-    if (isDebug && stepIndex >= stackArray.length - 1) {
-        $("#btnStepForward").attr("disabled", "disabled");
-    } else {
-        $("#btnStepForward").removeAttr("disabled");
-    }
-
-    // btnStop
-    if (isDebug) {
-        $("#btnStop").removeAttr("disabled");
-    } else {
-        $("#btnStop").attr("disabled", "disabled");
-    }
-
-    // btnRun
-    if (isDebug) {
-        $("#btnRun").attr("disabled", "disabled");
-    } else {
-        $("#btnRun").removeAttr("disabled");
-    }
+    $("#btnStepForward").disableIf(isDebug && stepIndex >= stackArray.length - 1);
+    $("#btnStop").disableIf(!isDebug);
+    $("#btnRun").disableIf(isDebug);
+    $("#btnAutoFormat").disableIf(isDebug);
 }
 
 function evaluateScript() {
@@ -124,28 +164,38 @@ function removeSig() {
     $('#sigSet').text('false');
 }
 
-
+/**
+ * Gets the input script.
+ */
+function getInputScript() {
+    var doc = cmInputScript.getDoc();
+    return doc.getValue();
+}
 
 /**
- * Functions for accessing the input and output script text boxes.
+ * Sets the input script.
+ * @param {string} scriptString
  */
-
-function getInputScript() {
-    var input_script_string = $("#inputScript").val();
-    return input_script_string;
-}
-
-function getOutputScript() {
-    var output_script_string = $("#outputScript").val();
-    return output_script_string;
-}
-
 function setInputScript(scriptString) {
-    $('#inputScript').val(scriptString);
+    var doc = cmInputScript.getDoc();
+    doc.setValue(scriptString);
 }
 
-function setOutPutScript(scriptString) {
-    $('#outputScript').val(scriptString);
+/**
+ * Gets the output script.
+ */
+function getOutputScript() {
+    var doc = cmOutputScript.getDoc();
+    return doc.getValue();
+}
+
+/**
+ * Sets the output script.
+ * @param {string} scriptString
+ */
+function setOutputScript(scriptString) {
+    var doc = cmOutputScript.getDoc();
+    doc.setValue(scriptString);
 }
 
 /**
@@ -351,7 +401,7 @@ function getPrivatKeyFromTable(num) {
 /**
  *
  */
-function loadDemoScript() {
+function loadBaiscDemoScript() {
     var inputScriptString = 'OP_1\n' +
         'OP_1\n' +
         'OP_ADD';
