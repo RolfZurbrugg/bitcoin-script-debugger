@@ -41,9 +41,9 @@ function init() {
  * and evaluates the script
  */
 function runScript() {
-    var tokenInfo = cm.getTokenAt({ line: 0, ch: 1 }, true);
-    var doc = cm.getDoc();
-    doc.markText({ line: 0, ch: tokenInfo.start }, { line: 0, ch: tokenInfo.end }, { className: "active-token" });
+    //    var tokenInfo = cm.getTokenAt({ line: 0, ch: 1 }, true);
+    //    var doc = cm.getDoc();
+    //    doc.markText({ line: 0, ch: tokenInfo.start }, { line: 0, ch: tokenInfo.end }, { className: "active-token" });
 
     var input_script_string = getInputScript();
     var output_script_string = getOutputScript();
@@ -66,7 +66,17 @@ function stopScript() {
 
 function stepForwardScript() {
     if (!isDebug) {
-        stackArray = evaluateScript();
+
+        try {
+            stackArray = evaluateScript();
+        } catch (err) {
+            console.log(err);
+            $("#alert-error").removeClass("hidden");
+            $("#alert-error-a").text(err);
+            return;
+        }
+        $("#alert-error").addClass("hidden");
+
         isDebug = true;
         stepIndex = 0;
     }
@@ -154,28 +164,38 @@ function removeSig() {
     $('#sigSet').text('false');
 }
 
-
+/**
+ * Gets the input script.
+ */
+function getInputScript() {
+    var doc = cmInputScript.getDoc();
+    return doc.getValue();
+}
 
 /**
- * Functions for accessing the input and output script text boxes.
+ * Sets the input script.
+ * @param {string} scriptString 
  */
-
-function getInputScript() {
-    var input_script_string = $("#inputScript").val();
-    return input_script_string;
-}
-
-function getOutputScript() {
-    var output_script_string = $("#outputScript").val();
-    return output_script_string;
-}
-
 function setInputScript(scriptString) {
-    $('#inputScript').val(scriptString);
+    var doc = cmInputScript.getDoc();
+    doc.setValue(scriptString);
 }
 
-function setOutPutScript(scriptString) {
-    $('#outputScript').val(scriptString);
+/**
+ * Gets the output script.
+ */
+function getOutputScript() {
+    var doc = cmOutputScript.getDoc();
+    return doc.getValue();
+}
+
+/**
+ * Sets the output script.
+ * @param {string} scriptString 
+ */
+function setOutputScript(scriptString) {
+    var doc = cmOutputScript.getDoc();
+    doc.setValue(scriptString);
 }
 
 /**

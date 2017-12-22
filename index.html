@@ -92,6 +92,14 @@
             <textarea class="form-control" rows="5" id="outputScript">OP_2 OP_EQUAL</textarea>
           </div>
         </div>
+
+        <div class="alert alert-success hidden">
+          <a href="#" class="alert-link">...</a>
+        </div>
+
+        <div class="alert alert-danger hidden" id="alert-error">
+          <a href="#" class="alert-link" id="alert-error-a">...</a>
+        </div>
       </div>
 
       <!-- Debug Info Column -->
@@ -103,7 +111,7 @@
             Execution Stack
             <div class="clearfix"></div>
           </div>
-          <div class="panel-body" style="overflow:scroll; height: 311px;">
+          <div class="panel-body" style="overflow:auto; height: 211px;">
             <table class="table table-striped" id="stack">
               <col width="80">
               <thead>
@@ -124,7 +132,7 @@
             Script Variables
             <div class="clearfix"></div>
           </div>
-          <div class="panel-body" style="overflow:scroll; height: 211px;">
+          <div class="panel-body" style="overflow:auto; height: 211px;">
             <table class="table table-striped">
               <col width="80">
               <thead>
