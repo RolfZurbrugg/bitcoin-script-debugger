@@ -71,7 +71,7 @@ var _countStackArray = 0; //the _countStackArray is needed in orded to fill the 
      * @param _this
      */
     bitcore.Script.Interpreter.prototype.printStack = function (_this) {
-       // here = Object.assign(this, _this);
+        here = Object.assign(this, _this);
         var fRequireMinimal = (here.flags & bitcore.Script.Interpreter.SCRIPT_VERIFY_MINIMALDATA) !== 0;
 
         // Read instruction
@@ -110,7 +110,7 @@ var _countStackArray = 0; //the _countStackArray is needed in orded to fill the 
         for (var i = 0; i < here.stack.length; i++) {
             // console.log('here');
             var bn = bitcore.crypto.BN.fromScriptNumBuffer(here.stack[i], fRequireMinimal, here.stack[i].length); //todo keys and signeatures are not displayed properly. not sure why here.stack[i] returns a Untit8Array which needs to be converted. maybe... :/
-            console.log(here);
+            //console.log(here);
             window.stack_trace += 'Stack element[' + i + '] = ' + bn.words[0] + '\n';
             console.log('Stack element[' + i + '] = ' + bn.words[0]);
             Parser.prototype.stackArray[_countStackArray][i+1] = bn.words[0];

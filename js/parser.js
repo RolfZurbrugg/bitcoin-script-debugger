@@ -94,10 +94,10 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
 
         var script = new bitcore.Script();
 
-        function addDebugToChunk(_this) {
-            here = Object.assign(this, _this);
+        function addDebugToChunk() {
+            //here = Object.assign(this, _this);
 
-            here.index = here.script_text.indexOf(opcode_arr[i], index); //the index of matched op code is set. The previous value of index is used as an offset to avoid matching the same op code multiple times.
+            index = script_text.indexOf(opcode_arr[i], index); //the index of matched op code is set. The previous value of index is used as an offset to avoid matching the same op code multiple times.
             line = script_text.substr(0, index).split('\n').length; //the line number is extracted by counting the amount of line brakes between the start of the script_text string and the currently matched op code in the script_text string.
 
             //if the opcode is on a new line the position string needs to be shorttend to not contain the previous line.
@@ -224,12 +224,14 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
             }
             else if (/OP_PUSHDATA[1-4]/.test(opcode_arr[i])){
                 if(!(/OP_PUSHDATA3/.test(opcode_arr[i]))){
-                   // if(bitcore.util.js.isHexa()){
+                   // if(bitcore.util.js.isHexa()){ //todo make this test ignor the first two characters '0x'
                         var string = opcode_arr[i] + ' ' + opcode_arr[i+1]+ ' ' +opcode_arr[i+2];
-                        i++;
-                        i++;
                         var pushdataScript = bitcore.Script.fromString(string);
                         script.add(pushdataScript);
+                        addDebugToChunk(this);
+                    //
+                     i++;
+                     i++;
                    // }
                    //  else{
                    //      throw opcode_arr[i+1] + 'is not a valid hex string.';
@@ -489,6 +491,26 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
     Parser.convertStringToBuffer = function (string) {
         var bytes = new bitcore.deps.Buffer(string);
         return bytes;
+    };
+
+
+    /**
+     * converts a string to hex
+     * @param str
+     * @param flag {boolen} if set to true '0x' is added to the beginning of the hex string.
+     * @returns {*}
+     */
+    Parser.convertStringToHex = function (str, flag) {
+        flag = flag || false;
+
+        var hex = '';
+        for(var i=0;i<str.length;i++) {
+            hex += ''+str.charCodeAt(i).toString(16);
+        }
+        if(flag){
+            return '0x'+hex;
+        }
+        return hex;
     };
 
 

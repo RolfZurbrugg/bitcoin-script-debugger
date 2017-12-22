@@ -410,7 +410,7 @@ function loadBaiscDemoScript() {
         'OP_EQUAL';
 
     setInputScript(inputScriptString);
-    setOutPutScript(outputScriptString);
+    setOutputScript(outputScriptString);
 }
 
 /**
@@ -423,14 +423,34 @@ function loadP2PKDemoScript() {
         'OP_CHECKSIG';
 
     setInputScript(inputScriptString);
-    setOutPutScript(outputScriptString);
+    setOutputScript(outputScriptString);
 
     //creating a new tx on the fly.
     setTransaction('privK_0');
 }
 
 /**
- *
+ * OP_PUSHDATA Example script
+ */
+function loadPushDataDemoScript(){
+    var dataString = P$.convertStringToHex('Bitcoin Rocks', true); //true indicates to function, to add 0x to the start of the returned Hex string
+    console.log(dataString);
+    var inputScriptString = 'OP_PUSHDATA2 13 ' +
+        dataString;
+
+    var outputScriptString = 'OP_PUSHDATA2 13 ' +
+        dataString + '\n' +
+        'OP_EQUAL';
+
+    setInputScript(inputScriptString);
+    setOutputScript(outputScriptString);
+
+    //creating a new tx on the fly.
+    setTransaction();
+}
+
+/**
+ * ToDo this doesnt work yet
  */
 function loadP2PKWithLockTimeDemoScript() {
     var myTx = new bitcore.Transaction();
@@ -451,7 +471,7 @@ function loadP2PKWithLockTimeDemoScript() {
         'OP_EQUAL';
 
     setInputScript(inputScriptString);
-    setOutPutScript(outputScriptString);
+    setOutputScript(outputScriptString);
 
     //creating a new tx on the fly.
     setTransaction();
@@ -479,7 +499,7 @@ function loadP2PKHDemoScript() {
         'OP_CHECKSIG';
 
     setInputScript(inputScriptString);
-    setOutPutScript(outputScriptString);
+    setOutputScript(outputScriptString);
 
     setTransaction('privK_0');
 }
@@ -496,7 +516,7 @@ function loadP2SHDemoScript() {
         'OP_EQUAL';
 
     setInputScript(inputScriptString);
-    setOutPutScript(outputScriptString);
+    setOutputScript(outputScriptString);
 }
 
 
@@ -529,7 +549,7 @@ function loadP2SHDemoScript() {
 //
 //     P$.addKeyValuePair('threshold',2); //the threshold defines how many signatures are required.
 //     setInputScript(inputScriptString);
-//     setOutPutScript(outputScriptString);
+//     setOutputScript(outputScriptString);
 //     var privKArr = ['privK_0','privK_00','privK_000'];
 //     setTransactionMultisig(privKArr);
 //     // setTransaction('privK_0');
@@ -553,7 +573,7 @@ function loadP2SHDemoScript() {
 //                                 'OP_CHECKSIG';
 //
 //     setInputScript(inputScriptString);
-//     setOutPutScript(outputScriptString);
+//     setOutputScript(outputScriptString);
 //
 //     setTransaction('privK_0');
 // }
@@ -568,7 +588,7 @@ function loadOPReturnScript() {
         'str_0';
 
     setInputScript(inputScriptString);
-    setOutPutScript(outputScriptString);
+    setOutputScript(outputScriptString);
 }
 
 /**
@@ -589,7 +609,7 @@ function loadMultiSigScript() {
 
     P$.addKeyValuePair('threshold',2); //the threshold defines how many signatures are required.
     setInputScript(inputScriptString);
-    setOutPutScript(outputScriptString);
+    setOutputScript(outputScriptString);
     var privKArr = ['privK_0','privK_00','privK_000'];
     setTransactionMultisig(privKArr);
 }
