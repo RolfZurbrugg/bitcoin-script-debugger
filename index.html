@@ -31,19 +31,19 @@
       </div>
 
       <form class="navbar-form navbar-left">
-        <button type="button" title="Run Script" class="btn btn-default" id="btnRun" onclick="runScript();">
+        <button type="button" title="Run Script" class="btn btn-default green-enabled" id="btnRun">
           <span class="glyphicon glyphicon-play"></span>
         </button>
-        <button type="button" title="Step Backward" class="btn btn-default">
+        <button type="button" title="Step Backward" class="btn btn-default" id="btnStepBackward">
           <span class="glyphicon glyphicon-step-backward"></span>
         </button>
-        <button type="button" title="Step Forward" class="btn btn-default" id="btnStepForward" onclick="stepForwardScript();">
+        <button type="button" title="Step Forward" class="btn btn-default" id="btnStepForward">
           <span class="glyphicon glyphicon-step-forward"></span>
         </button>
-        <button type="button" title="Stop Execution" class="btn btn-default" id="btnStop" onclick="stopScript();">
+        <button type="button" title="Stop Execution" class="btn btn-default red-enabled" id="btnStop">
           <span class="glyphicon glyphicon-stop"></span>
         </button>
-        <button type="button" title="Auto Format" class="btn btn-default" style="margin-left: 15px" id="btnAutoFormat" onclick="autoFormatScript(); this.blur();">
+        <button type="button" title="Auto Format" class="btn btn-default" style="margin-left: 15px" id="btnAutoFormat">
           <span class="glyphicon glyphicon-align-left"></span>
         </button>
       </form>
@@ -81,16 +81,12 @@
             </form>
             <div class="clearfix"></div>
           </div>
-          <div class="panel-body editor">
-            <textarea class="form-control" rows="5" id="inputScript">OP_1 OP_1 OP_ADD</textarea>
-          </div>
+          <textarea class="form-control" rows="5" id="inputScript">OP_1 OP_1 OP_ADD</textarea>
         </div>
 
         <div class="panel panel-default">
           <div class="panel-heading">Output Script</div>
-          <div class="panel-body editor">
-            <textarea class="form-control" rows="5" id="outputScript">OP_2 OP_EQUAL</textarea>
-          </div>
+          <textarea class="form-control" rows="5" id="outputScript">OP_2 OP_EQUAL</textarea>
         </div>
 
         <div class="alert alert-success hidden">
@@ -111,7 +107,7 @@
             Execution Stack
             <div class="clearfix"></div>
           </div>
-          <div class="panel-body" style="overflow:auto; height: 211px;">
+          <div style="overflow:auto; height: 211px;">
             <table class="table table-striped" id="stack">
               <col width="80">
               <thead>
@@ -132,7 +128,7 @@
             Script Variables
             <div class="clearfix"></div>
           </div>
-          <div class="panel-body" style="overflow:auto; height: 211px;">
+          <div style="height: 211px; overflow: auto;">
             <table class="table table-striped">
               <col width="80">
               <thead>
@@ -151,7 +147,6 @@
           </div>
         </div>
       </div>
-
     </div>
     <!-- /.row -->
 
@@ -182,7 +177,6 @@
   <script src="js/jQueryExtensions.js"></script>
   <script src="js/parser.js"></script>
   <script src="js/accesStack.js"></script>
-  <script src="old/webpage/prototypingWithTXSigneaturs.js"></script> <!-- todo remove this -->
   <script src="js/codeMirrorExtensions.js"></script>
   <script src="js/app.js"></script>
 

@@ -35,7 +35,24 @@ body {
   background-color: khaki;
 }
 
+.green-enabled:enabled {
+  color: darkgreen;
+}
+
+.red-enabled:enabled {
+  color: darkred;
+}
+
 /* Customize Bootstrap */
+
+.panel {
+  margin-bottom: 10px;
+}
+
+.col-md-4, .col-md-8 {
+  padding-left: 5px;
+  padding-right: 5px;
+}
 
 .navbar-default .navbar-nav > li > a:hover {
   background-color: #efefef;
