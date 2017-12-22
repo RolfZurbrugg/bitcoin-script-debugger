@@ -1,31 +1,117 @@
-
-
 (function () {
+    // Define a new mode for Bitcoin Script because this mode
+    // is not supported by the CodeMirror library.
+    //
+    // The code is heavily based on the vbscript mode implementation.
+    CodeMirror.defineMode("script", function (conf, parserConf) {
 
-    // https://github.com/crm416/script/blob/master/live-editor/code-mirror-editor.jsx
-    // Syntax highlighter for Bitcoin Script
-    CodeMirror.defineSimpleMode('script', {
-        start: [
-            // The regex matches the token, the token property contains the type
-            { regex: /([0-9]|[A-F]|[a-f])+\b/i, token: 'number' },
-            { regex: /OP\_(IF|NOTIF|ELSE)\b/i, token: 'keyword', indent: true },
-            { regex: /OP\_(ENDIF)\b/i, token: 'keyword', dedent: true },
-            { regex: /OP\_(VERIFY|EQUALVERIFY|RETURN|CHECKSIGVERIFY|CHECKMULTISIGVERIFY)\b/i, token: 'keyword' },
-            { regex: /OP\_(.+?)\b/i, token: 'variable' },
-        ],
-    });
-
-    CodeMirror.extendMode("script", {
-        newlineAfterToken: function (type, content, textAfter) {
-            return true;
-        },
-
-        tokenToUpperCase: function(type, content) {
-            return type == "variable" || type == "keyword";
+        function wordRegexp(words) {
+            return new RegExp("^((" + words.join(")|(") + "))\\b", "i");
         }
+
+        var keywords = /OP\_(.+?)\b/i
+        var opening = /OP\_(IF|NOTIF)\b/i
+        var middle = /OP\_ELSE\b/i
+        var closing = /OP\_ENDIF\b/i
+
+        // tokenizers
+        function tokenBase(stream, state) {
+            if (stream.eatSpace()) {
+                return 'space';
+            }
+
+            if (stream.match(opening)) {
+                state.currentIndent++;
+                return 'keyword';
+            }
+
+            if (stream.match(middle)) {
+                return 'keyword';
+            }
+
+            if (stream.match(closing)) {
+                state.currentIndent--;
+                return 'keyword';
+            }
+
+            if (stream.match(keywords)) {
+                return 'variable';
+            }
+
+            // Handle non-detected items
+            stream.next();
+
+            return 'error';
+        }
+
+        function tokenStringFactory(delimiter) {
+            var singleline = delimiter.length == 1;
+            var OUTCLASS = 'string';
+
+            return function (stream, state) {
+                while (!stream.eol()) {
+                    stream.eatWhile(/[^'"]/);
+                    if (stream.match(delimiter)) {
+                        state.tokenize = tokenBase;
+                        return OUTCLASS;
+                    } else {
+                        stream.eat(/['"]/);
+                    }
+                }
+                if (singleline) {
+                    if (parserConf.singleLineStringErrors) {
+                        return ERRORCLASS;
+                    } else {
+                        state.tokenize = tokenBase;
+                    }
+                }
+                return OUTCLASS;
+            };
+        }
+
+        var external = {
+            startState: function () {
+                return {
+                    tokenize: tokenBase,
+                    lastToken: null,
+                    currentIndent: 0,
+                };
+            },
+
+            token: function (stream, state) {
+                var style = state.tokenize(stream, state);
+                state.lastToken = { style: style, content: stream.current() };
+
+                if (style === 'space') {
+                    style = null;
+                }
+                return style;
+            },
+
+            indent: function (state, textAfter) {
+                var trueText = textAfter.replace(/^\s+|\s+$/g, '');
+                if (trueText.match(closing) || trueText.match(middle)) {
+                    return conf.indentUnit * (state.currentIndent - 1);
+                }
+                if (state.currentIndent < 0) {
+                    return 0;
+                }
+                return state.currentIndent * conf.indentUnit;
+            },
+
+            newlineAfterToken: function (type, content, textAfter) {
+                return true;
+            },
+
+            tokenToUpperCase: function (type, content) {
+                return type == "variable" || type == "keyword";
+            }
+        };
+
+        return external;
     });
 
-    // http://codemirror.net/2/lib/util/formatting.js
+    // http://codemirror.net/2/lib/util/formatting.js with some modifications
     // Applies automatic formatting to the specified range
     CodeMirror.defineExtension("autoFormatRange", function (from, to) {
         var cm = this;
@@ -46,7 +132,7 @@
                 var inner = CodeMirror.innerMode(outer, state);
                 var style = outer.token(stream, state), cur = stream.current();
                 stream.start = stream.pos;
-                if(/\S/.test(cur) && inner.mode.tokenToUpperCase(style, cur)){
+                if (/\S/.test(cur) && inner.mode.tokenToUpperCase(style, cur)) {
                     cur = cur.toUpperCase();
                 }
                 if (!atSol || /\S/.test(cur)) {
@@ -64,8 +150,9 @@
         cm.operation(function () {
             out = out.replace(/^\s+|\s+$/g, '');
             cm.replaceRange(out, from, to);
-            for (var cur = from.line + 1, end = from.line + lines; cur <= end; ++cur)
+            for (var cur = from.line + 1, end = from.line + lines; cur <= end; ++cur){
                 cm.indentLine(cur, "smart");
+            }
         });
     });
 })();
