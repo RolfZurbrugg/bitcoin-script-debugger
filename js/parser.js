@@ -79,8 +79,17 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
         return new Parser.init(script_text); //ToDo why new parser
     };
 
+    Parser.scriptCount = 0;
+
+    Parser.resetScriptCount = function () {
+        Parser.scriptCount=0;
+    };
+
 
     Parser.init = function (script_text) {
+
+        Parser.scriptCount++;
+        console.log(Parser.scriptCount)
 
         var positionstring = script_text;
 
@@ -129,7 +138,8 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
             //the debug attribute is added to the script chunk.
             script.chunks[script.chunks.length - 1].debug = {
                 start: {line: line -1, ch: index2},
-                end: {line: line -1 , ch: index2 + opcode_arr[i].length}
+                end: {line: line -1 , ch: index2 + opcode_arr[i].length},
+                script: Parser.scriptCount
             };
 
             index += opcode_arr[i].length; //index is set to the index corresponding to the end of the matched op code in the script_text
@@ -599,6 +609,7 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
     console.log('variable map initialized');
 
 })();
+
 
 
 // (function () {
