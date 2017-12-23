@@ -57,5 +57,11 @@ The User Interface definition is implemented in the index.html file and styled u
 
 The Application Layer is responsible for what is actually shown on the User Interface. It controls the appeareance and behaviour of the user controls and delegates actions down to the next layers like evaluation of the bitcoin scripts. Error handling is also done in the Application Layer.
 
+#### Script Parser and Debug Layer
 
+The bitcore library itself does not support debugging of scripts. The library itself can simple execute a script and return its final result. In order to be able to debug scripts a separate Script Parser is used together with a Debug Layer. The custom Script Parser allows for using custom variables and mapping of the opcodes to their corresponding positions in the text editor. The Debug Layer hooks itself into the bitcore interpreter and saves a copy of the actual stack after each executed step.
+
+#### Bitcoin Script Interpreter
+
+At the core of the IDE lays the Bitcoin Script Interpreter which is only a small part of the bitcore lib. More details about the bitcore lib itself can be found here: http://www.bitcore.io.
 
