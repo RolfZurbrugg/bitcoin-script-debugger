@@ -4,6 +4,7 @@ The Bitcoin Script Debugger is a web-based IDE that allows to run and debug bitc
 
 ## Feature Overview
 
+* Easy to use user interface
 * Syntax highlighting
 * Automatic code formatting
 * Step-by-step debugging
