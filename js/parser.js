@@ -107,9 +107,15 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
         /**
          * extra whitespaces and new line characters need to be removed, before the script is split.
          */
+
+        var script_text_cleaned =script_text;
+
         //remove brackets '<' '>'
-        var script_text_cleaned =script_text.replace(/(\u003C)+/, ''); // match \u003C = <
-        script_text_cleaned = script_text_cleaned.replace(/(\u003E)+/, ''); //\u003E = >
+        while(script_text_cleaned.includes('\u003C') || script_text_cleaned.includes('\u003E') ){
+            script_text_cleaned=  script_text_cleaned.replace(/(\u003C)+/, ''); // match \u003C = <
+            script_text_cleaned = script_text_cleaned.replace(/(\u003E)+/, ''); //\u003E = >
+        }
+
 
         //remove all line brakes '\n' and replace them with whitespaces
         script_text_cleaned = script_text_cleaned.replace('\n', ' ');
