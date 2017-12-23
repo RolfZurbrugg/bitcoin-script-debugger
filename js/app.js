@@ -769,7 +769,8 @@ function setTransaction(privKStr, option, sigVar) {
     var tx = P$.getValueByKey('tx');
 
     if (signBool) {
-        var sigArray = tx.getSignatures(P$.getValueByKey(privKStr), option);
+        var privateKey = P$.getValueByKey(privKStr);
+        var sigArray = tx.getSignatures(privateKey, option);
         var sig = sigArray[0]; //at the moment only one signature is supported
         P$.addKeyValuePair(sigVar, sig);
         console.log(sigVar);
