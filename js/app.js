@@ -239,7 +239,7 @@ function removeSig() {
  */
 function getInputScript() {
     var doc = cmInputScript.getDoc();
-    return doc.getValue().toUpperCase();
+    return doc.getValue();
 }
 
 /**
@@ -256,7 +256,7 @@ function setInputScript(scriptString) {
  */
 function getOutputScript() {
     var doc = cmOutputScript.getDoc();
-    return doc.getValue().toUpperCase();
+    return doc.getValue();
 }
 
 /**
