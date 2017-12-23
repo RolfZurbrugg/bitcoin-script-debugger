@@ -2,7 +2,7 @@
 
 The Bitcoin Script Debugger is a web-based IDE that allows to run and debug bitcoin scripts in a standalone environment.
 
-![alt text](https://github.com/RolfZurbrugg/bitcoin-script-debugger/blob/master/doc/ide.png "Screenshot of the IDE")
+![alt text](https://github.com/RolfZurbrugg/bitcoin-script-debugger/blob/master/doc/ide2.png "Screenshot of the IDE")
 
 ## Feature Overview
 
@@ -11,6 +11,7 @@ The Bitcoin Script Debugger is a web-based IDE that allows to run and debug bitc
 * Automatic code formatting
 * Step-by-step debugging
 * Predefined Script Variables for experimenting
+* Check if a script is standard or not
 
 ## User Guide
 
@@ -55,6 +56,12 @@ To use them in your script simply write their corresponding name in curly brakte
 ### Signing a Transaction
 
 In order to use OP_CHECKSIG...
+
+### Check if a script is standard
+
+In the header of each editor pane is a Check Standard button. You can click this button to check if the given script is a standard script or not:
+
+![alt text](https://github.com/RolfZurbrugg/bitcoin-script-debugger/blob/master/doc/btnCheckStandard2.png "Check Standard button")
 
 ## Technical Overview
 
