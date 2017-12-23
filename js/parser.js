@@ -635,7 +635,7 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
                j++;
             }
         }
-        return variableArray;
+        return userVariableArray;
     };
 
 
