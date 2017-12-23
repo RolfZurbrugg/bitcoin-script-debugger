@@ -17,15 +17,15 @@ The IDE is either in one of two modes: The Edit mode or Debug mode.
 
 While being in the Edit mode, you can edit both the input and output script. The IDE comes with an auto formatting feature that allows you to automatically format your script so that they look nicely and can be better read. To format your scripts simply click on the Auto Format button:
 
-![alt text](https://github.com/RolfZurbrugg/bitcoin-script-debugger/blob/master/readme-res/btnAutoFormatScript.png "Auto Format button")
+![alt text](https://github.com/RolfZurbrugg/bitcoin-script-debugger/blob/master/doc/btnAutoFormatScript.png "Auto Format button")
 
 To enter the debug mode you can press the Run button which executes the script and shows the final stack after both scripts have been executed (you will still be able to step through the script though):
 
-![alt text](https://github.com/RolfZurbrugg/bitcoin-script-debugger/blob/master/readme-res/btnRunScript.png "Run button")
+![alt text](https://github.com/RolfZurbrugg/bitcoin-script-debugger/blob/master/doc/btnRunScript.png "Run button")
 
 Or you can start debugging your script from the beginning by simply pressing on the Step Forward button which execute the scripts step by step:
 
-![alt text](https://github.com/RolfZurbrugg/bitcoin-script-debugger/blob/master/readme-res/btnStepForwardScript.png "Run button")
+![alt text](https://github.com/RolfZurbrugg/bitcoin-script-debugger/blob/master/doc/btnStepForwardScript.png "Run button")
 
 ### Debug Mode
 
@@ -33,13 +33,13 @@ When you have entered the Debug mode, you cannot edit or format the scripts anym
 
 You can Step Forward with the Step Forward button as already mentiond before. The Step Backward button allows you to go back to the previous execution step:
 
-![alt text](https://github.com/RolfZurbrugg/bitcoin-script-debugger/blob/master/readme-res/btnStepBackwardScript.png "Step Backward button")
+![alt text](https://github.com/RolfZurbrugg/bitcoin-script-debugger/blob/master/doc/btnStepBackwardScript.png "Step Backward button")
 
 Inside the script editors the Opcode that gets executed next when you press the Step Forward button is highlighted. This doesn't work for the Step Backward button though.
 
 To go back into the Edit mode simply click on the Stop button:
 
-![alt text](https://github.com/RolfZurbrugg/bitcoin-script-debugger/blob/master/readme-res/btnStopScript.png "Stop button")
+![alt text](https://github.com/RolfZurbrugg/bitcoin-script-debugger/blob/master/doc/btnStopScript.png "Stop button")
 
 ## Technical Overview
 
@@ -47,7 +47,7 @@ To go back into the Edit mode simply click on the Stop button:
 
 The Bitcoin Script Debugger builts on top of the JavaScript Bitcore library from bitcore.io and is roughly composed of the following layers:
 
-![alt text](https://github.com/RolfZurbrugg/bitcoin-script-debugger/blob/master/readme-res/architecture.png "Architectural Overview")
+![alt text](https://github.com/RolfZurbrugg/bitcoin-script-debugger/blob/master/doc/architecture.png "Architectural Overview")
 
 #### User Interface
 
