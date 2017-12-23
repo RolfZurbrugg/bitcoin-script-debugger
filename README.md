@@ -44,6 +44,14 @@ To go back into the Edit mode simply click on the Stop button:
 
 ![alt text](https://github.com/RolfZurbrugg/bitcoin-script-debugger/blob/master/doc/btnStopScript.png "Stop button")
 
+### Script Variables
+
+The Bitcoin Script Debugger includes some predefined variables to experiment with. You can see all of them in the right bottom pane of the IDE:
+
+![alt text](https://github.com/RolfZurbrugg/bitcoin-script-debugger/blob/master/doc/variables.png "Variables").
+
+To use them in your script simply write their corresponding name in curly braktes like so: `<sig_0> <pubK_0> OP_CHECKSIG`.
+
 ## Technical Overview
 
 ### Architecture
