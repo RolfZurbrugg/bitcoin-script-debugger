@@ -5,10 +5,6 @@
     // The code is based on the vbscript mode implementation.
     CodeMirror.defineMode("script", function (conf, parserConf) {
 
-        function wordRegexp(words) {
-            return new RegExp("^((" + words.join(")|(") + "))\\b", "i");
-        }
-
         var keywords = /OP\_(.+?)\b/i
         var opening = /OP\_(IF|NOTIF)\b/i
         var middle = /OP\_ELSE\b/i
