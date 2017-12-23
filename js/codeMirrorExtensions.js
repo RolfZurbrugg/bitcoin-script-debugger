@@ -2,7 +2,7 @@
     // Define a new mode for Bitcoin Script because this mode
     // is not supported by the CodeMirror library.
     //
-    // The code is heavily based on the vbscript mode implementation.
+    // The code is based on the vbscript mode implementation.
     CodeMirror.defineMode("script", function (conf, parserConf) {
 
         function wordRegexp(words) {
@@ -13,8 +13,9 @@
         var opening = /OP\_(IF|NOTIF)\b/i
         var middle = /OP\_ELSE\b/i
         var closing = /OP\_ENDIF\b/i
+        var literals = /^(0x|0X)?[a-fA-F0-9]+$/i
 
-        // tokenizers
+        // tokenizer
         function tokenBase(stream, state) {
             if (stream.eatSpace()) {
                 return 'space';
@@ -22,51 +23,30 @@
 
             if (stream.match(opening)) {
                 state.currentIndent++;
-                return 'keyword';
+                return 'flowcontrol';
             }
 
             if (stream.match(middle)) {
-                return 'keyword';
+                return 'flowcontrol';
             }
 
             if (stream.match(closing)) {
                 state.currentIndent--;
+                return 'flowcontrol';
+            }
+
+            if(stream.match(keywords)){
                 return 'keyword';
             }
 
-            if (stream.match(keywords)) {
-                return 'variable';
+            if (stream.match(literals)) {
+                return 'string';
             }
 
             // Handle non-detected items
             stream.next();
 
             return 'error';
-        }
-
-        function tokenStringFactory(delimiter) {
-            var singleline = delimiter.length == 1;
-            var OUTCLASS = 'string';
-
-            return function (stream, state) {
-                while (!stream.eol()) {
-                    stream.eatWhile(/[^'"]/);
-                    if (stream.match(delimiter)) {
-                        state.tokenize = tokenBase;
-                        return OUTCLASS;
-                    } else {
-                        stream.eat(/['"]/);
-                    }
-                }
-                if (singleline) {
-                    if (parserConf.singleLineStringErrors) {
-                        return ERRORCLASS;
-                    } else {
-                        state.tokenize = tokenBase;
-                    }
-                }
-                return OUTCLASS;
-            };
         }
 
         var external = {
@@ -100,11 +80,11 @@
             },
 
             newlineAfterToken: function (type, content, textAfter) {
-                return true;
+                return type != 'error';
             },
 
             tokenToUpperCase: function (type, content) {
-                return type == "variable" || type == "keyword";
+                return type == "flowcontrol" || type == "keyword";
             }
         };
 

@@ -78,3 +78,6 @@ body {
 .CodeMirror {
   height: 170px;
 }
+
+.cm-s-default .cm-flowcontrol {color: #00f;}
+.cm-s-default .cm-keyword {color: #000;}

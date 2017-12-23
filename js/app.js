@@ -60,6 +60,7 @@ function init() {
         this.blur();
     });
 
+    updateVariablesTable();
     handleState();
 }
 
@@ -73,8 +74,8 @@ function runScript() {
         stepIndex = stackArray.length - 1;
     }
 
-    markActiveToken();
-    displayStackTable(stackArray, stepIndex);
+    markNextToken();
+    updateStackTable(stackArray, stepIndex);
     handleState();
 }
 
@@ -104,8 +105,8 @@ function stepForwardScript() {
         stepIndex++;
     }
 
-    markActiveToken();
-    displayStackTable(stackArray, stepIndex);
+    markNextToken();
+    updateStackTable(stackArray, stepIndex);
     handleState();
 }
 
@@ -118,8 +119,8 @@ function stepBackwardScript() {
         stepIndex--;
     }
 
-    markActiveToken();
-    displayStackTable(stackArray, stepIndex);
+    markNextToken();
+    updateStackTable(stackArray, stepIndex);
     handleState();
 }
 
@@ -175,7 +176,7 @@ function evaluateScript() {
     return true; // evaluation was successfull
 }
 
-function displayStackTable(stackArray, index) {
+function updateStackTable(stackArray, index) {
     clearStackTable();
     var stack = stackArray[index];
     for (var i = 1; i < stack.length; i++) {
@@ -191,14 +192,27 @@ function clearStackTable() {
     $("#stack").find("tr:gt(0)").remove();
 }
 
-function markActiveToken() {
+function updateVariablesTable() {
+    clearVariablesTable();
+    var variables = P$.getVariableMapAsArray();
+    console.log(variables);
+}
+
+function clearVariablesTable() {
+    $("#variables").find("tr:gt(0)").remove();
+}
+
+function markNextToken() {
     if (mark) {
         mark.clear();
     }
 
-    var debugInfo = stackArray[stepIndex][0];
-    var doc = cmInputScript.getDoc();
-    mark = doc.markText(debugInfo.start, debugInfo.end, { className: "active-token" });
+    if (stepIndex < stackArray.length - 1) { // if there is a next token
+        var debugInfo = stackArray[stepIndex + 1][0]; // mark next token
+        var doc = (debugInfo.script == 1 ? cmInputScript : cmOutputScript).getDoc(); // beautiful
+
+        mark = doc.markText(debugInfo.start, debugInfo.end, { className: "active-token" });
+    }
 }
 
 function getSelectedPrivateKey() {
@@ -225,7 +239,7 @@ function removeSig() {
  */
 function getInputScript() {
     var doc = cmInputScript.getDoc();
-    return doc.getValue();
+    return doc.getValue().toUpperCase();
 }
 
 /**
@@ -242,7 +256,7 @@ function setInputScript(scriptString) {
  */
 function getOutputScript() {
     var doc = cmOutputScript.getDoc();
-    return doc.getValue();
+    return doc.getValue().toUpperCase();
 }
 
 /**
@@ -541,7 +555,7 @@ function loadP2PKWithLockTimeDemoScript() {
     console.log(tx.getLockTime());
 
     //set the flag to enable OP_CHECKLOCKTIMEVERIFY in accordance to bip 65
-    P$.addKeyValuePair('interpreterFlags',bitcore.Script.Interpreter.SCRIPT_VERIFY_CHECKLOCKTIMEVERIFY);
+    P$.addKeyValuePair('interpreterFlags', bitcore.Script.Interpreter.SCRIPT_VERIFY_CHECKLOCKTIMEVERIFY);
 }
 
 /**
