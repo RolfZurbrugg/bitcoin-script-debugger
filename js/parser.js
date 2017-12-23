@@ -79,10 +79,14 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
         return new Parser.init(script_text); //ToDo why new parser
     };
 
-    Parser.scriptCount = 0;
+    var scriptCount = 0;
 
     Parser.resetScriptCount = function () {
-        Parser.scriptCount=0;
+        scriptCount=0;
+    };
+
+    Parser.getScriptCount = function () {
+        return scriptCount;
     };
 
 
@@ -139,7 +143,7 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
             script.chunks[script.chunks.length - 1].debug = {
                 start: {line: line -1, ch: index2},
                 end: {line: line -1 , ch: index2 + opcode_arr[i].length},
-                script: Parser.scriptCount
+                script: scriptCount
             };
 
             index += opcode_arr[i].length; //index is set to the index corresponding to the end of the matched op code in the script_text
@@ -251,6 +255,11 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
             }
             else if (/OP_PUSHDATA[1-4]/.test(opcode_arr[i])){
                 if(!(/OP_PUSHDATA3/.test(opcode_arr[i]))){
+                    // automaicaly add 0x to the start of the hex string, if it is not allready present
+                    if(!bitcore.util.js.isHexa(opcode_arr[i+2].substring(2, opcode_arr[i+2].length))){
+                        opcode_arr[i+2] = '0x'+ opcode_arr[i+2];
+                    }
+
                     // it is tested if the string is in hexadecimal form, bitcore-lib requiers hex strings to start with
                     // 0x so the first 2 characters of the string are removed and the rest is tested if it is in hex form
                     if(bitcore.util.js.isHexa(opcode_arr[i+2].substring(2, opcode_arr[i+2].length))){
