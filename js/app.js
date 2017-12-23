@@ -186,6 +186,14 @@ function unsignTransaction() {
 }
 
 /**
+ * Loads the selected demo script.
+ */
+function loadSelectedDemoScript() {
+    var demoScriptName = $("#sctDemoScript").val();
+    alert(demoScriptName);
+}
+
+/**
  * Handles the UI state by enabling or disabling user controls.
  */
 function handleState() {
@@ -532,10 +540,14 @@ function getPrivatKeyFromTable(num) {
     return privateKey;
 }
 
+function loadDemoScript(name) {
+    window["load" + name + "DemoScript"]();
+}
+
 /**
  *
  */
-function loadBaiscDemoScript() {
+function loadBasicDemoScript() {
     var inputScriptString = 'OP_1\n' +
         'OP_1\n' +
         'OP_ADD';
@@ -642,7 +654,6 @@ function loadP2PKHDemoScript() {
     setTransaction('privK_0');
 }
 
-
 /**
  *
  */
@@ -656,65 +667,6 @@ function loadP2SHDemoScript() {
     setInputScript(inputScriptString);
     setOutputScript(outputScriptString);
 }
-
-
-/**
- * this script causes following error :(
- * bitcore.ErrorInvalidState: Invalid state: Provided public keys don't hash to the provided output
- */
-// function  loadP2SHMultisigDemoScript() {
-//     var redeemScriptString = '2\n' +
-//         'pubK_0\n' +
-//         'pubK_00\n' +
-//         'pubK_000\n' +
-//         '3\n' +
-//         'OP_CHECKMULTISIG';
-//
-//     var redeemScript = P$(redeemScriptString);
-//     var redeemScriptBuffer =redeemScript.toBuffer();
-//     P$.addKeyValuePair('redeemScript',redeemScriptBuffer);
-//     var redeemScriptHash = createHash(redeemScriptBuffer,'sha256ripemd160');
-//     P$.addKeyValuePair('redeemScriptHash',redeemScriptHash);
-//
-//     var inputScriptString = 'OP_0\n' +
-//         'sig_10\n' +
-//         'sig_11\n' +
-//         'redeemScript';
-//
-//     var outputScriptString = 'OP_HASH160\n' +
-//         'redeemScriptHash\n' +
-//         'OP_EQUAL';
-//
-//     P$.addKeyValuePair('threshold',2); //the threshold defines how many signatures are required.
-//     setInputScript(inputScriptString);
-//     setOutputScript(outputScriptString);
-//     var privKArr = ['privK_0','privK_00','privK_000'];
-//     setTransactionMultisig(privKArr);
-//     // setTransaction('privK_0');
-//     // var tx = P$.getValueByKey('tx');
-//     // var sigArray = tx.getSignatures(P$.getValueByKey('privK_00'), bitcore.crypto.Signature.SIGHASH_ALL);
-//     // var sig = sigArray[0];
-//     // P$.addKeyValuePair('sig_00',sig);
-// }
-
-/**
- * this doesnt work, as bitcore-lib doesnt allow the signing of non standard transacrtions.
- */
-// function loadNonStandardScript() {
-//     var inputScriptString =     'sig_0\n' +
-//                                 'pubK_0\n' +
-//                                 'str_0';
-//
-//     var outputScriptString =    'OP_HASH160\n' +
-//                                 'hash_00\n' +
-//                                 'OP_EQUALVERIFY\n' +
-//                                 'OP_CHECKSIG';
-//
-//     setInputScript(inputScriptString);
-//     setOutputScript(outputScriptString);
-//
-//     setTransaction('privK_0');
-// }
 
 /**
  *
@@ -784,7 +736,7 @@ function setTransactionMultisig(privKStrArr, option) {
 
 function setTransaction(privKStr, option, sigVar) {
 
-    switch (option){
+    switch (option) {
         case undefined:
             option = bitcore.crypto.Signature.SIGHASH_ALL;
             break;
