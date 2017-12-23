@@ -107,8 +107,11 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
         /**
          * extra whitespaces and new line characters need to be removed, before the script is split.
          */
+        //remove brackets '<' '>'
+        var script_text_cleaned =script_text.replace()
+
         //remove all line brakes '\n' and replace them with whitespaces
-        var script_text_cleaned = script_text.replace('\n', ' ');
+        script_text_cleaned = script_text_cleaned.replace('\n', ' ');
 
         //now remove all excess whitespaces. (\s)+ this regex matches one or more whitespaces.
         script_text_cleaned = script_text_cleaned.replace(/(\s)+/, ' ');
@@ -632,7 +635,7 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
                j++;
             }
         }
-        console.log(userVariableArray);
+        return variableArray;
     };
 
 
