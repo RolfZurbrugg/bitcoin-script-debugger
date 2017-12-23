@@ -44,9 +44,10 @@ var _countStackArray = 0; //the _countStackArray is needed in orded to fill the 
 
         //evaluate the scripts and the functions
         var nin = undefined;
-        P$.resetCount();
+        P$.resetScriptCount();
         var result  = bitcore.Script.Interpreter().verify(inputScript, outputScript, P$.getValueByKey('tx'), nin,P$.getValueByKey('interpreterFlags') );
-        P$.resetCount();
+        P$.resetScriptCount();
+        P$.addKeyValuePair('interpreterFlags',undefined);
         console.log(_countStackArray);
         console.log(result);
         return Parser.prototype.stackArray;
