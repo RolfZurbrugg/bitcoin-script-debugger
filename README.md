@@ -52,6 +52,10 @@ The Bitcoin Script Debugger includes some predefined variables to experiment wit
 
 To use them in your script simply write their corresponding name in curly braktes like so: `<sig_0> <pubK_0> OP_CHECKSIG`.
 
+### Signing a Transaction
+
+In order to use OP_CHECKSIG...
+
 ## Technical Overview
 
 ### Architecture
