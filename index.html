@@ -18,7 +18,7 @@
   <link rel="stylesheet" href="vendor/codemirror/theme/3024-day.css">
 
   <!-- Custom styles for this template -->
-  <link href="css/blog-home.css" rel="stylesheet">
+  <link href="css/app.css" rel="stylesheet">
 
 </head>
 
@@ -31,7 +31,7 @@
         <span class="navbar-brand" href="#">Bitcoin Script Debugger</span>
       </div>
 
-      <form class="navbar-form navbar-left">
+      <form class="navbar-form navbar-left" onsubmit="return false;">
         <button type="button" title="Run Script" class="btn btn-default green-enabled" id="btnRun">
           <span class="glyphicon glyphicon-play"></span>
         </button>
@@ -86,13 +86,25 @@
         <div class="panel panel-default">
           <div class="panel-heading">
             scriptSig
+
+            <div class=" margin-left-15 pull-right">
+              <button class="btn btn-default btn-xs" id="btnCheckInputScript">Check Standard</button>
+              <span id="inputScriptIsStandardFeedback" class="glyphicon" style="width: 18px"></span>
+            </div>
+
           </div>
           <textarea class="form-control" rows="5" id="inputScript">OP_1 OP_1 OP_ADD</textarea>
         </div>
         <div class="panel panel-default">
           <div class="panel-heading">
             scriptPubKey
-            <form class="form-inline pull-right">
+
+            <div class=" margin-left-15 pull-right">
+              <button class="btn btn-default btn-xs" id="btnCheckOutputScript">Check Standard</button>
+              <span id="outputScriptIsStandardFeedback" class="glyphicon" style="width: 18px"></span>
+            </div>
+
+            <form class="form-inline pull-right" onsubmit="return false;">
               <button class="btn btn-default btn-xs" id="btnUnsignTransaction">Unsign Transaction</button>
               <button class="btn btn-default btn-xs" id="btnSignTransaction">Sign Transaction</button>
               <select class="form-control input-xs" id="sctPrivateKey">
@@ -107,6 +119,7 @@
                 <option>SIGHASH_ANYONECANPAY</option>
               </select>
             </form>
+
             <div class="clearfix"></div>
           </div>
           <textarea class="form-control" rows="5" id="outputScript">OP_2 OP_EQUAL</textarea>
@@ -120,7 +133,7 @@
           <a href="#" class="alert-link" id="alert-error-a">...</a>
         </div>
 
-        <form class="form-inline">
+        <form class="form-inline" onsubmit="return false;">
           <div class="form-group">
             <div class="input-group">
               <select class="form-control" id="sctDemoScript">
@@ -136,7 +149,7 @@
               </select>
             </div>
           </div>
-          <button type="submit" class="btn btn-primary" onclick="loadSelectedDemoScript();">Load Script</button>
+          <button type="input" class="btn btn-primary" onclick="loadSelectedDemoScript();">Load Script</button>
         </form>
 
       </div>

@@ -64,12 +64,22 @@ function init() {
     $("#btnSignTransaction").click(function () {
         signTransaction();
         this.blur();
-    })
+    });
 
     $("#btnUnsignTransaction").click(function () {
         unsignTransaction();
         this.blur();
-    })
+    });
+
+    $("#btnCheckInputScript").click(function () {
+        checkInputScriptIfStandard();
+        this.blur();
+    });
+
+    $("#btnCheckOutputScript").click(function () {
+        checkOutputScriptIfStandard();
+        this.blur();
+    });
 
     updateVariablesTable();
     handleState();
@@ -758,6 +768,7 @@ function createHash(obj, hashType) {
             break;
 
         // following cryptographic functions are available, but are disabled here because they are not used in bitcoin scripts.
+
         // case 'hmac' :
         //     pubKeyHash= bitcore.crypto.Hash.hmac(pubKey.toBuffer());
         //     break;
@@ -789,27 +800,35 @@ function checkIfStandardScript(script) {
 }
 
 /**
- * the signature is generated once the script is run. So evaluating if a script
- * is standard when it contains the variable sig an exception will occur while parsing.
- * so a script containing a signature mus be run befor evaluating.
- * ToDo in order to avoid this, the signature and the transaction would need to be created at the point
- * ToDo in which the button sign is clicked.
+ * Checks if the input script is a standard script.
  */
 function checkInputScriptIfStandard() {
     var scriptString = getInputScript();
     var script = P$(scriptString);
     var isStandard = checkIfStandardScript(script);
-    $('#isInputScriptStandardVal').text(isStandard);
+
+    $("#inputScriptIsStandardFeedback").removeClass();
+    if (isStandard) {
+        $("#inputScriptIsStandardFeedback").addClass("glyphicon glyphicon-ok green");
+    } else {
+        $("#inputScriptIsStandardFeedback").addClass("glyphicon glyphicon-remove red");
+    }
 }
 
 /**
- *
+ * Checks if the output script is a standard script.
  */
 function checkOutputScriptIfStandard() {
     var scriptString = getOutputScript();
     var script = P$(scriptString);
     var isStandard = checkIfStandardScript(script);
-    $('#isOUtputScriptStandardVal').text(isStandard);
+
+    $("#outputScriptIsStandardFeedback").removeClass();
+    if (isStandard) {
+        $("#outputScriptIsStandardFeedback").addClass("glyphicon glyphicon-ok green");
+    } else {
+        $("#outputScriptIsStandardFeedback").addClass("glyphicon glyphicon-remove red");
+    }
 }
 
 /**

@@ -43,6 +43,18 @@ body {
   color: darkred;
 }
 
+.margin-left-15 {
+  margin-left: 15px;
+}
+
+.green {
+  color: green;
+}
+
+.red {
+  color: red;
+}
+
 /* Customize Bootstrap */
 
 .panel {
