@@ -631,7 +631,7 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
                 /(pubK_[0-9])/.test(variableArray[i][0]) || //test for public key variable
                 /(addr_[0-9])/.test(variableArray[i][0]) ||
                 /(hash_[0-9])/.test(variableArray[i][0]) ||
-                /(sig_[0-9])/.test(variableArray[i][0])  ||
+                /(sig_[0-9]*)/.test(variableArray[i][0])  ||
                 /(str_[0-9])/.test(variableArray[i][0])  ||
                 /(^[0-9])/.test(variableArray[i][0])    ||
                 /redeemScript/.test(variableArray[i][0]) ||
@@ -640,7 +640,7 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
             ){
                if(variableArray[i][1] instanceof Uint8Array && !/(sig_[0-9])/.test(variableArray[i][0])){
                    variableArray[i][1] = variableArray[i][1].toString('hex');
-               }else if (/(sig_[0-9])/.test(variableArray[i][0])){
+               }else if (/(sig_[0-9]*)/.test(variableArray[i][0])){
                    variableArray[i][1] = variableArray[i][1].signature.toString();
                }
                 userVariableArray[j]=variableArray[i];
