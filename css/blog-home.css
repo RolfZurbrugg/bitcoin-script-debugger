@@ -73,6 +73,11 @@ body {
   border-left-color: #111111;
 }
 
+.container-fluid {
+  padding-left: 25px;
+  padding-right: 25px;
+}
+
 /* Customize Code Mirror */
 
 .CodeMirror {

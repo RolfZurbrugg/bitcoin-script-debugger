@@ -26,7 +26,7 @@
 
   <!-- Navigation -->
   <nav class="navbar navbar-default navbar-fixed-top">
-    <div class="container">
+    <div class="container-fluid">
       <div class="navbar-header">
         <span class="navbar-brand" href="#">Bitcoin Script Debugger</span>
       </div>
@@ -52,30 +52,45 @@
   </nav>
 
   <!-- Page Content -->
-  <div class="container">
+  <div class="container-fluid">
 
     <hr>
 
     <div class="row">
 
-      <div class="col-md-8">
-        <div class="form-group">
-          <label>Select a Demo Script:</label>
-          <select class="form-control" id="demoScript">
-            <option>SIGHASH_ALL</option>
-            <option>SIGHASH_NONE</option>
-            <option>SIGHASH_SINGLE</option>
-            <option>SIGHASH_ANYONECANPAY</option>
-          </select>
-        </div>
+      <div class="col-md-6 col-sm-push-3">
+
       </div>
 
     </div>
 
     <div class="row">
 
+      <!-- Variables Column -->
+      <div class="col-md-3">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            Script Variables
+            <div class="clearfix"></div>
+          </div>
+          <div style="overflow: auto;">
+            <table class="table table-striped" id="variables">
+              <col width="80">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
       <!-- Editors Column -->
-      <div class="col-md-8">
+      <div class="col-md-6">
         <div class="panel panel-default">
           <div class="panel-heading">
             scriptSig
@@ -113,10 +128,20 @@
         <div class="alert alert-danger hidden" id="alert-error">
           <a href="#" class="alert-link" id="alert-error-a">...</a>
         </div>
+
+        <div class="form-group">
+          <label>Select a Demo Script:</label>
+          <select class="form-control" id="demoScript">
+            <option>SIGHASH_ALL</option>
+            <option>SIGHASH_NONE</option>
+            <option>SIGHASH_SINGLE</option>
+            <option>SIGHASH_ANYONECANPAY</option>
+          </select>
+        </div>
       </div>
 
       <!-- Debug Info Column -->
-      <div class="col-md-4">
+      <div class="col-md-3">
 
         <!-- Execution Stack -->
         <div class="panel panel-default">
@@ -139,26 +164,6 @@
           </div>
         </div>
 
-        <!-- Variables -->
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            Script Variables
-            <div class="clearfix"></div>
-          </div>
-          <div style="height: 460px; overflow: auto;">
-            <table class="table table-striped" id="variables">
-              <col width="80">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Value</th>
-                </tr>
-              </thead>
-              <tbody>
-              </tbody>
-            </table>
-          </div>
-        </div>
       </div>
     </div>
     <!-- /.row -->

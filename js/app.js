@@ -157,8 +157,8 @@ function autoFormatScript() {
 function signTransaction() {
     isTransactionSigned = true;
 
-    var privKey = $("#sctPrivateKey").text();
-    var sigHashType = $("#sctSighashType").text();
+    var privKey = $("#sctPrivateKey option:selected").text();
+    var sigHashType = $("#sctSighashType option:selected").text();
     setTransaction(privKey, sigHashType);
 
     updateVariablesTable();
