@@ -57,6 +57,12 @@ To use them in your script simply write their corresponding name in curly brakte
 
 In order to use OP_CHECKSIG...
 
+### Check if a script is standard
+
+In the header of each editor pane is a Check Standard button. You can click this button to check if the given script is a standard script or not:
+
+![alt text](https://github.com/RolfZurbrugg/bitcoin-script-debugger/blob/master/doc/btnCheckStandard.png "Check Standard button")
+
 ## Technical Overview
 
 ### Architecture
