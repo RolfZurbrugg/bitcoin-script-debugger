@@ -73,4 +73,4 @@ CodeMirror is a powerful text editor that is especially designed for coding. Whi
 
 #### jQuery
 
-There is almost no JavaScript that works without jQuery. Neither does our Bitcoin Script Debugger. jQuery deals with a lot of cross browser compatibility issues and abstracts the interaction with the DOM structure.
+There is almost no JavaScript that works without jQuery. Neither does our Bitcoin Script Debugger. jQuery deals with a lot of cross browser compatibility issues and abstracts the interaction with the DOM structure. More details about jQuery can be found here: https://jquery.com/.
