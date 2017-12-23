@@ -55,7 +55,7 @@ To use them in your script simply write their corresponding name in curly brakte
 
 ### Signing a Transaction
 
-In order to use OP_CHECKSIG...
+In order to use OP_CHECKSIG the scriptPubKey script must be present. After signing the transaction the scriptPubKey script can no longer be edited. A dummy transaction is created in the background and the specified private key from the drop down will be used, to sign the transaction. At this point the user has access to the script variable <sig_0>. 
 
 ### Check if a script is standard
 

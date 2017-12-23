@@ -76,7 +76,7 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
 (function (global) {
 
     var Parser = function (script_text) {
-        return new Parser.init(script_text); //ToDo why new parser
+        return new Parser.init(script_text);
     };
 
     var scriptCount = 0;
@@ -134,37 +134,6 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
 
         var script = new bitcore.Script();
 
-        // todo this function doesn't work.
-        // function addDebugToChunk() {
-        //     //here = Object.assign(this, _this);
-        //
-        //     /**
-        //      * add debug info to current script chunck
-        //      */
-        //
-        //     index = script_text.indexOf(opcode_arr[i], index); //the index of matched op code is set. The previous value of index is used as an offset to avoid matching the same op code multiple times.
-        //     line = script_text.substr(0, index).split('\n').length; //the line number is extracted by counting the amount of line brakes between the start of the script_text string and the currently matched op code in the script_text string.
-        //
-        //     //if the opcode is on a new line the position string needs to be shorttend to not contain the previous line.
-        //     if (positionstring.substring(0, index2 + opcode_arr[i].length).split('\n').length > 1) { //this test if the string up to the end of the currently matched op_codes contains any new line characters.
-        //         index2 = 0;
-        //         positionstring = script_text.substring(index + opcode_arr[i].length, script_text.length); //the position string is shortend to only contain the original string after the currently matched opcode
-        //     }
-        //     else { //the index2 is set to the index of the currently matched op code in the position string.
-        //         index2 = positionstring.indexOf(opcode_arr[i], index2);
-        //     }
-        //
-        //     //the debug attribute is added to the script chunk.
-        //     script.chunks[script.chunks.length - 1].debug = {
-        //         start: {line: line -1, ch: index2},
-        //         end: {line: line -1 , ch: index2 + opcode_arr[i].length},
-        //         script: scriptCount
-        //     };
-        //
-        //     index += opcode_arr[i].length; //index is set to the index corresponding to the end of the matched op code in the script_text
-        //     index2 += opcode_arr[i].length; //index2 is set to the index corresponding to the end of the matched op code in the positionstring
-        //
-        // }
 
         if (script_text === '') { //if a script is empty return a empty script
             return script;
@@ -176,7 +145,7 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
                 /(pubK_[0-9])/.test(opcode_arr[i]) || //test for public key variable
                 /(addr_[0-9])/.test(opcode_arr[i])) {     //test for address
 
-                var variable = P$.getValueByKey(opcode_arr[i]); //ToDo find a better name instead of variable
+                var variable = P$.getValueByKey(opcode_arr[i]);
                 if(variable !== undefined){
                     script.add(variable.toBuffer());
 
@@ -917,53 +886,3 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
 })();
 
 
-
-// (function () {
-//     /**
-//      * Checks a locktime parameter with the transaction's locktime.
-//      * There are two times of nLockTime: lock-by-blockheight and lock-by-blocktime,
-//      * distinguished by whether nLockTime < LOCKTIME_THRESHOLD = 500000000
-//      *
-//      * See the corresponding code on bitcoin core:
-//      * https://github.com/bitcoin/bitcoin/blob/ffd75adce01a78b3461b3ff05bcc2b530a9ce994/src/script/interpreter.cpp#L1129
-//      *
-//      * @param {BN} nLockTime the locktime read from the script
-//      * @return {boolean} true if the transaction's locktime is less than or equal to
-//      *                   the transaction's locktime
-//      */
-//     bitcore.Interpreter.prototype.checkLockTime = function(nLockTime) {
-//
-//         //var myTx = P$.getValueByKey('dummyTx');
-//         // We want to compare apples to apples, so fail the script
-//         // unless the type of nLockTime being tested is the same as
-//         // the nLockTime in the transaction.
-//         if (!(
-//                 (this.tx.nLockTime <  Interpreter.LOCKTIME_THRESHOLD && nLockTime.lt(Interpreter.LOCKTIME_THRESHOLD_BN)) ||
-//                 (this.tx.nLockTime >= Interpreter.LOCKTIME_THRESHOLD && nLockTime.gte(Interpreter.LOCKTIME_THRESHOLD_BN))
-//             )) {
-//             return false;
-//         }
-//
-//         // Now that we know we're comparing apples-to-apples, the
-//         // comparison is a simple numeric one.
-//         if (nLockTime.gt(new BN(this.tx.nLockTime))) {
-//             return false;
-//         }
-//
-//         // Finally the nLockTime feature can be disabled and thus
-//         // CHECKLOCKTIMEVERIFY bypassed if every txin has been
-//         // finalized by setting nSequence to maxint. The
-//         // transaction would be allowed into the blockchain, making
-//         // the opcode ineffective.
-//         //
-//         // Testing if this vin is not final is sufficient to
-//         // prevent this condition. Alternatively we could test all
-//         // inputs, but testing just this input minimizes the data
-//         // required to prove correct CHECKLOCKTIMEVERIFY execution.
-//         if (!this.tx.inputs[this.nin].isFinal()) {
-//             return false;
-//         }
-//
-//         return true;
-//     };
-// })();
