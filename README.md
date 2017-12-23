@@ -39,7 +39,7 @@ Inside the script editors the Opcode that gets executed next when you press the 
 
 To go back into the Edit mode simply click on the Stop button:
 
-![alt text](https://github.com/RolfZurbrugg/bitcoin-script-debugger/blob/master/readme-res/btnStopScript.png "Step Backward button")
+![alt text](https://github.com/RolfZurbrugg/bitcoin-script-debugger/blob/master/readme-res/btnStopScript.png "Stop button")
 
 ## Technical Overview
 
