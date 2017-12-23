@@ -8,6 +8,15 @@
                     $(this).removeAttr("disabled");
                 }
             });
+        },
+        hideIf: function (condition) {
+            return this.each(function () {
+                if (condition) {
+                    $(this).hide();
+                } else {
+                    $(this).show();
+                }
+            });
         }
     })
 })();

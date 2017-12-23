@@ -15,6 +15,7 @@
 
   <!-- Code Mirror -->
   <link rel="stylesheet" href="vendor/codemirror/lib/codemirror.css">
+  <link rel="stylesheet" href="vendor/codemirror/theme/3024-day.css">
 
   <!-- Custom styles for this template -->
   <link href="css/blog-home.css" rel="stylesheet">
@@ -57,14 +58,43 @@
 
     <div class="row">
 
+      <div class="col-md-8">
+        <div class="form-group">
+          <label>Select a Demo Script:</label>
+          <select class="form-control" id="demoScript">
+            <option>SIGHASH_ALL</option>
+            <option>SIGHASH_NONE</option>
+            <option>SIGHASH_SINGLE</option>
+            <option>SIGHASH_ANYONECANPAY</option>
+          </select>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="row">
+
       <!-- Editors Column -->
       <div class="col-md-8">
         <div class="panel panel-default">
           <div class="panel-heading">
             scriptSig
+          </div>
+          <textarea class="form-control" rows="5" id="inputScript">OP_1 OP_1 OP_ADD</textarea>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            scriptPubKey
             <form class="form-inline pull-right">
-              <button class="btn btn-default btn-xs ">Sign</button>
-              <select class="form-control input-xs">
+              <button class="btn btn-default btn-xs" id="btnUnsignTransaction">Unsign Transaction</button>
+              <button class="btn btn-default btn-xs" id="btnSignTransaction">Sign Transaction</button>
+              <select class="form-control input-xs" id="sctPrivateKey">
+                <option>privK_0</option>
+                <option>privK_00</option>
+                <option>privK_000</option>
+              </select>
+              <select class="form-control input-xs" id="sctSighashType">
                 <option>SIGHASH_ALL</option>
                 <option>SIGHASH_NONE</option>
                 <option>SIGHASH_SINGLE</option>
@@ -73,11 +103,6 @@
             </form>
             <div class="clearfix"></div>
           </div>
-          <textarea class="form-control" rows="5" id="inputScript">OP_1 OP_1 OP_ADD</textarea>
-        </div>
-
-        <div class="panel panel-default">
-          <div class="panel-heading">scriptPubKey</div>
           <textarea class="form-control" rows="5" id="outputScript">OP_2 OP_EQUAL</textarea>
         </div>
 
@@ -120,7 +145,7 @@
             Script Variables
             <div class="clearfix"></div>
           </div>
-          <div style="height: 211px; overflow: auto;">
+          <div style="height: 460px; overflow: auto;">
             <table class="table table-striped" id="variables">
               <col width="80">
               <thead>

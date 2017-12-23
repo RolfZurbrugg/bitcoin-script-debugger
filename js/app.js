@@ -8,6 +8,7 @@ var ADDRESS = 3;
 var isDebug = false; // true if debug mode is active
 var stackArray = []; // holds the stack trace of the evalutated script
 var stepIndex = 0; // used to step through the stack array
+var isTransactionSigned = false;
 
 var cmInputScript = null;
 var cmOutputScript = null;
@@ -59,6 +60,16 @@ function init() {
         autoFormatScript();
         this.blur();
     });
+
+    $("#btnSignTransaction").click(function () {
+        signTransaction();
+        this.blur();
+    })
+
+    $("#btnUnsignTransaction").click(function () {
+        unsignTransaction();
+        this.blur();
+    })
 
     updateVariablesTable();
     handleState();
@@ -141,6 +152,30 @@ function autoFormatScript() {
 }
 
 /**
+ * Signs a dummy transaction.
+ */
+function signTransaction() {
+    isTransactionSigned = true;
+
+    var privKey = $("#sctPrivateKey").text();
+    var sigHashType = $("#sctSighashType").text();
+    setTransaction(privKey, sigHashType);
+
+    updateVariablesTable();
+    handleState();
+}
+
+/**
+ * Unsigns the dummy transaction.
+ */
+function unsignTransaction() {
+    isTransactionSigned = false;
+
+    updateVariablesTable();
+    handleState();
+}
+
+/**
  * Handles the UI state by enabling or disabling user controls.
  */
 function handleState() {
@@ -151,8 +186,24 @@ function handleState() {
 
     $("#btnAutoFormat").disableIf(isDebug);
 
+    $("#btnUnsignTransaction").disableIf(!isTransactionSigned);
+    $("#btnSignTransaction").disableIf(isTransactionSigned);
+    $("#sctPrivateKey").disableIf(isTransactionSigned);
+    $("#sctSighashType").disableIf(isTransactionSigned);
+
     cmInputScript.setOption("readOnly", isDebug);
-    cmOutputScript.setOption("readOnly", isDebug);
+    if (isDebug) {
+        cmInputScript.setOption("theme", "3024-day");
+    } else {
+        cmInputScript.setOption("theme", "default");
+    }
+
+    cmOutputScript.setOption("readOnly", isDebug || isTransactionSigned);
+    if (isDebug || isTransactionSigned) {
+        cmOutputScript.setOption("theme", "3024-day");
+    } else {
+        cmOutputScript.setOption("theme", "default");
+    }
 }
 
 /**
