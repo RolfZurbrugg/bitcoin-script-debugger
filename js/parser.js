@@ -631,7 +631,10 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
                 /redeemScriptHash/.test(variableArray[i][0]) ||
                 /lockUntil/.test(variableArray[i][0])
             ){
-               userVariableArray[j]=variableArray[i];
+               if(variableArray[i][1] instanceof Uint8Array){
+                   variableArray[i][1] = variableArray[i][1].toString('hex');
+               }
+                userVariableArray[j]=variableArray[i];
                j++;
             }
         }
