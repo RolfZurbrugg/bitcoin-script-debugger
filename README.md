@@ -51,7 +51,7 @@ The Bitcoin Script Debugger builts on top of the JavaScript Bitcore library from
 
 #### User Interface
 
-The User Interface definition is implemented in the index.html file and styled using the css/app.css file (not shown in the picture).
+The User Interface definition is implemented in the index.html file and is based on the popular CSS Framework Bootstrap 3. Additional styles and modifications of 3rd Party styles have been made in the css/app.css file.
 
 #### Application Layer
 
@@ -65,3 +65,12 @@ The bitcore library itself does not support debugging of scripts. The library it
 
 At the core of the IDE lays the Bitcoin Script Interpreter which is only a small part of the bitcore lib. More details about the bitcore lib itself can be found here: http://www.bitcore.io.
 
+### Other used Libraries
+
+#### CodeMirror
+
+CodeMirror is a powerful text editor that is especially designed for coding. While CodeMirror supports a huge range of languages out of the box, Bitcoin Script or simply called Script is not one of them. So a custom mode (something like a language plugin) had to be implemented in order to support Script. This mode and the auto formatting feature has been implemented in the codeMirrorExtensions.js file. More details about CodeMirror can be found here: https://codemirror.net/.
+
+#### jQuery
+
+There is almost no JavaScript that works without jQuery. Neither does our Bitcoin Script Debugger. jQuery deals with a lot of cross browser compatibility issues and abstracts the interaction with the DOM structure.
