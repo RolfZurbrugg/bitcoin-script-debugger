@@ -2,6 +2,8 @@
 
 The Bitcoin Script Debugger is a web-based IDE that allows to run and debug bitcoin scripts in a standalone environment.
 
+![alt text](https://github.com/RolfZurbrugg/bitcoin-script-debugger/blob/master/doc/ide.png "Screenshot of the IDE")
+
 ## Feature Overview
 
 * Easy to use user interface
