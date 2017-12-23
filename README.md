@@ -50,7 +50,7 @@ To go back into the Edit mode simply click on the Stop button:
 
 The Bitcoin Script Debugger builts on top of the JavaScript Bitcore library from bitcore.io and is roughly composed of the following layers:
 
-![alt text](https://github.com/RolfZurbrugg/bitcoin-script-debugger/blob/master/doc/architecture.png "Architectural Overview")
+![alt text](https://github.com/RolfZurbrugg/bitcoin-script-debugger/blob/master/doc/architectur.png "Architectural Overview")
 
 #### User Interface
 
