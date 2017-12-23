@@ -159,7 +159,17 @@ function signTransaction() {
 
     var privKey = $("#sctPrivateKey option:selected").text();
     var sigHashType = $("#sctSighashType option:selected").text();
-    setTransaction(privKey, sigHashType);
+
+    try {
+        setTransaction(privKey, sigHashType);
+        $("#alert-error").addClass("hidden");
+    } catch (err) {
+        console.log(err);
+        $("#alert-error").removeClass("hidden");
+        $("#alert-error-a").text(err);
+
+        isTransactionSigned = false;
+    }
 
     updateVariablesTable();
     handleState();
