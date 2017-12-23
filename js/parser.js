@@ -163,7 +163,7 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
                     addDebugToChunk(this);
                 }
                 else{
-                    throw opcode_arr[i] + ' is undefined';
+                    throw opcode_arr[i] + ' is undefined. ' + 'Error in script:'+ Parser.scriptCount+' line: '+ line + ' index: '+index2;
                 }
 
             }
@@ -174,7 +174,7 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
                     addDebugToChunk(this);
                 }
                 else{
-                    throw opcode_arr[i] + ' is undefined';
+                    throw opcode_arr[i] + ' is undefined. ' + 'Error in script:'+ Parser.scriptCount+' line: '+ line + ' index: '+index2;
                 }
             }
             else if (/(sig_[0-9])/.test(opcode_arr[i])) { //test for key word sig_<number>
@@ -190,7 +190,7 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
                     addDebugToChunk(this);
                 }
                 else{
-                    throw opcode_arr[i] + ' is undefined';
+                    throw opcode_arr[i] + ' is undefined. ' + 'Error in script:'+ Parser.scriptCount+' line: '+ line + ' index: '+index2;
                 }
             }
             else if (/(str_[0-9])/.test(opcode_arr[i])) { // test for a string variable
@@ -201,7 +201,7 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
                     addDebugToChunk(this);
                 }
                 else{
-                    throw opcode_arr[i] + ' is undefined';
+                    throw opcode_arr[i] + ' is undefined. ' + 'Error in script:'+ Parser.scriptCount+' line: '+ line + ' index: '+index2;
                 }
             }
             else if ((/(^[0-9])/).test(opcode_arr[i])) { //test for a number. ^ denotes that the string must start with a number. [0-9]* will then match any following numbers.
@@ -211,7 +211,7 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
                     addDebugToChunk(this);
                 }
                 else{
-                    throw 'Number: '+num+'is bigger than 16 or smaller than 0';
+                    throw 'Number: '+num+'is bigger than 16 or smaller than 0. ' + 'Error in script:'+ Parser.scriptCount+' line: '+ line + ' index: '+index2;
                 }
 
 
@@ -224,7 +224,7 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
                     addDebugToChunk(this);
                 }
                 else{
-                    throw opcode_arr[i] + ' is undefined';
+                    throw opcode_arr[i] + ' is undefined. ' + 'Error in script:'+ Parser.scriptCount+' line: '+ line + ' index: '+index2;
                 }
 
 
@@ -236,7 +236,7 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
                     addDebugToChunk(this);
                 }
                 else{
-                    throw opcode_arr[i] + ' is undefined';
+                    throw opcode_arr[i] + ' is undefined. ' + 'Error in script:'+ Parser.scriptCount+' line: '+ line + ' index: '+index2;
                 }
             }
             else if((/lockUntil/.test(opcode_arr[i]))){
@@ -263,12 +263,12 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
                      i++;
                    }
                     else{
-                        throw opcode_arr[i+1] + 'is not a valid hex string.';
+                        throw opcode_arr[i+1] + 'is not a valid hex string. '+ 'Error in script:'+ Parser.scriptCount+' line: '+ line + ' index: '+index2;
                     }
 
                 }
                 else{
-                    throw 'OP_PUSHDATA3 is not an opcode';
+                    throw 'OP_PUSHDATA3 is not an opcode. '+ 'Error in script:'+ Parser.scriptCount+' line: '+ line + ' index: '+index2;
                 }
 
             }
@@ -278,7 +278,7 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
                     script.add(opcode_arr[i]);
                     addDebugToChunk(this);
                 } else {
-                    throw 'Opcode: ' + opcode_arr[i] + ' is not defined. Error at position: ' + i;
+                    throw 'Opcode ' + opcode_arr[i] + ' is not defined. ' + 'Error in script:'+ Parser.scriptCount+' line: '+ line + ' index: '+index2;
                 }
             }
         }
