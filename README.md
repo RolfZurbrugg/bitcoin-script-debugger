@@ -40,3 +40,22 @@ Inside the script editors the Opcode that gets executed next when you press the 
 To go back into the Edit mode simply click on the Stop button:
 
 ![alt text](https://github.com/RolfZurbrugg/bitcoin-script-debugger/blob/master/readme-res/btnStopScript.png "Step Backward button")
+
+## Technical Overview
+
+### Architecture
+
+The Bitcoin Script Debugger builts on top of the JavaScript Bitcore library from bitcore.io and is roughly composed of the following layers:
+
+![alt text](https://github.com/RolfZurbrugg/bitcoin-script-debugger/blob/master/readme-res/architecture.png "Architectural Overview")
+
+#### User Interface
+
+The User Interface definition is implemented in the index.html file and styled using the css/app.css file (not shown in the picture).
+
+#### Application Layer
+
+The Application Layer is responsible for what is actually shown on the User Interface. It controls the appeareance and behaviour of the user controls and delegates actions down to the next layers like evaluation of the bitcoin scripts. Error handling is also done in the Application Layer.
+
+
+
