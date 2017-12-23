@@ -92,8 +92,8 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
 
     Parser.init = function (script_text) {
 
-        Parser.scriptCount++;
-        console.log(Parser.scriptCount)
+        scriptCount++;
+        console.log(scriptCount);
 
         var positionstring = script_text;
 
@@ -124,32 +124,37 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
 
         var script = new bitcore.Script();
 
-        function addDebugToChunk() {
-            //here = Object.assign(this, _this);
-
-            index = script_text.indexOf(opcode_arr[i], index); //the index of matched op code is set. The previous value of index is used as an offset to avoid matching the same op code multiple times.
-            line = script_text.substr(0, index).split('\n').length; //the line number is extracted by counting the amount of line brakes between the start of the script_text string and the currently matched op code in the script_text string.
-
-            //if the opcode is on a new line the position string needs to be shorttend to not contain the previous line.
-            if (positionstring.substring(0, index2 + opcode_arr[i].length).split('\n').length > 1) { //this test if the string up to the end of the currently matched op_codes contains any new line characters.
-                index2 = 0;
-                positionstring = script_text.substring(index + opcode_arr[i].length, script_text.length); //the position string is shortend to only contain the original string after the currently matched opcode
-            }
-            else { //the index2 is set to the index of the currently matched op code in the position string.
-                index2 = positionstring.indexOf(opcode_arr[i], index2);
-            }
-
-            //the debug attribute is added to the script chunk.
-            script.chunks[script.chunks.length - 1].debug = {
-                start: {line: line -1, ch: index2},
-                end: {line: line -1 , ch: index2 + opcode_arr[i].length},
-                script: scriptCount
-            };
-
-            index += opcode_arr[i].length; //index is set to the index corresponding to the end of the matched op code in the script_text
-            index2 += opcode_arr[i].length; //index2 is set to the index corresponding to the end of the matched op code in the positionstring
-
-        }
+        // todo this function doesn't work.
+        // function addDebugToChunk() {
+        //     //here = Object.assign(this, _this);
+        //
+        //     /**
+        //      * add debug info to current script chunck
+        //      */
+        //
+        //     index = script_text.indexOf(opcode_arr[i], index); //the index of matched op code is set. The previous value of index is used as an offset to avoid matching the same op code multiple times.
+        //     line = script_text.substr(0, index).split('\n').length; //the line number is extracted by counting the amount of line brakes between the start of the script_text string and the currently matched op code in the script_text string.
+        //
+        //     //if the opcode is on a new line the position string needs to be shorttend to not contain the previous line.
+        //     if (positionstring.substring(0, index2 + opcode_arr[i].length).split('\n').length > 1) { //this test if the string up to the end of the currently matched op_codes contains any new line characters.
+        //         index2 = 0;
+        //         positionstring = script_text.substring(index + opcode_arr[i].length, script_text.length); //the position string is shortend to only contain the original string after the currently matched opcode
+        //     }
+        //     else { //the index2 is set to the index of the currently matched op code in the position string.
+        //         index2 = positionstring.indexOf(opcode_arr[i], index2);
+        //     }
+        //
+        //     //the debug attribute is added to the script chunk.
+        //     script.chunks[script.chunks.length - 1].debug = {
+        //         start: {line: line -1, ch: index2},
+        //         end: {line: line -1 , ch: index2 + opcode_arr[i].length},
+        //         script: scriptCount
+        //     };
+        //
+        //     index += opcode_arr[i].length; //index is set to the index corresponding to the end of the matched op code in the script_text
+        //     index2 += opcode_arr[i].length; //index2 is set to the index corresponding to the end of the matched op code in the positionstring
+        //
+        // }
 
         if (script_text === '') { //if a script is empty return a empty script
             return script;
@@ -164,10 +169,35 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
                 var variable = P$.getValueByKey(opcode_arr[i]); //ToDo find a better name instead of variable
                 if(variable !== undefined){
                     script.add(variable.toBuffer());
-                    addDebugToChunk(this);
+
+                    /**
+                     * add debug info to current script chunck
+                     */
+
+                    index = script_text.indexOf(opcode_arr[i], index); //the index of matched op code is set. The previous value of index is used as an offset to avoid matching the same op code multiple times.
+                    line = script_text.substr(0, index).split('\n').length; //the line number is extracted by counting the amount of line brakes between the start of the script_text string and the currently matched op code in the script_text string.
+
+                    //if the opcode is on a new line the position string needs to be shorttend to not contain the previous line.
+                    if (positionstring.substring(0, index2 + opcode_arr[i].length).split('\n').length > 1) { //this test if the string up to the end of the currently matched op_codes contains any new line characters.
+                        index2 = 0;
+                        positionstring = script_text.substring(index + opcode_arr[i].length, script_text.length); //the position string is shortend to only contain the original string after the currently matched opcode
+                    }
+                    else { //the index2 is set to the index of the currently matched op code in the position string.
+                        index2 = positionstring.indexOf(opcode_arr[i], index2);
+                    }
+
+                    //the debug attribute is added to the script chunk.
+                    script.chunks[script.chunks.length - 1].debug = {
+                        start: {line: line -1, ch: index2},
+                        end: {line: line -1 , ch: index2 + opcode_arr[i].length},
+                        script: scriptCount
+                    };
+
+                    index += opcode_arr[i].length; //index is set to the index corresponding to the end of the matched op code in the script_text
+                    index2 += opcode_arr[i].length; //index2 is set to the index corresponding to the end of the matched op code in the positionstring
                 }
                 else{
-                    throw opcode_arr[i] + ' is undefined. ' + 'Error in script:'+ Parser.scriptCount+' line: '+ line + ' index: '+index2;
+                    throw opcode_arr[i] + ' is undefined. ' + 'Error in script:'+ scriptCount+' line: '+ line + ' index: '+index2;
                 }
 
             }
@@ -175,10 +205,35 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
                 var variable = P$.getValueByKey(opcode_arr[i]);
                 if(variable !== undefined){
                     script.add(variable);
-                    addDebugToChunk(this);
+
+                    /**
+                     * add debug info to current script chunck
+                     */
+
+                    index = script_text.indexOf(opcode_arr[i], index); //the index of matched op code is set. The previous value of index is used as an offset to avoid matching the same op code multiple times.
+                    line = script_text.substr(0, index).split('\n').length; //the line number is extracted by counting the amount of line brakes between the start of the script_text string and the currently matched op code in the script_text string.
+
+                    //if the opcode is on a new line the position string needs to be shorttend to not contain the previous line.
+                    if (positionstring.substring(0, index2 + opcode_arr[i].length).split('\n').length > 1) { //this test if the string up to the end of the currently matched op_codes contains any new line characters.
+                        index2 = 0;
+                        positionstring = script_text.substring(index + opcode_arr[i].length, script_text.length); //the position string is shortend to only contain the original string after the currently matched opcode
+                    }
+                    else { //the index2 is set to the index of the currently matched op code in the position string.
+                        index2 = positionstring.indexOf(opcode_arr[i], index2);
+                    }
+
+                    //the debug attribute is added to the script chunk.
+                    script.chunks[script.chunks.length - 1].debug = {
+                        start: {line: line -1, ch: index2},
+                        end: {line: line -1 , ch: index2 + opcode_arr[i].length},
+                        script: scriptCount
+                    };
+
+                    index += opcode_arr[i].length; //index is set to the index corresponding to the end of the matched op code in the script_text
+                    index2 += opcode_arr[i].length; //index2 is set to the index corresponding to the end of the matched op code in the positionstring
                 }
                 else{
-                    throw opcode_arr[i] + ' is undefined. ' + 'Error in script:'+ Parser.scriptCount+' line: '+ line + ' index: '+index2;
+                    throw opcode_arr[i] + ' is undefined. ' + 'Error in script:'+ scriptCount+' line: '+ line + ' index: '+index2;
                 }
             }
             else if (/(sig_[0-9])/.test(opcode_arr[i])) { //test for key word sig_<number>
@@ -191,10 +246,34 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
                     // console.log(scriptContainingSig.toString());
                     script.add(scriptContainingSig);
 
-                    addDebugToChunk(this);
+                    /**
+                     * add debug info to current script chunck
+                     */
+
+                    index = script_text.indexOf(opcode_arr[i], index); //the index of matched op code is set. The previous value of index is used as an offset to avoid matching the same op code multiple times.
+                    line = script_text.substr(0, index).split('\n').length; //the line number is extracted by counting the amount of line brakes between the start of the script_text string and the currently matched op code in the script_text string.
+
+                    //if the opcode is on a new line the position string needs to be shorttend to not contain the previous line.
+                    if (positionstring.substring(0, index2 + opcode_arr[i].length).split('\n').length > 1) { //this test if the string up to the end of the currently matched op_codes contains any new line characters.
+                        index2 = 0;
+                        positionstring = script_text.substring(index + opcode_arr[i].length, script_text.length); //the position string is shortend to only contain the original string after the currently matched opcode
+                    }
+                    else { //the index2 is set to the index of the currently matched op code in the position string.
+                        index2 = positionstring.indexOf(opcode_arr[i], index2);
+                    }
+
+                    //the debug attribute is added to the script chunk.
+                    script.chunks[script.chunks.length - 1].debug = {
+                        start: {line: line -1, ch: index2},
+                        end: {line: line -1 , ch: index2 + opcode_arr[i].length},
+                        script: scriptCount
+                    };
+
+                    index += opcode_arr[i].length; //index is set to the index corresponding to the end of the matched op code in the script_text
+                    index2 += opcode_arr[i].length; //index2 is set to the index corresponding to the end of the matched op code in the positionstring
                 }
                 else{
-                    throw opcode_arr[i] + ' is undefined. ' + 'Error in script:'+ Parser.scriptCount+' line: '+ line + ' index: '+index2;
+                    throw opcode_arr[i] + ' is undefined. ' + 'Error in script:'+ scriptCount+' line: '+ line + ' index: '+index2;
                 }
             }
             else if (/(str_[0-9])/.test(opcode_arr[i])) { // test for a string variable
@@ -202,20 +281,71 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
                 if(str !== undefined){
                     var strBuf = P$.convertStringToBuffer(str);
                     script.add(strBuf);
-                    addDebugToChunk(this);
+
+
+                    /**
+                     * add debug info to current script chunck
+                     */
+
+                    index = script_text.indexOf(opcode_arr[i], index); //the index of matched op code is set. The previous value of index is used as an offset to avoid matching the same op code multiple times.
+                    line = script_text.substr(0, index).split('\n').length; //the line number is extracted by counting the amount of line brakes between the start of the script_text string and the currently matched op code in the script_text string.
+
+                    //if the opcode is on a new line the position string needs to be shorttend to not contain the previous line.
+                    if (positionstring.substring(0, index2 + opcode_arr[i].length).split('\n').length > 1) { //this test if the string up to the end of the currently matched op_codes contains any new line characters.
+                        index2 = 0;
+                        positionstring = script_text.substring(index + opcode_arr[i].length, script_text.length); //the position string is shortend to only contain the original string after the currently matched opcode
+                    }
+                    else { //the index2 is set to the index of the currently matched op code in the position string.
+                        index2 = positionstring.indexOf(opcode_arr[i], index2);
+                    }
+
+                    //the debug attribute is added to the script chunk.
+                    script.chunks[script.chunks.length - 1].debug = {
+                        start: {line: line -1, ch: index2},
+                        end: {line: line -1 , ch: index2 + opcode_arr[i].length},
+                        script: scriptCount
+                    };
+
+                    index += opcode_arr[i].length; //index is set to the index corresponding to the end of the matched op code in the script_text
+                    index2 += opcode_arr[i].length; //index2 is set to the index corresponding to the end of the matched op code in the positionstring
                 }
                 else{
-                    throw opcode_arr[i] + ' is undefined. ' + 'Error in script:'+ Parser.scriptCount+' line: '+ line + ' index: '+index2;
+                    throw opcode_arr[i] + ' is undefined. ' + 'Error in script:'+ scriptCount+' line: '+ line + ' index: '+index2;
                 }
             }
             else if ((/(^[0-9])/).test(opcode_arr[i])) { //test for a number. ^ denotes that the string must start with a number. [0-9]* will then match any following numbers.
                 var num = Number(opcode_arr[i]); //convert the string to a number
                 if (num >= 0 && num <= 16){
                     script.add(bitcore.Opcode.smallInt(num));
-                    addDebugToChunk(this);
+
+                    /**
+                     * add debug info to current script chunck
+                     */
+
+                    index = script_text.indexOf(opcode_arr[i], index); //the index of matched op code is set. The previous value of index is used as an offset to avoid matching the same op code multiple times.
+                    line = script_text.substr(0, index).split('\n').length; //the line number is extracted by counting the amount of line brakes between the start of the script_text string and the currently matched op code in the script_text string.
+
+                    //if the opcode is on a new line the position string needs to be shorttend to not contain the previous line.
+                    if (positionstring.substring(0, index2 + opcode_arr[i].length).split('\n').length > 1) { //this test if the string up to the end of the currently matched op_codes contains any new line characters.
+                        index2 = 0;
+                        positionstring = script_text.substring(index + opcode_arr[i].length, script_text.length); //the position string is shortend to only contain the original string after the currently matched opcode
+                    }
+                    else { //the index2 is set to the index of the currently matched op code in the position string.
+                        index2 = positionstring.indexOf(opcode_arr[i], index2);
+                    }
+
+                    //the debug attribute is added to the script chunk.
+                    script.chunks[script.chunks.length - 1].debug = {
+                        start: {line: line -1, ch: index2},
+                        end: {line: line -1 , ch: index2 + opcode_arr[i].length},
+                        script: scriptCount
+                    };
+
+                    index += opcode_arr[i].length; //index is set to the index corresponding to the end of the matched op code in the script_text
+                    index2 += opcode_arr[i].length; //index2 is set to the index corresponding to the end of the matched op code in the positionstring
                 }
                 else{
-                    throw 'Number: '+num+'is bigger than 16 or smaller than 0. ' + 'Error in script:'+ Parser.scriptCount+' line: '+ line + ' index: '+index2;
+                    throw 'Number: '+num+'is bigger than 16 or smaller than 0. ' + 'Error in script:'+ scriptCount+' line: '+ line + ' index: '+index2;
                 }
 
 
@@ -225,10 +355,35 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
                 var variable  = P$.getValueByKey(opcode_arr[i]);
                 if (variable !== undefined){
                     script.add(variable);
-                    addDebugToChunk(this);
+
+                    /**
+                     * add debug info to current script chunck
+                     */
+
+                    index = script_text.indexOf(opcode_arr[i], index); //the index of matched op code is set. The previous value of index is used as an offset to avoid matching the same op code multiple times.
+                    line = script_text.substr(0, index).split('\n').length; //the line number is extracted by counting the amount of line brakes between the start of the script_text string and the currently matched op code in the script_text string.
+
+                    //if the opcode is on a new line the position string needs to be shorttend to not contain the previous line.
+                    if (positionstring.substring(0, index2 + opcode_arr[i].length).split('\n').length > 1) { //this test if the string up to the end of the currently matched op_codes contains any new line characters.
+                        index2 = 0;
+                        positionstring = script_text.substring(index + opcode_arr[i].length, script_text.length); //the position string is shortend to only contain the original string after the currently matched opcode
+                    }
+                    else { //the index2 is set to the index of the currently matched op code in the position string.
+                        index2 = positionstring.indexOf(opcode_arr[i], index2);
+                    }
+
+                    //the debug attribute is added to the script chunk.
+                    script.chunks[script.chunks.length - 1].debug = {
+                        start: {line: line -1, ch: index2},
+                        end: {line: line -1 , ch: index2 + opcode_arr[i].length},
+                        script: scriptCount
+                    };
+
+                    index += opcode_arr[i].length; //index is set to the index corresponding to the end of the matched op code in the script_text
+                    index2 += opcode_arr[i].length; //index2 is set to the index corresponding to the end of the matched op code in the positionstring
                 }
                 else{
-                    throw opcode_arr[i] + ' is undefined. ' + 'Error in script:'+ Parser.scriptCount+' line: '+ line + ' index: '+index2;
+                    throw opcode_arr[i] + ' is undefined. ' + 'Error in script:'+ scriptCount+' line: '+ line + ' index: '+index2;
                 }
 
 
@@ -237,17 +392,67 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
                 var variable  = P$.getValueByKey(opcode_arr[i]);
                 if (variable !== undefined){
                     script.add(variable.toBuffer());
-                    addDebugToChunk(this);
+
+                    /**
+                     * add debug info to current script chunck
+                     */
+
+                    index = script_text.indexOf(opcode_arr[i], index); //the index of matched op code is set. The previous value of index is used as an offset to avoid matching the same op code multiple times.
+                    line = script_text.substr(0, index).split('\n').length; //the line number is extracted by counting the amount of line brakes between the start of the script_text string and the currently matched op code in the script_text string.
+
+                    //if the opcode is on a new line the position string needs to be shorttend to not contain the previous line.
+                    if (positionstring.substring(0, index2 + opcode_arr[i].length).split('\n').length > 1) { //this test if the string up to the end of the currently matched op_codes contains any new line characters.
+                        index2 = 0;
+                        positionstring = script_text.substring(index + opcode_arr[i].length, script_text.length); //the position string is shortend to only contain the original string after the currently matched opcode
+                    }
+                    else { //the index2 is set to the index of the currently matched op code in the position string.
+                        index2 = positionstring.indexOf(opcode_arr[i], index2);
+                    }
+
+                    //the debug attribute is added to the script chunk.
+                    script.chunks[script.chunks.length - 1].debug = {
+                        start: {line: line -1, ch: index2},
+                        end: {line: line -1 , ch: index2 + opcode_arr[i].length},
+                        script: scriptCount
+                    };
+
+                    index += opcode_arr[i].length; //index is set to the index corresponding to the end of the matched op code in the script_text
+                    index2 += opcode_arr[i].length; //index2 is set to the index corresponding to the end of the matched op code in the positionstring
                 }
                 else{
-                    throw opcode_arr[i] + ' is undefined. ' + 'Error in script:'+ Parser.scriptCount+' line: '+ line + ' index: '+index2;
+                    throw opcode_arr[i] + ' is undefined. ' + 'Error in script:'+ scriptCount+' line: '+ line + ' index: '+index2;
                 }
             }
             else if((/lockUntil/.test(opcode_arr[i]))){
                 var lockTime = P$.getValueByKey(opcode_arr[i]); //locktime is saved as a buffer when it is created
                 if (lockTime !== undefined){
                     script.add(lockTime);
-                    addDebugToChunk(this);
+
+                    /**
+                     * add debug info to current script chunck
+                     */
+
+                    index = script_text.indexOf(opcode_arr[i], index); //the index of matched op code is set. The previous value of index is used as an offset to avoid matching the same op code multiple times.
+                    line = script_text.substr(0, index).split('\n').length; //the line number is extracted by counting the amount of line brakes between the start of the script_text string and the currently matched op code in the script_text string.
+
+                    //if the opcode is on a new line the position string needs to be shorttend to not contain the previous line.
+                    if (positionstring.substring(0, index2 + opcode_arr[i].length).split('\n').length > 1) { //this test if the string up to the end of the currently matched op_codes contains any new line characters.
+                        index2 = 0;
+                        positionstring = script_text.substring(index + opcode_arr[i].length, script_text.length); //the position string is shortend to only contain the original string after the currently matched opcode
+                    }
+                    else { //the index2 is set to the index of the currently matched op code in the position string.
+                        index2 = positionstring.indexOf(opcode_arr[i], index2);
+                    }
+
+                    //the debug attribute is added to the script chunk.
+                    script.chunks[script.chunks.length - 1].debug = {
+                        start: {line: line -1, ch: index2},
+                        end: {line: line -1 , ch: index2 + opcode_arr[i].length},
+                        script: scriptCount
+                    };
+
+                    index += opcode_arr[i].length; //index is set to the index corresponding to the end of the matched op code in the script_text
+                    index2 += opcode_arr[i].length; //index2 is set to the index corresponding to the end of the matched op code in the positionstring
                 }
                 else{
                     throw 'lock time is undefined';
@@ -266,28 +471,79 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
                         var string = opcode_arr[i] + ' ' + opcode_arr[i+1]+ ' ' +opcode_arr[i+2];
                         var pushdataScript = bitcore.Script.fromString(string);
                         script.add(pushdataScript);
-                        addDebugToChunk(this);
+
+                        /**
+                         * add debug info to current script chunck
+                         */
+
+                        index = script_text.indexOf(opcode_arr[i], index); //the index of matched op code is set. The previous value of index is used as an offset to avoid matching the same op code multiple times.
+                        line = script_text.substr(0, index).split('\n').length; //the line number is extracted by counting the amount of line brakes between the start of the script_text string and the currently matched op code in the script_text string.
+
+                        //if the opcode is on a new line the position string needs to be shorttend to not contain the previous line.
+                        if (positionstring.substring(0, index2 + opcode_arr[i].length).split('\n').length > 1) { //this test if the string up to the end of the currently matched op_codes contains any new line characters.
+                            index2 = 0;
+                            positionstring = script_text.substring(index + opcode_arr[i].length, script_text.length); //the position string is shortend to only contain the original string after the currently matched opcode
+                        }
+                        else { //the index2 is set to the index of the currently matched op code in the position string.
+                            index2 = positionstring.indexOf(opcode_arr[i], index2);
+                        }
+
+                        //the debug attribute is added to the script chunk.
+                        script.chunks[script.chunks.length - 1].debug = {
+                            start: {line: line -1, ch: index2},
+                            end: {line: line -1 , ch: index2 + opcode_arr[i].length},
+                            script: scriptCount
+                        };
+
+                        index += opcode_arr[i].length; //index is set to the index corresponding to the end of the matched op code in the script_text
+                        index2 += opcode_arr[i].length; //index2 is set to the index corresponding to the end of the matched op code in the positionstring
                     //
                      i++;
                      i++;
                    }
                     else{
-                        throw opcode_arr[i+1] + 'is not a valid hex string. '+ 'Error in script:'+ Parser.scriptCount+' line: '+ line + ' index: '+index2;
+                        throw opcode_arr[i+1] + 'is not a valid hex string. '+ 'Error in script:'+ scriptCount+' line: '+ line + ' index: '+index2;
                     }
 
                 }
                 else{
-                    throw 'OP_PUSHDATA3 is not an opcode. '+ 'Error in script:'+ Parser.scriptCount+' line: '+ line + ' index: '+index2;
+                    throw 'OP_PUSHDATA3 is not an opcode. '+ 'Error in script:'+ scriptCount+' line: '+ line + ' index: '+index2;
                 }
 
             }
             else {
                 //error handling to test if (opcode_arr[i]) is an opcode
                 if (P$.testIfOpcode(opcode_arr[i])) {
-                    script.add(opcode_arr[i]);
-                    addDebugToChunk(this);
+                    var opCodeUpper = opcode_arr[i].toUpperCase();
+                    script.add(opCodeUpper);
+
+                    /**
+                     * add debug info to current script chunck
+                     */
+
+                    index = script_text.indexOf(opcode_arr[i], index); //the index of matched op code is set. The previous value of index is used as an offset to avoid matching the same op code multiple times.
+                    line = script_text.substr(0, index).split('\n').length; //the line number is extracted by counting the amount of line brakes between the start of the script_text string and the currently matched op code in the script_text string.
+
+                    //if the opcode is on a new line the position string needs to be shorttend to not contain the previous line.
+                    if (positionstring.substring(0, index2 + opcode_arr[i].length).split('\n').length > 1) { //this test if the string up to the end of the currently matched op_codes contains any new line characters.
+                        index2 = 0;
+                        positionstring = script_text.substring(index + opcode_arr[i].length, script_text.length); //the position string is shortend to only contain the original string after the currently matched opcode
+                    }
+                    else { //the index2 is set to the index of the currently matched op code in the position string.
+                        index2 = positionstring.indexOf(opcode_arr[i], index2);
+                    }
+
+                    //the debug attribute is added to the script chunk.
+                    script.chunks[script.chunks.length - 1].debug = {
+                        start: {line: line -1, ch: index2},
+                        end: {line: line -1 , ch: index2 + opcode_arr[i].length},
+                        script: scriptCount
+                    };
+
+                    index += opcode_arr[i].length; //index is set to the index corresponding to the end of the matched op code in the script_text
+                    index2 += opcode_arr[i].length; //index2 is set to the index corresponding to the end of the matched op code in the positionstring
                 } else {
-                    throw 'Opcode ' + opcode_arr[i] + ' is not defined. ' + 'Error in script:'+ Parser.scriptCount+' line: '+ line + ' index: '+index2;
+                    throw 'Opcode ' + opcode_arr[i] + ' is not defined. ' + 'Error in script:'+ scriptCount+' line: '+ line + ' index: '+index2;
                 }
             }
         }
@@ -353,6 +609,32 @@ var _numOfSigs = 1; //this variable is used to keep track of how many signatures
     Parser.getVariableMapAsArray = function () {
         return convertMapToArray(P$.getVariableMap());
     };
+
+    Parser.getUserVariableMap = function (){
+        var variableArray = P$.getVariableMapAsArray();
+        var userVariableArray = new Array();
+
+        for(var i= 0, j =0 ; i<variableArray.length; i++){
+
+            if (
+                /(privK_[0-9])/.test(variableArray[i][0]) || //test for private key variable
+                /(pubK_[0-9])/.test(variableArray[i][0]) || //test for public key variable
+                /(addr_[0-9])/.test(variableArray[i][0]) ||
+                /(hash_[0-9])/.test(variableArray[i][0]) ||
+                /(sig_[0-9])/.test(variableArray[i][0])  ||
+                /(str_[0-9])/.test(variableArray[i][0])  ||
+                /(^[0-9])/.test(variableArray[i][0])    ||
+                /redeemScript/.test(variableArray[i][0]) ||
+                /redeemScriptHash/.test(variableArray[i][0]) ||
+                /lockUntil/.test(variableArray[i][0])
+            ){
+               userVariableArray[j]=variableArray[i];
+               j++;
+            }
+        }
+        console.log(userVariableArray);
+    };
+
 
     /**
      * helper function, it converts a given map to an array.
