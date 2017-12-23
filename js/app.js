@@ -367,16 +367,8 @@ function getSigType() {
     return option;
 }
 
-
-
-/**
- * todo this needs refactoring
- * creating a dynamic table in order to store public and private key pairs and their corresponding address
- * @type {number}
- */
 //create dynamic table for keypairs and addresses
 //addapted implementation from http://www.encodedna.com/javascript/dynamically-add-remove-rows-to-html-table-using-javascript-and-save-data.htm
-
 
 // ARRAY FOR HEADER.
 var createdAdressId = 1;
@@ -491,7 +483,6 @@ function getTableValue(row, columns) {
     return element.childNodes[0].value;
 }
 
-
 // ToDo not sure if this is needed
 // EXTRACT AND SUBMIT TABLE DATA.
 function sumbit() {
@@ -511,9 +502,6 @@ function sumbit() {
     console.log(values);
 }
 
-/**
- * @param privateKeyVariable
- */
 function addPrivateKeyToDropDown(privateKeyVariable) {
     var selectHTML = '';
 
@@ -528,22 +516,12 @@ function addVariableToHashCreateDropDown(publicKeyVariable) {
     $('#selectionPubKeyElement0').after(selectHTML);
 }
 
-/**
- *
- * @param num
- * @returns {*}
- */
 function getPubKeyFromTable(num) {
     var pubKeyString = getTableValue(num, PUBLIC_KEY); //getting the public key string out of the dynamic table
     var pubKey = new bitcore.PublicKey(pubKeyString);
     return pubKey;
 }
 
-/**
- *
- * @param num
- * @returns {*}
- */
 function getPrivatKeyFromTable(num) {
     var privateKeyString = getTableValue(num, PRIVATE_KEY);
     var privateKey = new bitcore.PrivateKey(privateKeyString);
@@ -553,12 +531,6 @@ function getPrivatKeyFromTable(num) {
 function loadDemoScript(name) {
     window["load" + name + "DemoScript"]();
 }
-
-/**
- *
- */
-
-
 
 function setTransactionMultisig(privKStrArr, option) {
     option = option || bitcore.crypto.Signature.SIGHASH_ALL;
@@ -629,12 +601,6 @@ function setTransaction(privKStr, option, sigVar) {
         console.log(sigVar);
     }
 }
-
-
-/**
- * table for hashes
- *
- */
 
 // ARRAY FOR HEADER.
 var createdHashId = 1;
@@ -792,9 +758,8 @@ function initTables() {
 }
 
 /**
- * check if scripts are standard
+ * Checks if the given script is a standard script.
  */
-
 function checkIfStandardScript(script) {
     return script.isStandard();
 }
@@ -831,9 +796,6 @@ function checkOutputScriptIfStandard() {
     }
 }
 
-/**
- *
- */
 function addHashValue() {
     var selectedHashFunction = $('#selectStringHashFunktion').val();
     var option = P$.getValueByKey(selectedHashFunction);
@@ -845,9 +807,6 @@ function addHashValue() {
     createdHashId++;
 }
 
-/**
- *
- */
 var stringVarCount = 1;
 function addStringVar() {
     var str = $('#StringVar').val();
