@@ -490,9 +490,9 @@ function loadBaiscDemoScript() {
  *
  */
 function loadP2PKDemoScript() {
-    var inputScriptString = 'sig_0';
+    var inputScriptString = '\u003Csig_0\u003E';
 
-    var outputScriptString = 'pubK_0\n' +
+    var outputScriptString = '\u003CpubK_0\u003E\n' +
         'OP_CHECKSIG';
 
     setInputScript(inputScriptString);
@@ -528,16 +528,17 @@ function loadPushDataDemoScript() {
 function loadP2PKWithLockTimeDemoScript() {
     var myTx = new bitcore.Transaction();
     var lockUntil = new Date(2011, 01, 01);
+    lockUntil = lockUntil.getTime() / 1000;
     myTx.lockUntilDate(lockUntil);
     var nLockTime = myTx.nLockTime;
-    var nLockTimeBuffer = new bitcore.crypto.BN(nLockTime);
-    P$.addKeyValuePair('lockUntil', nLockTimeBuffer);
+    //var nLockTimeBuffer = bitcore.crypto.BN(nLockTime);
+    P$.addKeyValuePair('lockUntil', lockUntil);
 
 
     var inputScriptString = 'OP_1';
 
     var outputScriptString = 'OP_1\n' +
-        'lockUntil\n' +
+        '\u003ClockUntil\u003E\n' +
         'OP_CHECKLOCKTIMEVERIFY\n' +
         'OP_DROP\n' +
         //'OP_1\n' +
@@ -565,12 +566,12 @@ function loadP2PKWithLockTimeDemoScript() {
  *
  */
 function loadP2PKHDemoScript() {
-    var inputScriptString = 'sig_0\n' +
+    var inputScriptString = '\u003Csig_0\u003E\n' +
         'pubK_0';
 
     var outputScriptString = 'OP_DUP\n' +
         'OP_HASH160\n' +
-        'hash_0\n' +
+        '\u003Chash_0\u003E\n' +
         'OP_EQUALVERIFY\n' +
         'OP_CHECKSIG';
 
@@ -585,10 +586,10 @@ function loadP2PKHDemoScript() {
  *
  */
 function loadP2SHDemoScript() {
-    var inputScriptString = 'str_0';
+    var inputScriptString = '\u003Cstr_0\u003E';
 
     var outputScriptString = 'OP_HASH160\n' +
-        'hash_00\n' +
+        '\u003Chash_00\u003E\n' +
         'OP_EQUAL';
 
     setInputScript(inputScriptString);
@@ -661,7 +662,7 @@ function loadOPReturnScript() {
     var inputScriptString = '';
 
     var outputScriptString = 'OP_RETURN\n' +
-        'str_0';
+        '\u003Cstr_0\u003E';
 
     setInputScript(inputScriptString);
     setOutputScript(outputScriptString);
@@ -672,13 +673,13 @@ function loadOPReturnScript() {
  */
 function loadMultiSigScript() {
     var inputScriptString = 'OP_0\n' +
-        'sig_10\n' +
-        'sig_11';
+        '\u003Csig_10\u003E\n' +
+        '\u003Csig_11\u003E';
 
     var outputScriptString = '2\n' +
-        'pubK_0\n' +
-        'pubK_00\n' +
-        'pubK_000\n' +
+        '\u003CpubK_0\u003E\n' +
+        '\u003CpubK_00\u003E\n' +
+        '\u003CpubK_000\u003E\n' +
         '3\n' +
         'OP_CHECKMULTISIG';
 
@@ -721,8 +722,29 @@ function setTransactionMultisig(privKStrArr, option) {
 }
 
 function setTransaction(privKStr, option, sigVar) {
-    option = option || bitcore.crypto.Signature.SIGHASH_ALL;
-    sigVar = sigVar || 'sig_0'
+
+    switch (option){
+        case undefined:
+            option = bitcore.crypto.Signature.SIGHASH_ALL;
+            break;
+        case 'SIGHASH_ALL':
+            option = bitcore.crypto.Signature.SIGHASH_ALL;
+            break;
+
+        case 'SIGHASH_NONE':
+            option = bitcore.crypto.Signature.SIGHASH_NONE;
+            break;
+
+        case 'SIGHASH_SINGLE':
+            option = bitcore.crypto.Signature.SIGHASH_SINGLE;
+            break;
+
+        case 'SIGHASH_ANYONECANPAY':
+            option = bitcore.crypto.Signature.SIGHASH_ANYONECANPAY;
+            break;
+    }
+
+    sigVar = sigVar || 'sig_0';
     var signBool = true;
     if (privKStr === undefined) {
         signBool = false;
