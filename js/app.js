@@ -577,13 +577,15 @@ function loadPushDataDemoScript() {
  * ToDo this doesnt work yet
  */
 function loadP2PKWithLockTimeDemoScript() {
-    var myTx = new bitcore.Transaction();
-    var lockUntil = new Date(2011, 01, 01);
-    lockUntil = lockUntil.getTime() / 1000;
-    myTx.lockUntilDate(lockUntil);
-    var nLockTime = myTx.nLockTime;
+    //var myTx = new bitcore.Transaction();
+    var lockUntil = new Date(2015, 01, 01);
+    var lockUntilInt = lockUntil.getTime() / 1000;
+    var lockUntilBuffer = bitcore.util.buffer.integerAsBuffer(lockUntilInt);
+    var lockUntilBufferBN = bitcore.crypto.BN.fromNumber(lockUntilInt);
+    //myTx.lockUntilDate(lockUntil);
+    //var nLockTime = myTx.nLockTime;
     //var nLockTimeBuffer = bitcore.crypto.BN(nLockTime);
-    P$.addKeyValuePair('lockUntil', lockUntil);
+    P$.addKeyValuePair('lockUntil', lockUntilBufferBN);
 
 
     var inputScriptString = 'OP_1';
@@ -602,7 +604,7 @@ function loadP2PKWithLockTimeDemoScript() {
     setTransaction();
 
     //add lock time to transaction
-    var future = new Date(2016, 10, 30);
+    var future = new Date(2011, 10, 30);
     var tx = P$.getValueByKey('tx');
     tx.lockUntilDate(future); //tx.lockUntilBlockHeight()
     P$.addKeyValuePair('tx', tx);
