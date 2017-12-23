@@ -70,7 +70,7 @@
       <div class="col-md-8">
         <div class="panel panel-default">
           <div class="panel-heading">
-            Input Script
+            scriptSig
             <form class="form-inline pull-right">
               <button class="btn btn-default btn-xs ">Sign</button>
               <select class="form-control input-xs">
@@ -85,7 +85,7 @@
         </div>
 
         <div class="panel panel-default">
-          <div class="panel-heading">Output Script</div>
+          <div class="panel-heading">scriptPubKey</div>
           <textarea class="form-control" rows="5" id="outputScript">OP_2 OP_EQUAL</textarea>
         </div>
 
@@ -129,7 +129,7 @@
             <div class="clearfix"></div>
           </div>
           <div style="height: 211px; overflow: auto;">
-            <table class="table table-striped">
+            <table class="table table-striped" id="variables">
               <col width="80">
               <thead>
                 <tr>
@@ -138,10 +138,6 @@
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>&lt;sig&gt;</td>
-                  <td>0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</td>
-                </tr>
               </tbody>
             </table>
           </div>
