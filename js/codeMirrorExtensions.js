@@ -10,6 +10,7 @@
         var middle = /OP\_ELSE\b/i
         var closing = /OP\_ENDIF\b/i
         var literals = /^(0x|0X)?[a-fA-F0-9]+$/i
+        var variables = /<[a-zA-Z].*?[^?]?>/
 
         // tokenizer
         function tokenBase(stream, state) {
@@ -37,6 +38,10 @@
 
             if (stream.match(literals)) {
                 return 'string';
+            }
+
+            if (stream.match(variables)) {
+                return 'variable-2';
             }
 
             // Handle non-detected items

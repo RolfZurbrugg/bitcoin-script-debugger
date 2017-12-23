@@ -194,8 +194,11 @@ function clearStackTable() {
 
 function updateVariablesTable() {
     clearVariablesTable();
-    var variables = P$.getVariableMapAsArray();
-    console.log(variables);
+    var variables = P$.getUserVariableMap();
+    for (var i = 0; i < variables.length; i++) {
+        var row = "<tr><td>" + variables[i][0] + "</td><td>" + variables[i][1] + "</td></tr>";
+        $("#variables > tbody").append(row);
+    }
 }
 
 function clearVariablesTable() {
