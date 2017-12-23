@@ -76,7 +76,7 @@ function loadP2PKWithLockTimeDemoScript() {
  */
 function loadP2PKHDemoScript() {
     var inputScriptString = '\u003Csig_0\u003E\n' +
-        'pubK_0';
+        '\u003CpubK_0\u003E';
 
     var outputScriptString = 'OP_DUP\n' +
         'OP_HASH160\n' +
