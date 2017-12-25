@@ -72,9 +72,11 @@ The most important functionalities of the parser are:
 
 *P$.addKeyValuePari(key, value) adds a new key value pair to the variableMap. the key is expected to be a string.
 
-*P$.getVariableMap()
+*P$.getVariableMap() returns the variable map.
 
-*
+*P$.getUserVariableMap() !this function will actualy return an array of all the user variables not a map.
+
+
 
 ### debug.js
 
