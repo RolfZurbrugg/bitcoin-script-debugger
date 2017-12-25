@@ -80,5 +80,18 @@ The most important functionalities of the parser are:
 
 ### debug.js
 
+In the debug.js we monkey patch the step function from the bitcore-lib interpreter. This allows us to access the stack
+after each opcode is executed. This enables us to construct a 2D array containing the opcodes and the current stack.
+
+To make the function easier to use, it will take the just the string representation of the bitcoin script. The bitcoin scripts
+are then parsed by the parser.
+
+Noteworthy is that if a script needs to be verified against a transaction, the transaction needs to be created and set 
+before the debug function is called.
+
 ### demoScript
+
+The demoScripts.js file contains a number of standard scripts. That with the exception of loadP2PKWithLockTimeDemoScript
+all work. These scripts can be used as a template as to how modular custom scripts can be created 
+using the bitcoin-script-debugger.
 
